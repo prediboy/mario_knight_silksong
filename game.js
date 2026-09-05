@@ -563,42 +563,47 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 30.0; // Strict 30s Countdown!
-    this.traveledKm = 0.0;
+    this.levelTimer = 30.0; // Strict 30s Boss Rush Countdown!
+    this.traveledKm = this.levelManager.config.targetKm;
     this.levelKills = 0;
-    this.screenShake = 0;
+    this.screenShake = 0.5;
     this.paused = false;
 
-    // Load level map & reset entities
+    // Load level map & reset entities directly in the Boss Colosseum
     this.levelManager.loadLevel(levelNum);
-    this.player.resetPosition(120, 460);
+    this.player.resetPosition(180, 460);
     this.monsters = [];
     this.projectiles = [];
     this.particles = [];
     this.floatingTexts = [];
-    this.activeBoss = null;
 
-    // Initial enemy spawns along the 30s track
+    // Spawn Boss Colossus directly in front of Mario!
+    this.activeBoss = new Boss(this.currentLevel, this.levelManager.bossSpawnX, this.levelManager.bossSpawnY);
+
+    // Initial supporting soul swarms
     const types = this.levelManager.config.monsterTypes;
-    const initialSpawns = [250, 480, 750, 1050, 1380, 1720, 2100, 2450];
-    for (let i = 0; i < initialSpawns.length; i++) {
-      const sx = initialSpawns[i];
-      const type = types[i % types.length];
-      const sy = (type === 'needle_wasp' || type === 'shadow_wisp') ? 260 + Math.random() * 80 : 490;
-      this.monsters.push(new SmallMonster(sx, sy, type));
-    }
+    this.monsters.push(new SmallMonster(220, 490, types[0]));
+    this.monsters.push(new SmallMonster(880, 490, types[types.length - 1]));
 
     // UI Updates
     this.levelBadge.textContent = `LEVEL ${levelNum}: ${this.levelManager.config.name.toUpperCase()}`;
     this.distanceTarget.textContent = `${this.levelManager.config.targetKm.toFixed(1)}`;
-    this.bossHud.classList.add('hidden');
+    this.distanceCurrent.textContent = `${this.levelManager.config.targetKm.toFixed(1)}`;
+    this.distanceBarFill.style.width = '100%';
+    this.distanceMarioPin.style.left = '95%';
+
+    this.bossHud.classList.remove('hidden');
+    this.bossName.textContent = this.activeBoss.name;
+    this.bossSubtitle.textContent = this.activeBoss.title.toUpperCase();
+    this.bossBarFill.style.width = '100%';
+
     this.updateHPUI();
     this.updateSoulUI();
     this.updatePowerIconsUI();
 
-    this.state = 'PLAYING';
-    window.soundEngine.startBGM('ambient');
-    this.showToast(`⚡ 30s RUSH STARTED: ${this.levelManager.config.name} ⚡`);
+    this.state = 'BOSS';
+    window.soundEngine.startBGM('boss');
+    this.showToast(`⚔️ TITAN BATTLE: ${this.activeBoss.name} (30s) ⚔️`);
   }
 
   updateHPUI() {
@@ -749,12 +754,10 @@ class Game {
     // 4. Update Player
     this.player.update(dt, this.input, this.levelManager.platforms, this.particles, this.floatingTexts);
 
-    // If in Boss Battle, STRICTLY LOCK both Player and Boss inside the arena!
-    if (this.state === 'BOSS') {
-      this.player.x = Math.max(this.levelManager.bossArenaStartX + 10, Math.min(this.player.x, this.levelManager.levelWidth - this.player.width - 20));
-      if (this.activeBoss && this.activeBoss.alive) {
-        this.activeBoss.x = Math.max(this.levelManager.bossArenaStartX + 40, Math.min(this.activeBoss.x, this.levelManager.levelWidth - this.activeBoss.width - 40));
-      }
+    // Keep Player and Boss inside the 1400px Colosseum
+    this.player.x = Math.max(20, Math.min(this.player.x, this.levelManager.levelWidth - this.player.width - 20));
+    if (this.activeBoss && this.activeBoss.alive) {
+      this.activeBoss.x = Math.max(80, Math.min(this.activeBoss.x, this.levelManager.levelWidth - this.activeBoss.width - 40));
     }
 
     // Player Spike Hazard Check
@@ -934,13 +937,9 @@ class Game {
       if (!this.floatingTexts[i].update(dt)) this.floatingTexts.splice(i, 1);
     }
 
-    // 9. Camera Tracking (Lock inside arena during boss battle)
-    let targetCamX = this.player.x - this.canvas.width * 0.35;
-    if (this.state === 'BOSS') {
-      targetCamX = Math.max(this.levelManager.bossArenaStartX - 50, Math.min(targetCamX, this.levelManager.levelWidth - this.canvas.width));
-    } else {
-      targetCamX = Math.max(0, Math.min(targetCamX, this.levelManager.levelWidth - this.canvas.width));
-    }
+    // 9. Camera Tracking (Centered inside 1400px Colosseum arena)
+    const maxCamX = Math.max(0, this.levelManager.levelWidth - this.canvas.width);
+    const targetCamX = Math.max(0, Math.min(this.player.x - this.canvas.width * 0.35, maxCamX));
     this.cameraX += (targetCamX - this.cameraX) * 0.1;
 
     const targetCamY = Math.max(0, (520 + 80) - this.canvas.height);

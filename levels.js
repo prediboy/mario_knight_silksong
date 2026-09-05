@@ -151,12 +151,12 @@ class LevelManager {
   constructor() {
     this.currentLevel = 1;
     this.config = LEVEL_CONFIGS[0];
-    this.levelWidth = 3800;
+    this.levelWidth = 1400;
     this.levelHeight = 600;
     this.platforms = [];
     this.spikes = [];
-    this.bossArenaStartX = 2900;
-    this.bossSpawnX = 3350;
+    this.bossArenaStartX = 0;
+    this.bossSpawnX = 750;
     this.bossSpawnY = 380;
     this.spawnTimer = 0;
   }
@@ -171,75 +171,33 @@ class LevelManager {
     this.platforms = [];
     this.spikes = [];
 
-    // Main base ground
+    // Main Colosseum Ground Arena
     this.platforms.push({ x: 0, y: 520, w: this.levelWidth, h: 80 });
 
-    // Left boundary wall
-    this.platforms.push({ x: -40, y: 0, w: 40, h: 600 });
+    // Left and Right Arena Boundaries
+    this.platforms.push({ x: -30, y: 0, w: 30, h: 600 });
+    this.platforms.push({ x: this.levelWidth, y: 0, w: 40, h: 600 });
 
-    // Procedural stepped platforms leading up to Boss Arena
-    const chunkWidth = 320;
-    const totalChunks = Math.floor(this.bossArenaStartX / chunkWidth);
-
-    for (let c = 1; c < totalChunks; c++) {
-      const cx = c * chunkWidth;
-
-      // Tiered stepped platforms for seamless climbing
-      const step1 = 430; // Low easy step
-      const step2 = 330; // Mid step
-      const step3 = 220; // High ledge
-      const step4 = 140; // Sky perch
-
-      if (c % 2 === 0) {
-        this.platforms.push({ x: cx, y: step1, w: 140, h: 20 });
-        this.platforms.push({ x: cx + 110, y: step2, w: 140, h: 20 });
-        this.platforms.push({ x: cx + 200, y: step3, w: 120, h: 20 });
-      } else {
-        this.platforms.push({ x: cx + 30, y: step2, w: 160, h: 20 });
-        this.platforms.push({ x: cx + 160, y: step1, w: 130, h: 20 });
-        this.platforms.push({ x: cx + 90, y: step4, w: 110, h: 20 });
-      }
-
-      // Ground spikes hazard chunks
-      if (c % 3 === 1 && cx < this.bossArenaStartX - 200) {
-        this.spikes.push({ x: cx + 60, y: 504, w: 60, h: 16 });
-      }
-    }
-
-    // Boss Arena (Enclosed arena from bossArenaStartX to levelWidth)
-    // Left arena sealing gate (Physical barrier)
-    this.platforms.push({ x: this.bossArenaStartX - 20, y: 0, w: 40, h: 520, isBossGate: true });
-    // Right boundary wall
-    this.platforms.push({ x: this.levelWidth, y: 0, w: 50, h: 600 });
-    // Stepped arena platforms for dodging boss attacks
-    this.platforms.push({ x: this.bossArenaStartX + 100, y: 410, w: 130, h: 20 });
-    this.platforms.push({ x: this.bossArenaStartX + 420, y: 410, w: 130, h: 20 });
-    this.platforms.push({ x: this.bossArenaStartX + 240, y: 300, w: 180, h: 20 });
-    this.platforms.push({ x: this.bossArenaStartX + 150, y: 190, w: 150, h: 20 });
-    this.platforms.push({ x: this.bossArenaStartX + 360, y: 190, w: 150, h: 20 });
+    // Tactical Multi-Tier Battle Platforms (Wide open, NO blocking poles)
+    this.platforms.push({ x: 120, y: 410, w: 160, h: 20 });
+    this.platforms.push({ x: 840, y: 410, w: 160, h: 20 });
+    this.platforms.push({ x: 320, y: 320, w: 180, h: 20 });
+    this.platforms.push({ x: 620, y: 320, w: 180, h: 20 });
+    this.platforms.push({ x: 440, y: 190, w: 240, h: 20 });
   }
 
   updateMonsterSpawns(dt, player, monsters, isBossActive) {
-    if (isBossActive) return; // Boss arena handles its own spawns
-
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0) {
       this.spawnTimer = this.config.spawnInterval;
 
-      // Spawn monster ahead or behind player within viewing distance
-      const spawnAhead = Math.random() > 0.35;
-      const spawnX = player.x + (spawnAhead ? 450 + Math.random() * 200 : -350 - Math.random() * 150);
-
-      // Don't spawn outside level or inside boss arena
-      if (spawnX > 80 && spawnX < this.bossArenaStartX - 80) {
+      // Spawn supporting small monsters on the sides to harvest Soul
+      if (monsters.length < 5) {
         const types = this.config.monsterTypes;
         const chosenType = types[Math.floor(Math.random() * types.length)];
-        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp') ? 260 + Math.random() * 120 : 490;
-        
-        // Cap maximum small monsters on screen to maintain 60 FPS
-        if (monsters.length < 18) {
-          monsters.push(new SmallMonster(spawnX, spawnY, chosenType));
-        }
+        const spawnX = Math.random() > 0.5 ? 160 + Math.random() * 150 : 850 + Math.random() * 200;
+        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp') ? 240 + Math.random() * 80 : 490;
+        monsters.push(new SmallMonster(spawnX, spawnY, chosenType));
       }
     }
   }
