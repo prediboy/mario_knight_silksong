@@ -837,7 +837,7 @@ class SmallMonster {
   }
 
   draw(ctx) {
-    Sprites.drawMonster(
+    Sprites.drawSmallMonster(
       ctx,
       this.type,
       this.x,
