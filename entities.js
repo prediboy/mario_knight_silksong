@@ -784,14 +784,32 @@ class SmallMonster {
       this.y = this.baseY + Math.sin(this.time * 3) * 35;
       this.x += this.vx * 60 * dt;
     } else {
-      this.vy += 0.35 * 60 * dt; // Gravity
+      // 1. Horizontal movement and wall turnaround
       this.x += this.vx * 60 * dt;
-      this.y += this.vy * 60 * dt;
 
-      // Platform collisions
       for (const p of platforms) {
         if (this.checkOverlap(p)) {
-          if (this.vy > 0) {
+          if (this.y + this.height > p.y + 6) {
+            if (this.vx > 0) {
+              this.x = p.x - this.width;
+              this.vx = -Math.abs(this.vx);
+              this.facingRight = false;
+            } else if (this.vx < 0) {
+              this.x = p.x + p.w;
+              this.vx = Math.abs(this.vx);
+              this.facingRight = true;
+            }
+          }
+        }
+      }
+
+      // 2. Vertical movement, gravity, and platform landing
+      this.vy += 0.35 * 60 * dt;
+      this.y += this.vy * 60 * dt;
+
+      for (const p of platforms) {
+        if (this.checkOverlap(p)) {
+          if (this.vy > 0 && this.y + this.height - this.vy * 60 * dt <= p.y + 12) {
             this.y = p.y - this.height;
             this.vy = 0;
           }
@@ -863,6 +881,7 @@ class Boss {
     this.bossLevel = bossLevel;
     this.x = arenaX;
     this.y = arenaY;
+    this.baseY = arenaY; // Fixed reference for hovering bosses
     this.vx = 0;
     this.vy = 0;
     this.alive = true;
@@ -874,14 +893,14 @@ class Boss {
 
     // Boss Name & Config by Level (Tuned for approachable, thrilling combat)
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 120, w: 90, h: 80, speed: 1.8 },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 160, w: 80, h: 90, speed: 2.8 },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 210, w: 95, h: 95, speed: 2.2 },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 260, w: 85, h: 100, speed: 3.0 },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 320, w: 110, h: 85, speed: 2.5 },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 380, w: 105, h: 95, speed: 2.0 },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 450, w: 95, h: 110, speed: 3.4 },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 550, w: 115, h: 115, speed: 3.6 }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 120, w: 90, h: 80, speed: 1.8, isFlying: false },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 160, w: 80, h: 90, speed: 2.8, isFlying: true },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 210, w: 95, h: 95, speed: 2.2, isFlying: false },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 260, w: 85, h: 100, speed: 3.0, isFlying: true },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 320, w: 110, h: 85, speed: 2.5, isFlying: true },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 380, w: 105, h: 95, speed: 2.0, isFlying: false },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 450, w: 95, h: 110, speed: 3.4, isFlying: true },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 550, w: 115, h: 115, speed: 3.6, isFlying: true }
     ];
 
     const cfg = bossConfigs[bossLevel - 1];
@@ -892,6 +911,7 @@ class Boss {
     this.width = cfg.w;
     this.height = cfg.h;
     this.baseSpeed = cfg.speed;
+    this.isFlying = cfg.isFlying;
 
     window.soundEngine.playBossRoar();
   }
@@ -962,55 +982,42 @@ class Boss {
     }
 
     // Boss Level Specific AI Movement
-    switch (this.bossLevel) {
-      case 1: // Giga Goomba (Stomp & Leap)
-        this.vy += 0.4 * 60 * dt;
-        this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 0.7 * 60 * dt;
-        break;
+    if (this.isFlying) {
+      this.vy = 0;
+      switch (this.bossLevel) {
+        case 2: // Hornet Queen
+          this.y = this.baseY + Math.sin(this.time * 3.5) * 35;
+          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.5;
+          break;
+        case 4: // Mantis Kamek
+          this.y = this.baseY + Math.cos(this.time * 3.0) * 40;
+          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.45;
+          break;
+        case 5: // Abyssal Leviathan
+          this.y = this.baseY + Math.sin(this.time * 2.5) * 45;
+          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.6;
+          break;
+        case 7: // Grimm Bowser
+          this.y = this.baseY + Math.sin(this.time * 4.0) * 35;
+          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.7);
+          break;
+        case 8: // Radiance Koopa God
+          this.y = this.baseY + Math.sin(this.time * 3.0) * 30;
+          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.65);
+          break;
+      }
+    } else {
+      // Ground-based bosses
+      this.vy += 0.4 * 60 * dt;
+      this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.7;
+      this.y += this.vy * 60 * dt;
 
-      case 2: // Hornet Queen (Air Dash & Hover)
-        this.y += Math.sin(this.time * 4) * 2;
-        this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.5;
-        break;
-
-      case 3: // Molten Bowser (Shell Roll & Ground Dash)
-        this.vy += 0.4 * 60 * dt;
-        this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt;
-        break;
-
-      case 4: // Mantis Kamek (Teleport & Glide)
-        this.y += Math.cos(this.time * 3) * 2.5;
-        this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.4;
-        break;
-
-      case 5: // Abyssal Leviathan (Wave Breach & Submerge)
-        this.y += Math.sin(this.time * 2.5) * 3.5;
-        this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.6;
-        break;
-
-      case 6: // Crystal Koopa (Tremor Quake)
-        this.vy += 0.4 * 60 * dt;
-        this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.5;
-        break;
-
-      case 7: // Grimm Bowser (Nightmare Swoop)
-        this.y += Math.sin(this.time * 5) * 2.5;
-        this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.7);
-        break;
-
-      case 8: // Radiance Koopa God (Ascended Solar Halo)
-        this.y += Math.sin(this.time * 3.5) * 2.5;
-        this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.65);
-        break;
-    }
-
-    // Platform collisions
-    this.y += this.vy * 60 * dt;
-    for (const p of platforms) {
-      if (this.checkOverlap(p)) {
-        if (this.vy > 0) {
-          this.y = p.y - this.height;
-          this.vy = 0;
+      for (const p of platforms) {
+        if (this.checkOverlap(p)) {
+          if (this.vy > 0 && this.y + this.height - this.vy * 60 * dt <= p.y + 16) {
+            this.y = p.y - this.height;
+            this.vy = 0;
+          }
         }
       }
     }
