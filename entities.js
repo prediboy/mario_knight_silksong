@@ -1172,17 +1172,18 @@ class Boss {
   }
 }
 
-// Hornet Cage in Final Boss Arena (Level 8)
+// Hornet Cage in Final Boss Arena (Level 8) - Appears after Radiance Koopa God is slain
 class HornetCage {
   constructor(x, y) {
     this.x = x;
-    this.y = y;
+    this.targetY = y;
+    this.y = y - 260; // Descends dramatically from the sky upon boss defeat
     this.width = 70;
     this.height = 90;
     this.maxHp = 3;
     this.hp = 3;
     this.broken = false;
-    this.bossAlive = true;
+    this.landed = false;
     this.hitFlashTimer = 0;
     this.freedTimer = 0;
     this.time = 0;
@@ -1190,67 +1191,83 @@ class HornetCage {
 
   takeDamage(amount, particles, floatingTexts) {
     if (this.broken) return false;
-
-    // Divine God-Shield prevents any damage while The Radiance Koopa God is alive!
-    if (this.bossAlive) {
-      if (this.hitFlashTimer <= 0) {
-        this.hitFlashTimer = 0.15;
-        if (window.soundEngine && window.soundEngine.playPogo) {
-          window.soundEngine.playPogo();
-        } else if (window.soundEngine && window.soundEngine.playHit) {
-          window.soundEngine.playHit();
-        }
-        floatingTexts.push(new FloatingText('🛡️ SHIELDED! DEFEAT RADIANCE GOD FIRST!', this.x - 50, this.y - 20, '#ffd700', 10));
-      }
-      return false;
-    }
-
     if (this.hitFlashTimer > 0.04) return false;
+
     this.hp -= 1; // 1 strike per hit
     this.hitFlashTimer = 0.22;
-    window.soundEngine.playHit();
-    window.soundEngine.playCageCrack();
+    if (window.soundEngine && window.soundEngine.playHit) window.soundEngine.playHit();
+    if (window.soundEngine && window.soundEngine.playCageCrack) window.soundEngine.playCageCrack();
     
     // Crack spark particles
-    for (let i = 0; i < 14; i++) {
-      particles.push(new Particle(
-        this.x + this.width / 2 + (Math.random() - 0.5) * 40,
-        this.y + this.height / 2 + (Math.random() - 0.5) * 40,
-        (Math.random() - 0.5) * 10,
-        (Math.random() - 0.5) * 10,
-        Math.random() > 0.5 ? '#ffd700' : '#ffffff',
-        5,
-        0.5
-      ));
+    if (particles) {
+      for (let i = 0; i < 16; i++) {
+        particles.push(new Particle(
+          this.x + this.width / 2 + (Math.random() - 0.5) * 40,
+          this.y + this.height / 2 + (Math.random() - 0.5) * 40,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 10,
+          Math.random() > 0.5 ? '#ffd700' : '#ffffff',
+          5,
+          0.5
+        ));
+      }
     }
 
     if (this.hp > 0) {
-      floatingTexts.push(new FloatingText(`💥 CAGE CRACKED! (${this.hp} HITS LEFT)`, this.x - 20, this.y - 20, '#ffd700', 12));
+      if (floatingTexts) floatingTexts.push(new FloatingText(`💥 CAGE CRACKED! (${this.hp} HITS LEFT)`, this.x - 20, this.y - 20, '#ffd700', 12));
       return false;
     } else {
       this.broken = true;
-      window.soundEngine.playCageShatter();
-      floatingTexts.push(new FloatingText('✨ HORNET IS FREED! ✨', this.x - 30, this.y - 30, '#3fe0d0', 14));
+      if (window.soundEngine && window.soundEngine.playCageShatter) window.soundEngine.playCageShatter();
+      if (floatingTexts) floatingTexts.push(new FloatingText('✨ HORNET IS FREED! ✨', this.x - 30, this.y - 30, '#3fe0d0', 14));
       
       // Giant celestial burst
-      for (let i = 0; i < 40; i++) {
-        particles.push(new Particle(
-          this.x + this.width / 2,
-          this.y + this.height / 2,
-          (Math.random() - 0.5) * 16,
-          (Math.random() - 0.5) * 16,
-          Math.random() > 0.5 ? '#e91e63' : '#ffd700',
-          7,
-          1.2
-        ));
+      if (particles) {
+        for (let i = 0; i < 45; i++) {
+          particles.push(new Particle(
+            this.x + this.width / 2,
+            this.y + this.height / 2,
+            (Math.random() - 0.5) * 16,
+            (Math.random() - 0.5) * 16,
+            Math.random() > 0.5 ? '#e91e63' : '#ffd700',
+            7,
+            1.2
+          ));
+        }
       }
       return true; // Broken!
     }
   }
 
-  update(dt) {
+  update(dt, particles) {
     this.time += dt;
     if (this.hitFlashTimer > 0) this.hitFlashTimer -= dt;
+
+    // Smooth descent from sky upon appearance
+    if (!this.landed) {
+      this.y += (this.targetY - this.y) * Math.min(1, dt * 7) + 150 * dt;
+      if (this.y >= this.targetY) {
+        this.y = this.targetY;
+        this.landed = true;
+        if (window.soundEngine && window.soundEngine.playSlam) {
+          window.soundEngine.playSlam();
+        }
+        if (particles) {
+          for (let i = 0; i < 20; i++) {
+            particles.push(new Particle(
+              this.x + this.width / 2 + (Math.random() - 0.5) * 50,
+              this.y + this.height - 4,
+              (Math.random() - 0.5) * 10,
+              -Math.random() * 6,
+              Math.random() > 0.5 ? '#ffd700' : '#ffffff',
+              5,
+              0.6
+            ));
+          }
+        }
+      }
+    }
+
     if (this.broken) {
       this.freedTimer += dt;
     }
@@ -1271,6 +1288,6 @@ class HornetCage {
   }
 
   draw(ctx) {
-    Sprites.drawHornetCage(ctx, this.x, this.y, this.width, this.height, this.time, this.hp, this.broken, this.hitFlashTimer > 0, this.freedTimer, this.bossAlive);
+    Sprites.drawHornetCage(ctx, this.x, this.y, this.width, this.height, this.time, this.hp, this.broken, this.hitFlashTimer > 0, this.freedTimer);
   }
 }

@@ -578,12 +578,8 @@ class Game {
     this.floatingTexts = [];
     this.activeBoss = null;
 
-    // In Level 8 (The Radiance Koopa God), Hornet is trapped in a golden radiance cage!
-    if (levelNum === 8) {
-      this.hornetCage = new HornetCage(this.levelManager.bossSpawnX + 240, 420);
-    } else {
-      this.hornetCage = null;
-    }
+    // Hornet cage appears strictly after defeating the final boss (Level 8)
+    this.hornetCage = null;
 
     // Initial monsters in traversal path
     const types = this.levelManager.config.monsterTypes;
@@ -612,11 +608,28 @@ class Game {
   }
 
   handleBossDefeat() {
-    if (this.currentLevel === 8 && this.hornetCage && !this.hornetCage.broken) {
-      this.hornetCage.bossAlive = false;
+    if (this.currentLevel === 8) {
+      // Spawn Hornet's Trapping Cage right where Radiance Koopa God was slain!
+      const spawnX = this.activeBoss ? Math.max(2480, Math.min(2920, this.activeBoss.x)) : (this.levelManager.bossSpawnX + 240);
+      this.hornetCage = new HornetCage(spawnX, 420);
       this.screenShake = 1.0;
       window.soundEngine.playBossRoar();
-      this.showToast('⚔️ THE RADIANCE GOD HAS FALLEN! THE SHIELD BROKE! STRIKE THE CAGE TO FREE HORNET! ⚔️');
+      window.soundEngine.playPowerUp();
+      
+      // Giant radiant summoning burst
+      for (let i = 0; i < 35; i++) {
+        this.particles.push(new Particle(
+          spawnX + 35,
+          465,
+          (Math.random() - 0.5) * 14,
+          (Math.random() - 0.5) * 14,
+          Math.random() > 0.5 ? '#ffd700' : '#ff4081',
+          6,
+          1.2
+        ));
+      }
+      this.floatingTexts.push(new FloatingText('🪡 HORNET TRAPPED IN CAGE! BREAK IT! ⚔️', spawnX - 30, 370, '#ffd700', 14));
+      this.showToast('⚔️ THE RADIANCE GOD IS SLAIN! THE CAGE APPEARED! STRIKE IT WITH YOUR NAIL TO FREE HORNET! ⚔️');
     } else {
       this.showLevelClear();
     }
@@ -927,7 +940,7 @@ class Game {
 
     // 6.5 Update Hornet Cage (Level 8 Climax)
     if (this.hornetCage) {
-      this.hornetCage.update(dt);
+      this.hornetCage.update(dt, this.particles);
 
       // Player strikes Hornet Cage with Nail / Axe to free Hornet!
       if (!this.hornetCage.broken && attackBox && !this.player.attackHitEntities.has(this.hornetCage) && this.hornetCage.checkOverlap(attackBox)) {
