@@ -151,12 +151,12 @@ class LevelManager {
   constructor() {
     this.currentLevel = 1;
     this.config = LEVEL_CONFIGS[0];
-    this.levelWidth = 1400;
+    this.levelWidth = 3600;
     this.levelHeight = 600;
     this.platforms = [];
     this.spikes = [];
-    this.bossArenaStartX = 0;
-    this.bossSpawnX = 750;
+    this.bossArenaStartX = 2500;
+    this.bossSpawnX = 3000;
     this.bossSpawnY = 380;
     this.spawnTimer = 0;
   }
@@ -171,33 +171,67 @@ class LevelManager {
     this.platforms = [];
     this.spikes = [];
 
-    // Main Colosseum Ground Arena
+    // Main base ground across entire level
     this.platforms.push({ x: 0, y: 520, w: this.levelWidth, h: 80 });
 
-    // Left and Right Arena Boundaries
-    this.platforms.push({ x: -30, y: 0, w: 30, h: 600 });
+    // Left and Right level boundaries
+    this.platforms.push({ x: -40, y: 0, w: 40, h: 600 });
     this.platforms.push({ x: this.levelWidth, y: 0, w: 40, h: 600 });
 
-    // Tactical Multi-Tier Battle Platforms (Wide open, NO blocking poles)
-    this.platforms.push({ x: 120, y: 410, w: 160, h: 20 });
-    this.platforms.push({ x: 840, y: 410, w: 160, h: 20 });
-    this.platforms.push({ x: 320, y: 320, w: 180, h: 20 });
-    this.platforms.push({ x: 620, y: 320, w: 180, h: 20 });
-    this.platforms.push({ x: 440, y: 190, w: 240, h: 20 });
+    // Stepped Traversal Platforms leading up to Boss Arena (0 -> 2500px)
+    const chunkWidth = 320;
+    const totalChunks = Math.floor(this.bossArenaStartX / chunkWidth);
+
+    for (let c = 1; c < totalChunks; c++) {
+      const cx = c * chunkWidth;
+      const step1 = 430; // Low step
+      const step2 = 330; // Mid step
+      const step3 = 230; // High ledge
+
+      if (c % 2 === 0) {
+        this.platforms.push({ x: cx, y: step1, w: 150, h: 20 });
+        this.platforms.push({ x: cx + 110, y: step2, w: 150, h: 20 });
+        this.platforms.push({ x: cx + 200, y: step3, w: 130, h: 20 });
+      } else {
+        this.platforms.push({ x: cx + 30, y: step2, w: 160, h: 20 });
+        this.platforms.push({ x: cx + 160, y: step1, w: 140, h: 20 });
+      }
+
+      // Small ground spike hazards with platforms above
+      if (c % 3 === 1 && cx < this.bossArenaStartX - 200) {
+        this.spikes.push({ x: cx + 60, y: 504, w: 60, h: 16 });
+      }
+    }
+
+    // Boss Arena Tactical Platforms at the end of the level (2500 -> 3600px)
+    // Wide OPEN entry - NO blocking poles!
+    this.platforms.push({ x: 2620, y: 410, w: 160, h: 20 });
+    this.platforms.push({ x: 3340, y: 410, w: 160, h: 20 });
+    this.platforms.push({ x: 2820, y: 320, w: 180, h: 20 });
+    this.platforms.push({ x: 3120, y: 320, w: 180, h: 20 });
+    this.platforms.push({ x: 2940, y: 190, w: 240, h: 20 });
   }
 
   updateMonsterSpawns(dt, player, monsters, isBossActive) {
+    if (isBossActive) return; // Boss battle handles its own encounters
+
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0) {
       this.spawnTimer = this.config.spawnInterval;
 
-      // Spawn supporting small monsters on the sides to harvest Soul
-      if (monsters.length < 5) {
+      // Spawn monster ahead or behind player within viewing distance
+      const spawnAhead = Math.random() > 0.35;
+      const spawnX = player.x + (spawnAhead ? 450 + Math.random() * 200 : -350 - Math.random() * 150);
+
+      // Don't spawn outside level or inside boss arena
+      if (spawnX > 80 && spawnX < this.bossArenaStartX - 80) {
         const types = this.config.monsterTypes;
         const chosenType = types[Math.floor(Math.random() * types.length)];
-        const spawnX = Math.random() > 0.5 ? 160 + Math.random() * 150 : 850 + Math.random() * 200;
-        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp') ? 240 + Math.random() * 80 : 490;
-        monsters.push(new SmallMonster(spawnX, spawnY, chosenType));
+        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp') ? 260 + Math.random() * 120 : 490;
+        
+        if (monsters.length < 16) {
+          monsters.push(new SmallMonster(spawnX, spawnY, chosenType));
+        }
       }
     }
   }

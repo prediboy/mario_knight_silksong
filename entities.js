@@ -272,9 +272,12 @@ class Player {
     this.dashing = false;
     this.groundSlamming = false;
     this.airJumpsLeft = 0;
-    this.attackHitEntities.clear();
-    this.dashHitEntities.clear();
-    this.slamHitEntities.clear();
+    if (!this.attackHitEntities) this.attackHitEntities = new Set();
+    else this.attackHitEntities.clear();
+    if (!this.dashHitEntities) this.dashHitEntities = new Set();
+    else this.dashHitEntities.clear();
+    if (!this.slamHitEntities) this.slamHitEntities = new Set();
+    else this.slamHitEntities.clear();
   }
 
   unlockPower(level) {
@@ -334,7 +337,8 @@ class Player {
     this.slashing = true;
     this.slashTimer = 0;
     this.slashCooldown = 0.12;
-    this.attackHitEntities.clear();
+    if (!this.attackHitEntities) this.attackHitEntities = new Set();
+    else this.attackHitEntities.clear();
 
     if (this.powers.lightningAxe) {
       // Crackling Lightning Thunder Axe Slash!
@@ -386,7 +390,8 @@ class Player {
     this.dashing = true;
     this.dashTimer = 0.22;
     this.dashCooldown = 0.45;
-    this.dashHitEntities.clear();
+    if (!this.dashHitEntities) this.dashHitEntities = new Set();
+    else this.dashHitEntities.clear();
     this.vy = 0;
     this.dashSpeed = this.powers.tornadoDash ? 18.0 : 14.5;
     this.vx = (this.facingRight ? 1 : -1) * this.dashSpeed;
@@ -456,7 +461,8 @@ class Player {
   triggerGroundSlam() {
     if (!this.grounded && !this.groundSlamming) {
       this.groundSlamming = true;
-      this.slamHitEntities.clear();
+      if (!this.slamHitEntities) this.slamHitEntities = new Set();
+      else this.slamHitEntities.clear();
       this.vy = 20;
       this.vx = 0;
     }
