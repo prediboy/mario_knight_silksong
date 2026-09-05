@@ -854,5 +854,193 @@ const Sprites = {
     }
 
     ctx.restore();
+  },
+
+  // Draw Silksong Hornet Sprite
+  drawHornet(ctx, x, y, width, height, facingRight, state, time) {
+    ctx.save();
+    ctx.translate(x + width / 2, y + height / 2);
+    if (!facingRight) ctx.scale(-1, 1);
+
+    const bob = Math.sin(time * 6) * 2;
+
+    // 1. Hornet Flowing Silk Cloak
+    ctx.fillStyle = '#ad1457'; // Deep Silksong Crimson
+    ctx.beginPath();
+    ctx.moveTo(0, -10 + bob);
+    ctx.lineTo(16, 20 + bob);
+    ctx.lineTo(-16, 20 + bob);
+    ctx.closePath();
+    ctx.fill();
+
+    // Inner cloak shadow
+    ctx.fillStyle = '#880e4f';
+    ctx.beginPath();
+    ctx.moveTo(0, -6 + bob);
+    ctx.lineTo(8, 20 + bob);
+    ctx.lineTo(-4, 20 + bob);
+    ctx.closePath();
+    ctx.fill();
+
+    // 2. Head / Mask (Iconic Hornet White & Black with Curved Horns)
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.ellipse(0, -16 + bob, 10, 14, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Horns
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(-6, -24 + bob);
+    ctx.quadraticCurveTo(-14, -40 + bob, -20, -36 + bob);
+    ctx.quadraticCurveTo(-10, -28 + bob, -2, -26 + bob);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(6, -24 + bob);
+    ctx.quadraticCurveTo(14, -40 + bob, 20, -36 + bob);
+    ctx.quadraticCurveTo(10, -28 + bob, 2, -26 + bob);
+    ctx.closePath();
+    ctx.fill();
+
+    // Glowing Almond Eyes
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.ellipse(-3.5, -16 + bob, 2, 4.5, -0.2, 0, Math.PI * 2);
+    ctx.ellipse(3.5, -16 + bob, 2, 4.5, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3. Iconic Silksong Needle Blade
+    ctx.save();
+    ctx.translate(14, 2 + bob);
+    ctx.rotate(0.3 + Math.sin(time * 3) * 0.1);
+    ctx.fillStyle = '#cfd8dc';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, -28);
+    ctx.lineTo(5, 14);
+    ctx.lineTo(-5, 14);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Needle Thread Eyelet
+    ctx.fillStyle = '#e91e63';
+    ctx.beginPath();
+    ctx.arc(0, 8, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.restore();
+  },
+
+  // Draw Radiance God's Trapping Cage with Hornet Inside / Freed
+  drawHornetCage(ctx, x, y, width, height, time, hp, isBroken, hitFlash, freedTimer) {
+    ctx.save();
+    const cx = x + width / 2;
+    const cy = y + height / 2;
+
+    if (!isBroken) {
+      // Golden Silk Chains suspended from ceiling
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = '#ffd700';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.moveTo(cx - 16, 0);
+      ctx.lineTo(cx - 16, y);
+      ctx.moveTo(cx + 16, 0);
+      ctx.lineTo(cx + 16, y);
+      ctx.stroke();
+
+      // Cage Base & Roof Dome
+      ctx.fillStyle = hitFlash ? '#ffffff' : '#b78103';
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 3;
+      // Roof Dome
+      ctx.beginPath();
+      ctx.arc(cx, y + 16, width / 2, Math.PI, 0);
+      ctx.fill();
+      ctx.stroke();
+      // Floor
+      ctx.beginPath();
+      ctx.roundRect(x - 4, y + height - 12, width + 8, 12, 4);
+      ctx.fill();
+      ctx.stroke();
+
+      // Hornet inside the cage
+      Sprites.drawHornet(ctx, x + 8, y + 18, width - 16, height - 30, true, 'trapped', time);
+
+      // Trapping Golden Bars
+      ctx.strokeStyle = hitFlash ? '#ffffff' : '#ffd700';
+      ctx.lineWidth = 3;
+      const barCount = 5;
+      for (let i = 0; i <= barCount; i++) {
+        const bx = x + 6 + (i * (width - 12) / barCount);
+        ctx.beginPath();
+        ctx.moveTo(bx, y + 16);
+        ctx.lineTo(bx, y + height - 12);
+        ctx.stroke();
+      }
+
+      // Radiance Energy Shield over cage
+      ctx.fillStyle = `rgba(255, 215, 0, ${0.15 + Math.sin(time * 6) * 0.08})`;
+      ctx.beginPath();
+      ctx.roundRect(x, y + 14, width, height - 24, 8);
+      ctx.fill();
+
+      // Fracture Cracks when damaged
+      if (hp < 3) {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.moveTo(cx - 14, cy - 10);
+        ctx.lineTo(cx + 4, cy + 6);
+        ctx.lineTo(cx - 8, cy + 22);
+        if (hp < 2) {
+          ctx.moveTo(cx + 12, cy - 16);
+          ctx.lineTo(cx - 2, cy);
+          ctx.lineTo(cx + 18, cy + 18);
+        }
+        ctx.stroke();
+      }
+
+      // Overhead Objective Hint
+      ctx.fillStyle = '#ffd700';
+      ctx.font = "bold 9px 'Press Start 2P', monospace";
+      ctx.textAlign = 'center';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 4;
+      ctx.fillText('BREAK CAGE! ⚔️', cx, y - 14 + Math.sin(time * 5) * 3);
+    } else {
+      // Cage Shattered: Broken Bars on the ground
+      ctx.fillStyle = '#8d6e63';
+      ctx.fillRect(x - 4, y + height - 8, width + 8, 8);
+      // Shattered Bar Debris
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x - 10, y + height - 4);
+      ctx.lineTo(x + 10, y + height - 16);
+      ctx.moveTo(x + width - 10, y + height - 18);
+      ctx.lineTo(x + width + 12, y + height - 4);
+      ctx.stroke();
+
+      // Hornet Standing Proud & Victorious beside Mario!
+      const hopY = Math.max(0, 1 - (freedTimer || 0) * 2) * -30;
+      Sprites.drawHornet(ctx, x + 8, y + 18 + hopY, width - 16, height - 30, false, 'freed', time);
+
+      // Heart & Silk emotes floating above Hornet!
+      ctx.fillStyle = '#e91e63';
+      ctx.font = '16px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('❤️ 🪡', cx, y - 8 + Math.sin(time * 5) * 4);
+    }
+
+    ctx.restore();
   }
 };

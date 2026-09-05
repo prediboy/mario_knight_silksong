@@ -1171,3 +1171,89 @@ class Boss {
     );
   }
 }
+
+// Hornet Cage in Final Boss Arena (Level 8)
+class HornetCage {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.width = 70;
+    this.height = 90;
+    this.maxHp = 3;
+    this.hp = 3;
+    this.broken = false;
+    this.hitFlashTimer = 0;
+    this.freedTimer = 0;
+    this.time = 0;
+  }
+
+  takeDamage(amount, particles, floatingTexts) {
+    if (this.broken || this.hitFlashTimer > 0.04) return false;
+    this.hp -= 1; // 1 strike per hit
+    this.hitFlashTimer = 0.22;
+    window.soundEngine.playHit();
+    window.soundEngine.playCageCrack();
+    
+    // Crack spark particles
+    for (let i = 0; i < 14; i++) {
+      particles.push(new Particle(
+        this.x + this.width / 2 + (Math.random() - 0.5) * 40,
+        this.y + this.height / 2 + (Math.random() - 0.5) * 40,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        Math.random() > 0.5 ? '#ffd700' : '#ffffff',
+        5,
+        0.5
+      ));
+    }
+
+    if (this.hp > 0) {
+      floatingTexts.push(new FloatingText(`💥 CAGE CRACKED! (${this.hp} HITS LEFT)`, this.x - 20, this.y - 20, '#ffd700', 12));
+      return false;
+    } else {
+      this.broken = true;
+      window.soundEngine.playCageShatter();
+      floatingTexts.push(new FloatingText('✨ HORNET IS FREED! ✨', this.x - 30, this.y - 30, '#3fe0d0', 14));
+      
+      // Giant celestial burst
+      for (let i = 0; i < 40; i++) {
+        particles.push(new Particle(
+          this.x + this.width / 2,
+          this.y + this.height / 2,
+          (Math.random() - 0.5) * 16,
+          (Math.random() - 0.5) * 16,
+          Math.random() > 0.5 ? '#e91e63' : '#ffd700',
+          7,
+          1.2
+        ));
+      }
+      return true; // Broken!
+    }
+  }
+
+  update(dt) {
+    this.time += dt;
+    if (this.hitFlashTimer > 0) this.hitFlashTimer -= dt;
+    if (this.broken) {
+      this.freedTimer += dt;
+    }
+  }
+
+  checkOverlap(rect) {
+    if (!rect) return false;
+    const rw = rect.w !== undefined ? rect.w : (rect.width !== undefined ? rect.width : 0);
+    const rh = rect.h !== undefined ? rect.h : (rect.height !== undefined ? rect.height : 0);
+    const tw = this.w !== undefined ? this.w : (this.width !== undefined ? this.width : 0);
+    const th = this.h !== undefined ? this.h : (this.height !== undefined ? this.height : 0);
+    return (
+      this.x < rect.x + rw &&
+      this.x + tw > rect.x &&
+      this.y < rect.y + rh &&
+      this.y + th > rect.y
+    );
+  }
+
+  draw(ctx) {
+    Sprites.drawHornetCage(ctx, this.x, this.y, this.width, this.height, this.time, this.hp, this.broken, this.hitFlashTimer > 0, this.freedTimer);
+  }
+}

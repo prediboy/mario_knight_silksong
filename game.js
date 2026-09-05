@@ -578,6 +578,13 @@ class Game {
     this.floatingTexts = [];
     this.activeBoss = null;
 
+    // In Level 8 (The Radiance Koopa God), Hornet is trapped in a golden radiance cage!
+    if (levelNum === 8) {
+      this.hornetCage = new HornetCage(this.levelManager.bossSpawnX + 240, 420);
+    } else {
+      this.hornetCage = null;
+    }
+
     // Initial monsters in traversal path
     const types = this.levelManager.config.monsterTypes;
     for (let i = 0; i < 5; i++) {
@@ -601,7 +608,17 @@ class Game {
 
     this.state = 'PLAYING';
     window.soundEngine.startBGM('ambient');
-    this.showToast(`⚡ 30s RUSH STARTED: ${this.levelManager.config.name} ⚡`);
+    this.showToast(`⚡ 45s RUSH STARTED: ${this.levelManager.config.name} ⚡`);
+  }
+
+  handleBossDefeat() {
+    if (this.currentLevel === 8 && this.hornetCage && !this.hornetCage.broken) {
+      this.screenShake = 1.0;
+      window.soundEngine.playBossRoar();
+      this.showToast('⚔️ THE RADIANCE GOD HAS FALLEN! STRIKE THE CAGE WITH YOUR NAIL TO FREE HORNET! ⚔️');
+    } else {
+      this.showLevelClear();
+    }
   }
 
   updateHPUI() {
@@ -871,7 +888,7 @@ class Game {
         if (this.player.vy > 0) this.player.pogoBounce();
 
         if (bossDied) {
-          this.showLevelClear();
+          this.handleBossDefeat();
         }
       }
 
@@ -882,7 +899,7 @@ class Game {
         this.player.addSoul(1);
         this.updateSoulUI();
         if (bossDied) {
-          this.showLevelClear();
+          this.handleBossDefeat();
         }
       }
 
@@ -893,7 +910,7 @@ class Game {
         this.player.addSoul(1);
         this.updateSoulUI();
         if (bossDied) {
-          this.showLevelClear();
+          this.handleBossDefeat();
         }
       }
 
@@ -907,6 +924,49 @@ class Game {
       }
     }
 
+    // 6.5 Update Hornet Cage (Level 8 Climax)
+    if (this.hornetCage) {
+      this.hornetCage.update(dt);
+
+      // Player strikes Hornet Cage with Nail / Axe to free Hornet!
+      if (!this.hornetCage.broken && attackBox && !this.player.attackHitEntities.has(this.hornetCage) && this.hornetCage.checkOverlap(attackBox)) {
+        this.player.attackHitEntities.add(this.hornetCage);
+        const broken = this.hornetCage.takeDamage(1, this.particles, this.floatingTexts);
+        this.screenShake = 0.4;
+        if (this.player.vy > 0) this.player.pogoBounce();
+        if (broken) {
+          this.screenShake = 1.3;
+          window.soundEngine.playVictory();
+          this.showToast('✨ HORNET FREED! PHARLOOM IS SAVED! ✨');
+          setTimeout(() => this.showGameWin(), 2400);
+        }
+      }
+
+      // Tornado Dash vs Cage
+      if (!this.hornetCage.broken && this.player.dashing && this.player.powers.tornadoDash && !this.player.dashHitEntities.has(this.hornetCage) && this.player.checkOverlap(this.hornetCage)) {
+        this.player.dashHitEntities.add(this.hornetCage);
+        const broken = this.hornetCage.takeDamage(1, this.particles, this.floatingTexts);
+        if (broken) {
+          this.screenShake = 1.3;
+          window.soundEngine.playVictory();
+          this.showToast('✨ HORNET FREED! PHARLOOM IS SAVED! ✨');
+          setTimeout(() => this.showGameWin(), 2400);
+        }
+      }
+
+      // Ground Slam vs Cage
+      if (!this.hornetCage.broken && this.player.groundSlamming && !this.player.slamHitEntities.has(this.hornetCage) && this.player.checkOverlap(this.hornetCage)) {
+        this.player.slamHitEntities.add(this.hornetCage);
+        const broken = this.hornetCage.takeDamage(1, this.particles, this.floatingTexts);
+        if (broken) {
+          this.screenShake = 1.3;
+          window.soundEngine.playVictory();
+          this.showToast('✨ HORNET FREED! PHARLOOM IS SAVED! ✨');
+          setTimeout(() => this.showGameWin(), 2400);
+        }
+      }
+    }
+
     // 7. Update Projectiles
     for (let i = this.projectiles.length - 1; i >= 0; i--) {
       const p = this.projectiles[i];
@@ -916,7 +976,7 @@ class Game {
         continue;
       }
 
-      // Player Projectile hitting monsters or Boss
+      // Player Projectile hitting monsters, Boss, or Cage
       if (p.isPlayer) {
         for (let mIdx = this.monsters.length - 1; mIdx >= 0; mIdx--) {
           const m = this.monsters[mIdx];
@@ -941,7 +1001,21 @@ class Game {
             this.player.addSoul(1); // Soul on boss hit!
             this.updateSoulUI();
             if (bossDied) {
-              this.showLevelClear();
+              this.handleBossDefeat();
+            }
+          }
+        }
+
+        if (this.hornetCage && !this.hornetCage.broken && p.alive) {
+          if (p.x > this.hornetCage.x - 10 && p.x < this.hornetCage.x + this.hornetCage.width + 10 &&
+              p.y > this.hornetCage.y - 10 && p.y < this.hornetCage.y + this.hornetCage.height + 10) {
+            if (p.type !== 'black_hole') p.alive = false;
+            const broken = this.hornetCage.takeDamage(1, this.particles, this.floatingTexts);
+            if (broken) {
+              this.screenShake = 1.3;
+              window.soundEngine.playVictory();
+              this.showToast('✨ HORNET FREED! PHARLOOM IS SAVED! ✨');
+              setTimeout(() => this.showGameWin(), 2400);
             }
           }
         }
@@ -1015,6 +1089,11 @@ class Game {
     // Draw Boss
     if (this.activeBoss && this.activeBoss.alive) {
       this.activeBoss.draw(this.ctx);
+    }
+
+    // Draw Hornet Cage (Level 8 Climax)
+    if (this.hornetCage) {
+      this.hornetCage.draw(this.ctx);
     }
 
     // Draw Mario Knight Player
