@@ -125,6 +125,28 @@ class SoundEngine {
     osc.stop(now + 0.15);
   }
 
+  playMonsterDeath() {
+    if (this.muted || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } catch (err) {}
+  }
+
   playSoulAbsorb() {
     if (this.muted || !this.ctx) return;
     const now = this.ctx.currentTime;
@@ -470,4 +492,22 @@ class SoundEngine {
   }
 }
 
-window.soundEngine = new SoundEngine();
+window.soundEngine = new Proxy(new SoundEngine(), {
+  get(target, prop) {
+    if (prop in target) {
+      const val = target[prop];
+      if (typeof val === 'function') {
+        return function(...args) {
+          try {
+            return val.apply(target, args);
+          } catch (err) {
+            return null;
+          }
+        };
+      }
+      return val;
+    }
+    // Return safe no-op function for any undefined sound methods
+    return function() { return null; };
+  }
+});
