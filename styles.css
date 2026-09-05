@@ -520,7 +520,10 @@ html, body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  padding: 20px;
+  padding: 16px 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .modal.active {
@@ -537,16 +540,21 @@ html, body {
   background: linear-gradient(180deg, #161a29 0%, #0c0f18 100%);
   border: 2px solid var(--gold-primary);
   border-radius: 12px;
-  padding: 28px 36px;
-  max-width: 680px;
+  padding: 24px 28px;
+  max-width: 640px;
+  max-height: 90vh;
+  max-height: 90dvh;
   width: 100%;
   box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px var(--gold-glow);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   pointer-events: auto !important;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -555,6 +563,15 @@ html, body {
   cursor: pointer !important;
   position: relative;
   z-index: 1002;
+  touch-action: manipulation;
+}
+
+.btn-hero {
+  font-size: 16px !important;
+  padding: 14px 24px !important;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 0 25px var(--gold-glow) !important;
 }
 
 @keyframes modalPop {

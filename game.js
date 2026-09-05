@@ -309,12 +309,14 @@ class Game {
       this.startLevel(this.currentLevel);
     });
 
-    // Start Journey Button
-    addAction('btn-play-game', () => {
+    // Start Journey Buttons (Top & Bottom)
+    const handleStartGame = () => {
       try { window.soundEngine.init(); } catch (err) {}
       if (this.modalStart) this.modalStart.classList.remove('active');
       this.startLevel(1);
-    });
+    };
+    addAction('btn-play-game', handleStartGame);
+    addAction('btn-play-game-bottom', handleStartGame);
 
     // Next Level Button
     addAction('btn-next-level', () => {
