@@ -613,9 +613,10 @@ class Game {
 
   handleBossDefeat() {
     if (this.currentLevel === 8 && this.hornetCage && !this.hornetCage.broken) {
+      this.hornetCage.bossAlive = false;
       this.screenShake = 1.0;
       window.soundEngine.playBossRoar();
-      this.showToast('⚔️ THE RADIANCE GOD HAS FALLEN! STRIKE THE CAGE WITH YOUR NAIL TO FREE HORNET! ⚔️');
+      this.showToast('⚔️ THE RADIANCE GOD HAS FALLEN! THE SHIELD BROKE! STRIKE THE CAGE TO FREE HORNET! ⚔️');
     } else {
       this.showLevelClear();
     }

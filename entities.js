@@ -1182,13 +1182,30 @@ class HornetCage {
     this.maxHp = 3;
     this.hp = 3;
     this.broken = false;
+    this.bossAlive = true;
     this.hitFlashTimer = 0;
     this.freedTimer = 0;
     this.time = 0;
   }
 
   takeDamage(amount, particles, floatingTexts) {
-    if (this.broken || this.hitFlashTimer > 0.04) return false;
+    if (this.broken) return false;
+
+    // Divine God-Shield prevents any damage while The Radiance Koopa God is alive!
+    if (this.bossAlive) {
+      if (this.hitFlashTimer <= 0) {
+        this.hitFlashTimer = 0.15;
+        if (window.soundEngine && window.soundEngine.playPogo) {
+          window.soundEngine.playPogo();
+        } else if (window.soundEngine && window.soundEngine.playHit) {
+          window.soundEngine.playHit();
+        }
+        floatingTexts.push(new FloatingText('🛡️ SHIELDED! DEFEAT RADIANCE GOD FIRST!', this.x - 50, this.y - 20, '#ffd700', 10));
+      }
+      return false;
+    }
+
+    if (this.hitFlashTimer > 0.04) return false;
     this.hp -= 1; // 1 strike per hit
     this.hitFlashTimer = 0.22;
     window.soundEngine.playHit();
@@ -1254,6 +1271,6 @@ class HornetCage {
   }
 
   draw(ctx) {
-    Sprites.drawHornetCage(ctx, this.x, this.y, this.width, this.height, this.time, this.hp, this.broken, this.hitFlashTimer > 0, this.freedTimer);
+    Sprites.drawHornetCage(ctx, this.x, this.y, this.width, this.height, this.time, this.hp, this.broken, this.hitFlashTimer > 0, this.freedTimer, this.bossAlive);
   }
 }

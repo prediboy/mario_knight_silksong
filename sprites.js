@@ -937,7 +937,7 @@ const Sprites = {
   },
 
   // Draw Radiance God's Trapping Cage with Hornet Inside / Freed
-  drawHornetCage(ctx, x, y, width, height, time, hp, isBroken, hitFlash, freedTimer) {
+  drawHornetCage(ctx, x, y, width, height, time, hp, isBroken, hitFlash, freedTimer, bossAlive) {
     ctx.save();
     const cx = x + width / 2;
     const cy = y + height / 2;
@@ -985,37 +985,68 @@ const Sprites = {
         ctx.stroke();
       }
 
-      // Radiance Energy Shield over cage
-      ctx.fillStyle = `rgba(255, 215, 0, ${0.15 + Math.sin(time * 6) * 0.08})`;
-      ctx.beginPath();
-      ctx.roundRect(x, y + 14, width, height - 24, 8);
-      ctx.fill();
-
-      // Fracture Cracks when damaged
-      if (hp < 3) {
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = '#00ffff';
-        ctx.shadowBlur = 10;
+      if (bossAlive) {
+        // Divine God-Shield Bubble (Invulnerable while Radiance Koopa God is alive!)
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#ffab00';
+        ctx.shadowBlur = 18;
         ctx.beginPath();
-        ctx.moveTo(cx - 14, cy - 10);
-        ctx.lineTo(cx + 4, cy + 6);
-        ctx.lineTo(cx - 8, cy + 22);
-        if (hp < 2) {
-          ctx.moveTo(cx + 12, cy - 16);
-          ctx.lineTo(cx - 2, cy);
-          ctx.lineTo(cx + 18, cy + 18);
-        }
+        ctx.arc(cx, cy, width * 0.72 + Math.sin(time * 6) * 3, 0, Math.PI * 2);
         ctx.stroke();
-      }
 
-      // Overhead Objective Hint
-      ctx.fillStyle = '#ffd700';
-      ctx.font = "bold 9px 'Press Start 2P', monospace";
-      ctx.textAlign = 'center';
-      ctx.shadowColor = '#000';
-      ctx.shadowBlur = 4;
-      ctx.fillText('BREAK CAGE! ⚔️', cx, y - 14 + Math.sin(time * 5) * 3);
+        ctx.fillStyle = `rgba(255, 215, 0, ${0.25 + Math.sin(time * 5) * 0.1})`;
+        ctx.beginPath();
+        ctx.arc(cx, cy, width * 0.72 + Math.sin(time * 6) * 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Orbiting Holy Runes
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '10px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🛡️', cx + Math.cos(time * 3) * (width * 0.75), cy + Math.sin(time * 3) * (width * 0.75));
+        ctx.fillText('☀️', cx + Math.cos(time * 3 + Math.PI) * (width * 0.75), cy + Math.sin(time * 3 + Math.PI) * (width * 0.75));
+
+        // Overhead Shield Hint
+        ctx.fillStyle = '#ffcc80';
+        ctx.font = "bold 8px 'Press Start 2P', monospace";
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.fillText('🛡️ GOD SHIELDED', cx, y - 14 + Math.sin(time * 4) * 2);
+      } else {
+        // Shield is broken! Cage is vulnerable to Mario's nail/axe!
+        ctx.fillStyle = `rgba(0, 229, 255, ${0.15 + Math.sin(time * 8) * 0.1})`;
+        ctx.beginPath();
+        ctx.roundRect(x, y + 14, width, height - 24, 8);
+        ctx.fill();
+
+        // Fracture Cracks when damaged
+        if (hp < 3) {
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2.5;
+          ctx.shadowColor = '#00ffff';
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.moveTo(cx - 14, cy - 10);
+          ctx.lineTo(cx + 4, cy + 6);
+          ctx.lineTo(cx - 8, cy + 22);
+          if (hp < 2) {
+            ctx.moveTo(cx + 12, cy - 16);
+            ctx.lineTo(cx - 2, cy);
+            ctx.lineTo(cx + 18, cy + 18);
+          }
+          ctx.stroke();
+        }
+
+        // Overhead Strike Hint
+        ctx.fillStyle = '#ffd700';
+        ctx.font = "bold 9px 'Press Start 2P', monospace";
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.fillText('STRIKE WITH NAIL! ⚔️', cx, y - 14 + Math.sin(time * 6) * 3);
+      }
     } else {
       // Cage Shattered: Broken Bars on the ground
       ctx.fillStyle = '#8d6e63';
