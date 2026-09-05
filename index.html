@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mario Knight Silksong</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="game-container">
+    <!-- Top Main HUD -->
+    <header id="hud">
+      <!-- Left: HP & Soul Vessel -->
+      <div class="hud-left">
+        <!-- Hollow Knight Style Masks (6 Max HP chunks) -->
+        <div class="hp-section">
+          <div class="hud-label">LIFE MASKS <span id="hp-text">(6/6)</span></div>
+          <div id="masks-container">
+            <div class="mask full" id="mask-0"></div>
+            <div class="mask full" id="mask-1"></div>
+            <div class="mask full" id="mask-2"></div>
+            <div class="mask full" id="mask-3"></div>
+            <div class="mask full" id="mask-4"></div>
+            <div class="mask full" id="mask-5"></div>
+          </div>
+        </div>
+
+        <!-- Silksong Spool / Soul Vessel (10 Notches, 1/10 per monster kill) -->
+        <div class="soul-section">
+          <div class="soul-vessel-wrapper">
+            <div class="soul-vessel" id="soul-vessel">
+              <div class="soul-liquid" id="soul-liquid"></div>
+              <div class="soul-glow" id="soul-glow"></div>
+              <div class="soul-notches">
+                <span class="notch" data-notch="1"></span>
+                <span class="notch" data-notch="2"></span>
+                <span class="notch" data-notch="3"></span>
+                <span class="notch" data-notch="4"></span>
+                <span class="notch" data-notch="5"></span>
+                <span class="notch" data-notch="6"></span>
+                <span class="notch" data-notch="7"></span>
+                <span class="notch" data-notch="8"></span>
+                <span class="notch" data-notch="9"></span>
+                <span class="notch" data-notch="10"></span>
+              </div>
+            </div>
+            <div class="soul-info">
+              <div class="hud-label">SOUL SPOOL</div>
+              <div class="soul-count"><span id="soul-val">0</span>/10</div>
+              <div class="focus-hint" id="focus-hint">PRESS [F] TO RESTORE FULL HP</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Level Distance & 300s Timer -->
+      <div class="hud-center">
+        <div class="level-badge" id="level-badge">LEVEL 1</div>
+        <div class="timer-wrapper">
+          <span class="timer-icon">⏳</span>
+          <span id="timer-display">300.0</span>s
+        </div>
+        <div class="distance-track-container">
+          <div class="distance-text">
+            <span>TRAVELED: <strong id="distance-current">0.0</strong> km</span>
+            <span>GOAL: <strong id="distance-target">1000.0</strong> km</span>
+          </div>
+          <div class="distance-bar-bg">
+            <div class="distance-bar-fill" id="distance-bar-fill"></div>
+            <div class="distance-mario-pin" id="distance-mario-pin">🍄</div>
+            <div class="distance-boss-pin">👹</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Active Powers & Audio Toggle -->
+      <div class="hud-right">
+        <div class="powers-container">
+          <div class="hud-label">KNIGHT POWERS</div>
+          <div class="power-slots" id="power-slots">
+            <div class="power-icon locked" id="power-p1" title="Level 1: Lightning Thunder Axe">⚡</div>
+            <div class="power-icon locked" id="power-p2" title="Level 2: Tornado Silk Dash">🌪️</div>
+            <div class="power-icon locked" id="power-p3" title="Level 3: Meteor Magma Blaster">🔥</div>
+            <div class="power-icon locked" id="power-p4" title="Level 4: Holy Monarch Flight">🪽</div>
+            <div class="power-icon locked" id="power-p5" title="Level 5: Divine Aegis Reflector">🛡️</div>
+            <div class="power-icon locked" id="power-p6" title="Level 6: Titan Seismic Slam">🌋</div>
+            <div class="power-icon locked" id="power-p7" title="Level 7: Abyssal Black Hole">🌌</div>
+          </div>
+        </div>
+        <div class="sound-controls">
+          <button id="btn-pause" class="btn-pause" title="Pause Game [P / Esc]">⏸️ PAUSE</button>
+          <button id="btn-sound" class="btn-icon" title="Toggle Sound">🔊</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Boss Health Bar (Hidden during level traversal, shown in Boss Arena) -->
+    <div id="boss-hud" class="boss-hud hidden">
+      <div class="boss-title-container">
+        <span class="boss-skull">💀</span>
+        <span id="boss-name" class="boss-name">GIGA GOOMBA COLOSSUS</span>
+        <span class="boss-title" id="boss-subtitle">TITAN OF THE FIRST CHASM</span>
+      </div>
+      <div class="boss-bar-frame">
+        <div class="boss-bar-fill" id="boss-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- Main Game Canvas -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- In-Game floating notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Pause Modal -->
+    <div id="modal-pause" class="modal">
+      <div class="modal-content pause-modal">
+        <div class="silksong-crest">⏸️ ❖ ⏸️</div>
+        <h2 class="game-title">JOURNEY PAUSED</h2>
+        <p class="tagline">The depths of Pharloom stand frozen in time</p>
+        <div class="pause-actions">
+          <button id="btn-resume" class="btn-gold pulse-btn">RESUME [P / Esc]</button>
+          <button id="btn-restart-level" class="btn-crimson">RESTART LEVEL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start / Title Overlay -->
+    <div id="modal-start" class="modal active">
+      <div class="modal-content title-modal">
+        <div class="silksong-crest">❖ 🍄 ❖</div>
+        <h1 class="game-title">MARIO KNIGHT<br><span class="subtitle">SILKSONG</span></h1>
+        <p class="tagline">Descend into Pharloom's Mushroom Chasm • 8 Intense 30-Second Levels</p>
+
+        <div class="rules-card">
+          <h3>✦ KNIGHT'S CODEX ✦</h3>
+          <ul>
+            <li><strong>Level Length:</strong> Level 1 is <strong>1000 km</strong>. Each subsequent level adds <strong>+15 km</strong> (up to 1105 km in Level 8).</li>
+            <li><strong>Intense 30s Timer:</strong> Exactly <strong>30.0 Seconds</strong> per level! Sprint, cleave swarms, and slay the Colossus before time expires!</li>
+            <li><strong>Arena Lock:</strong> Entering the Titan's Colosseum <strong>locks and seals the arena</strong> until the Colossus is slain!</li>
+            <li><strong>Life Masks:</strong> You have <strong>6 Life Masks</strong>. Every monster bite drains <strong>1/6 HP (1 Mask)</strong>.</li>
+            <li><strong>Soul on Hit:</strong> Every axe strike grants <strong>+1 Soul</strong>! At <strong>10/10 Soul</strong>, press <strong>[H] / [U]</strong> to restore <strong>100% FULL HP</strong>!</li>
+            <li><strong>Overpowered Rewards:</strong> Slaying each boss unlocks devastating powers: Thunder Axe, Tornado Dash, Meteor Blaster, Black Hole Void!</li>
+          </ul>
+        </div>
+
+        <div class="controls-guide">
+          <div class="ctrl-col">
+            <span><strong>Move:</strong> [A] [D] / [←] [→]</span>
+            <span><strong>Super High Jump:</strong> [W] / [Space] / [↑]</span>
+            <span><strong>Great Axe Slash:</strong> [J] / [Z] / [Left Click]</span>
+            <span><strong>Pause Game:</strong> [P] / [Esc]</span>
+          </div>
+          <div class="ctrl-col">
+            <span><strong>Soul Focus Heal (10/10):</strong> [H] / [U]</span>
+            <span><strong>Tornado Dash:</strong> [Shift] / [L] / [Right Click]</span>
+            <span><strong>Cast Meteor / Void Spell:</strong> [Q] / [E]</span>
+            <span><strong>Seismic Ground Slam:</strong> [S] / [↓] in mid-air</span>
+          </div>
+        </div>
+
+        <button id="btn-play-game" class="btn-gold pulse-btn" onclick="if(window.game) window.game.startLevel(1);">START JOURNEY (30s RUSH)</button>
+      </div>
+    </div>
+
+    <!-- Level Complete / Power Unlocked Modal -->
+    <div id="modal-level-clear" class="modal">
+      <div class="modal-content victory-modal">
+        <div class="crest-icon">✨ 👑 ✨</div>
+        <h2 id="clear-level-title">LEVEL 1 CONQUERED!</h2>
+        <div class="boss-slain-badge">GIANT MONSTER SLAIN</div>
+        
+        <div class="power-reward-box">
+          <div class="power-icon-large" id="reward-icon">⚡</div>
+          <div class="power-details">
+            <div class="power-unlocked-tag">NEW OVERPOWERED ABILITY UNLOCKED</div>
+            <h3 id="reward-name">LIGHTNING THUNDER AXE</h3>
+            <p id="reward-desc">Slashing calls down crackling thunderbolts and chain lightning arcs that electrocute all monsters in sight!</p>
+          </div>
+        </div>
+
+        <div class="level-stats">
+          <div class="stat-box">
+            <span class="stat-label">TIME REMAINING</span>
+            <span class="stat-val" id="stat-time">14.2s</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">MONSTERS SLAIN</span>
+            <span class="stat-val" id="stat-kills">48</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">NEXT DISTANCE</span>
+            <span class="stat-val" id="stat-next-dist">1015 km</span>
+          </div>
+        </div>
+
+        <button id="btn-next-level" class="btn-gold pulse-btn" onclick="if(window.game) { window.game.modalLevelClear.classList.remove('active'); window.game.startLevel(window.game.currentLevel + 1); }">ADVANCE TO NEXT LEVEL</button>
+      </div>
+    </div>
+
+    <!-- Death / Game Over Modal -->
+    <div id="modal-game-over" class="modal">
+      <div class="modal-content death-modal">
+        <div class="death-skull">💀</div>
+        <h2 class="death-title">YOU HAVE FALLEN</h2>
+        <p class="death-reason" id="death-reason">Your Life Masks shattered completely.</p>
+        <div class="restart-note">You will restart from the beginning of <strong id="death-level-text">Level 1</strong> with 30s.</div>
+        <button id="btn-retry" class="btn-crimson" onclick="if(window.game) window.game.startLevel(window.game.currentLevel);">RETRY LEVEL (30s)</button>
+      </div>
+    </div>
+
+    <!-- Grand Victory Modal (All 8 Levels Complete) -->
+    <div id="modal-game-win" class="modal">
+      <div class="modal-content champion-modal">
+        <div class="crest-icon">🌟 👑 🌟</div>
+        <h1 class="victory-heading">MARIO KNIGHT OF SILKSONG</h1>
+        <p class="tagline">All 8 Colossal Monsters Slain • The Realm of Pharloom is Free</p>
+        
+        <div class="champion-powers-recap">
+          <h3>ALL 8 GODLIKE POWERS UNLOCKED</h3>
+          <div class="champion-icons">
+            <span>⚡</span><span>🌪️</span><span>🔥</span><span>🪽</span><span>🛡️</span><span>🌋</span><span>🌌</span><span>👑</span>
+          </div>
+        </div>
+
+        <div class="final-stats">
+          <div class="final-stat-item"><span>Total Distance Conquered:</span> <strong>8,420 km</strong></div>
+          <div class="final-stat-item"><span>Final Titan Slain:</span> <strong>The Radiance Koopa God</strong></div>
+          <div class="final-stat-item"><span>Title Earned:</span> <strong>Grand Silksong Champion</strong></div>
+        </div>
+
+        <button id="btn-play-again" class="btn-gold" onclick="if(window.game) window.game.startLevel(1);">PLAY FROM LEVEL 1 AGAIN</button>
+      </div>
+    </div>
+
+    <!-- Universal Virtual Battle Controls & Hotkey Action Bar -->
+    <div id="touch-controls" class="touch-controls">
+      <div class="dpad-container">
+        <button class="touch-btn touch-left" id="touch-left" title="Move Left [A / ←]">◀</button>
+        <button class="touch-btn touch-right" id="touch-right" title="Move Right [D / →]">▶</button>
+        <button class="touch-btn touch-down" id="touch-down" title="Ground Slam [S / ↓]">▼</button>
+      </div>
+      <div class="action-buttons">
+        <button class="touch-btn action-pause" id="touch-pause" title="Pause Game [P / Esc]"><span class="btn-icon-sub">⏸️</span><span>PAUSE</span><span class="key-badge">P</span></button>
+        <button class="touch-btn action-heal" id="touch-heal" title="Soul Focus Heal (10/10) [H / U]"><span class="btn-icon-sub">✨</span><span>FOCUS</span><span class="key-badge">H</span></button>
+        <button class="touch-btn action-spell" id="touch-spell" title="Cast Meteor / Void Spell [Q / E]"><span class="btn-icon-sub">🔥</span><span>SPELL</span><span class="key-badge">Q</span></button>
+        <button class="touch-btn action-dash" id="touch-dash" title="Tornado Silk Dash [Shift / L / Right Click]"><span class="btn-icon-sub">🌪️</span><span>DASH</span><span class="key-badge">Shift</span></button>
+        <button class="touch-btn action-slash" id="touch-slash" title="Great Axe Cleave [J / Z / Left Click]"><span class="btn-icon-sub">⚔️</span><span>AXE</span><span class="key-badge">J / Click</span></button>
+        <button class="touch-btn action-jump" id="touch-jump" title="Super Jump / Triple Jump [W / Space]"><span class="btn-icon-sub">🪽</span><span>JUMP</span><span class="key-badge">Space</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Scripts -->
+  <script src="audio.js"></script>
+  <script src="sprites.js"></script>
+  <script src="entities.js"></script>
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
