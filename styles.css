@@ -901,7 +901,7 @@ html, body {
   100% { opacity: 0; transform: translateY(-15px); }
 }
 
-/* Universal Virtual Battle Controls & Hotkey Action Bar */
+/* Virtual Arcade Battle Controls (Joystick + A/B Buttons) */
 .touch-controls {
   position: absolute;
   bottom: 12px;
@@ -913,166 +913,255 @@ html, body {
   pointer-events: none;
   z-index: 100;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.dpad-container {
+/* =========================================
+   LEFT: VIRTUAL JOYSTICK
+   ========================================= */
+.joystick-zone {
+  position: relative;
+  width: 140px;
+  height: 140px;
   display: flex;
-  gap: 10px;
-  pointer-events: auto;
   align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  touch-action: none;
 }
 
-.action-buttons {
+.joystick-base {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 26, 42, 0.85) 0%, rgba(10, 14, 24, 0.92) 100%);
+  border: 2.5px solid rgba(240, 195, 85, 0.45);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(240, 195, 85, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.joystick-base.active {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 25px var(--gold-glow), inset 0 0 20px rgba(240, 195, 85, 0.3);
+}
+
+.joystick-guide {
+  position: absolute;
+  background: rgba(240, 195, 85, 0.2);
+  pointer-events: none;
+}
+
+.joystick-guide.horizontal {
+  width: 80%;
+  height: 1px;
+}
+
+.joystick-guide.vertical {
+  width: 1px;
+  height: 80%;
+}
+
+.joystick-knob {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff1ba 0%, #d4a028 50%, #785208 100%);
+  border: 2px solid #fff8d6;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.9), 0 0 12px var(--gold-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(0px, 0px);
+  will-change: transform;
+  pointer-events: none;
+}
+
+.joystick-center-dot {
+  font-size: 16px;
+  color: #1a1405;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* =========================================
+   RIGHT: ARCADE A/B/X/Y DIAMOND CLUSTER
+   ========================================= */
+.arcade-zone {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
   pointer-events: auto;
-  margin-left: auto;
+  touch-action: none;
 }
 
-.sub-actions-row {
+.arcade-top-row {
   display: flex;
   gap: 8px;
+  margin-right: 8px;
 }
 
-.main-actions-row {
-  display: flex;
-  gap: 12px;
-}
-
-.touch-btn {
-  height: 48px;
-  min-width: 48px;
-  padding: 4px 8px;
-  border-radius: 14px;
-  background: rgba(18, 23, 38, 0.88);
-  border: 2px solid rgba(240, 195, 85, 0.6);
+.arcade-mini-btn {
+  background: rgba(18, 23, 38, 0.9);
+  border: 1.5px solid rgba(240, 195, 85, 0.5);
   color: #ffffff;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
   font-weight: 700;
-  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  touch-action: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  transition: transform 0.08s, background 0.1s;
+}
+
+.arcade-mini-btn:active, .arcade-mini-btn.active {
+  transform: scale(0.92);
+  background: var(--gold-primary);
+  color: #000;
+}
+
+.arcade-mini-btn.btn-pause {
+  border-color: #3fe0d0;
+}
+
+.arcade-mini-btn.btn-heal {
+  border-color: #ffd700;
+  background: rgba(30, 45, 35, 0.9);
+}
+
+.arcade-diamond {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  touch-action: none;
+}
+
+.arcade-btn {
+  position: absolute;
+  border-radius: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.8), 0 0 10px rgba(240, 195, 85, 0.2);
-  touch-action: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
   cursor: pointer;
-  transition: transform 0.08s ease, background 0.1s ease;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.85);
+  transition: transform 0.06s ease, filter 0.08s ease;
 }
 
-.touch-btn:active, .touch-btn.active {
-  background: var(--gold-primary) !important;
-  color: #000000 !important;
-  transform: scale(0.92) !important;
-  border-color: #ffffff !important;
-  box-shadow: 0 0 16px var(--gold-primary) !important;
+.arcade-btn:active, .arcade-btn.active {
+  transform: translate(-50%, -50%) scale(0.90) !important;
+  filter: brightness(1.35) drop-shadow(0 0 16px currentColor);
 }
 
-.touch-left, .touch-right, .touch-down {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  font-size: 20px;
+.arcade-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
   font-weight: 900;
-  background: rgba(16, 21, 35, 0.92);
-  border-color: var(--gold-primary);
-}
-
-.sub-actions-row .touch-btn {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  border-radius: 50%;
-  padding: 0;
-  font-size: 14px;
-}
-
-.sub-actions-row .touch-btn span:not(.btn-icon-sub) {
-  display: none;
-}
-
-.action-pause {
-  border-color: #3fe0d0;
-}
-
-.action-heal {
-  border-color: #3fe0d0;
-  background: rgba(18, 45, 42, 0.92);
-}
-
-.action-spell {
-  border-color: #ff5722;
-  background: rgba(45, 20, 18, 0.92);
-}
-
-.action-dash {
-  border-color: #ffffff;
-  background: rgba(30, 36, 52, 0.92);
-}
-
-/* Big Main Thumb Buttons */
-.main-actions-row .touch-btn {
-  height: 60px;
-  min-width: 70px;
-  padding: 6px 14px;
-  border-radius: 18px;
-}
-
-.action-slash {
-  border-color: #ffd700;
-  background: linear-gradient(180deg, rgba(60, 40, 15, 0.95) 0%, rgba(30, 20, 10, 0.95) 100%);
-}
-
-.action-jump {
-  border-color: #3fe0d0;
-  background: linear-gradient(180deg, rgba(18, 55, 60, 0.95) 0%, rgba(10, 30, 35, 0.95) 100%);
-}
-
-.btn-icon-main {
-  font-size: 20px;
   line-height: 1;
 }
 
-.btn-label-main {
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1px;
+.arcade-icon {
+  font-size: 16px;
+  line-height: 1;
+  margin: 1px 0;
 }
 
-.key-badge {
+.arcade-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+/* BUTTON A: JUMP (Bottom Center) - Main Action */
+.btn-a {
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at 35% 35%, #62ebd9 0%, #178074 70%, #0c3e38 100%);
+  border: 2.5px solid #a8fff5;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 14px rgba(63, 224, 208, 0.5);
+}
+
+.btn-a .arcade-badge {
+  color: #d1fffa;
+}
+
+/* BUTTON B: AXE ATTACK (Right Center) - Main Action */
+.btn-b {
+  top: 50%;
+  right: 0;
+  transform: translate(0, -50%);
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at 35% 35%, #ff7888 0%, #c4182b 70%, #630a14 100%);
+  border: 2.5px solid #ffccd3;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 14px rgba(230, 57, 70, 0.5);
+}
+
+.btn-b .arcade-badge {
+  color: #ffe0e4;
+}
+
+/* BUTTON X: DASH (Left Center) - Secondary */
+.btn-x {
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle at 35% 35%, #e2e8f0 0%, #4a5568 70%, #1a202c 100%);
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.btn-x .arcade-label {
   font-size: 8px;
-  background: rgba(0, 0, 0, 0.6);
-  color: #ffd700;
-  padding: 1px 4px;
-  border-radius: 4px;
-  border: 1px solid rgba(240, 195, 85, 0.4);
+}
+
+/* BUTTON Y: SPELL (Top Center) - Secondary */
+.btn-y {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle at 35% 35%, #ffb347 0%, #e65100 70%, #7a2b00 100%);
+  border: 2px solid #ffd59e;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 10px rgba(255, 107, 53, 0.5);
+}
+
+.btn-y .arcade-label {
+  font-size: 8px;
 }
 
 /* Mobile & Tablet Optimizations */
 @media (max-width: 900px) {
   .touch-controls {
     display: flex !important;
-    bottom: 8px;
-    left: 8px;
-    right: 8px;
-  }
-  .dpad-container {
-    display: flex !important;
-  }
-  .main-actions-row .touch-btn {
-    height: 54px;
-    min-width: 64px;
-  }
-  .touch-left, .touch-right, .touch-down {
-    width: 48px;
-    height: 48px;
-    font-size: 18px;
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
   }
 }
 

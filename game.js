@@ -340,77 +340,155 @@ class Game {
   }
 
   bindTouchControls() {
-    // Multi-touch hold buttons (Left, Right, Down)
-    const bindHoldButton = (id, onStart, onEnd) => {
-      const el = document.getElementById(id);
-      if (!el) return;
+    // =========================================
+    // 1. VIRTUAL ANALOG JOYSTICK (LEFT THUMB)
+    // =========================================
+    const joystickZone = document.getElementById('joystick-zone');
+    const joystickBase = document.getElementById('joystick-base');
+    const joystickKnob = document.getElementById('joystick-knob');
 
-      let activeTouchId = null;
+    let joystickActive = false;
+    let joystickTouchId = null;
+    let baseCenterX = 0;
+    let baseCenterY = 0;
+    const maxRadius = 38;
 
-      const start = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        try { window.soundEngine.init(); } catch (err) {}
-        el.classList.add('active');
-        onStart();
-      };
+    const updateJoystickPosition = (touchX, touchY) => {
+      let dx = touchX - baseCenterX;
+      let dy = touchY - baseCenterY;
+      const distance = Math.hypot(dx, dy);
 
-      const end = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        el.classList.remove('active');
-        onEnd();
-      };
+      if (distance > maxRadius) {
+        const angle = Math.atan2(dy, dx);
+        dx = Math.cos(angle) * maxRadius;
+        dy = Math.sin(angle) * maxRadius;
+      }
 
-      el.addEventListener('touchstart', (e) => {
-        if (e.changedTouches && e.changedTouches.length > 0) {
-          activeTouchId = e.changedTouches[0].identifier;
+      if (joystickKnob) {
+        joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+      }
+
+      // Horizontal Run Deadzone
+      if (dx < -10) {
+        this.input.left = true;
+        this.input.right = false;
+      } else if (dx > 10) {
+        this.input.right = true;
+        this.input.left = false;
+      } else {
+        this.input.left = false;
+        this.input.right = false;
+      }
+
+      // Vertical Down / Ground Slam Deadzone
+      if (dy > 18) {
+        this.input.down = true;
+        if (!this.player.grounded && (this.state === 'PLAYING' || this.state === 'BOSS')) {
+          this.player.triggerGroundSlam();
         }
-        start(e);
-      }, { passive: false });
-
-      el.addEventListener('touchend', (e) => {
-        activeTouchId = null;
-        end(e);
-      }, { passive: false });
-
-      el.addEventListener('touchcancel', (e) => {
-        activeTouchId = null;
-        end(e);
-      }, { passive: false });
-
-      el.addEventListener('pointerdown', (e) => {
-        if (e.pointerType === 'touch') return; // Handled by touchstart
-        start(e);
-      });
-
-      el.addEventListener('pointerup', (e) => {
-        if (e.pointerType === 'touch') return;
-        end(e);
-      });
-
-      el.addEventListener('pointercancel', (e) => {
-        if (e.pointerType === 'touch') return;
-        end(e);
-      });
-
-      el.addEventListener('mouseleave', () => {
-        el.classList.remove('active');
-        onEnd();
-      });
+      } else {
+        this.input.down = false;
+      }
     };
 
-    // Instant Action buttons (Jump, Slash, Dash, Spell, Heal, Pause)
-    const bindActionButton = (id, actionFn) => {
+    const startJoystick = (touchX, touchY, id) => {
+      joystickActive = true;
+      joystickTouchId = id;
+      try { window.soundEngine.init(); } catch (err) {}
+
+      if (joystickBase) {
+        const rect = joystickBase.getBoundingClientRect();
+        baseCenterX = rect.left + rect.width / 2;
+        baseCenterY = rect.top + rect.height / 2;
+        joystickBase.classList.add('active');
+      }
+      if (joystickKnob) {
+        joystickKnob.style.transition = 'none';
+      }
+      updateJoystickPosition(touchX, touchY);
+    };
+
+    const endJoystick = () => {
+      if (!joystickActive) return;
+      joystickActive = false;
+      joystickTouchId = null;
+      this.input.left = false;
+      this.input.right = false;
+      this.input.down = false;
+
+      if (joystickBase) joystickBase.classList.remove('active');
+      if (joystickKnob) {
+        joystickKnob.style.transition = 'transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        joystickKnob.style.transform = 'translate(0px, 0px)';
+        setTimeout(() => { if (joystickKnob) joystickKnob.style.transition = ''; }, 160);
+      }
+    };
+
+    if (joystickZone) {
+      joystickZone.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          const t = e.changedTouches[0];
+          startJoystick(t.clientX, t.clientY, t.identifier);
+        }
+      }, { passive: false });
+
+      joystickZone.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!joystickActive) return;
+        for (let i = 0; i < e.touches.length; i++) {
+          if (e.touches[i].identifier === joystickTouchId) {
+            updateJoystickPosition(e.touches[i].clientX, e.touches[i].clientY);
+            break;
+          }
+        }
+      }, { passive: false });
+
+      joystickZone.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        endJoystick();
+      }, { passive: false });
+
+      joystickZone.addEventListener('touchcancel', (e) => {
+        endJoystick();
+      }, { passive: false });
+
+      // Mouse drag fallback for desktop testing
+      joystickZone.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        startJoystick(e.clientX, e.clientY, 'mouse');
+        const onMouseMove = (ev) => {
+          if (joystickActive) updateJoystickPosition(ev.clientX, ev.clientY);
+        };
+        const onMouseUp = () => {
+          endJoystick();
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        };
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
+    // =========================================
+    // 2. ARCADE COMBAT BUTTONS (RIGHT THUMB)
+    // =========================================
+    const bindArcadeButton = (id, actionFn) => {
       const el = document.getElementById(id);
       if (!el) return;
 
       const trigger = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
         try { window.soundEngine.init(); } catch (err) {}
         el.classList.add('active');
         setTimeout(() => el.classList.remove('active'), 120);
+
         if (this.state === 'PLAYING' || this.state === 'BOSS' || id === 'touch-pause') {
           actionFn();
         }
@@ -423,45 +501,28 @@ class Game {
       });
     };
 
-    // Movement D-Pad
-    bindHoldButton('touch-left',
-      () => { this.input.left = true; },
-      () => { this.input.left = false; }
-    );
-
-    bindHoldButton('touch-right',
-      () => { this.input.right = true; },
-      () => { this.input.right = false; }
-    );
-
-    bindHoldButton('touch-down',
-      () => {
-        this.input.down = true;
-        if (!this.player.grounded && (this.state === 'PLAYING' || this.state === 'BOSS')) {
-          this.player.triggerGroundSlam();
-        }
-      },
-      () => { this.input.down = false; }
-    );
-
-    // Primary Actions
-    bindActionButton('touch-jump', () => {
+    // Button A: Super Jump / Monarch Triple Jump
+    bindArcadeButton('touch-jump', () => {
       this.player.jump(this.particles);
     });
 
-    bindActionButton('touch-slash', () => {
+    // Button B: Great Axe Cleave / Slash
+    bindArcadeButton('touch-slash', () => {
       this.player.slash(this.projectiles, this.particles);
     });
 
-    bindActionButton('touch-dash', () => {
+    // Button X: Tornado Silk Dash
+    bindArcadeButton('touch-dash', () => {
       this.player.dash(this.particles);
     });
 
-    bindActionButton('touch-spell', () => {
+    // Button Y: Meteor Magma / Void Spell
+    bindArcadeButton('touch-spell', () => {
       this.player.castSpell(this.projectiles);
     });
 
-    bindActionButton('touch-heal', () => {
+    // Soul Focus Full Heal (10/10)
+    bindArcadeButton('touch-heal', () => {
       if (this.player.focusHeal()) {
         this.showToast('✨ 10/10 SOUL FOCUSED: FULL HP RESTORED!');
         this.updateHPUI();
@@ -469,29 +530,20 @@ class Game {
       }
     });
 
-    bindActionButton('touch-pause', () => {
+    // Pause Game Button
+    bindArcadeButton('touch-pause', () => {
       this.togglePause();
     });
 
-    // Global touch safety: reset movement inputs if all touches end
+    // Global touch cleanup
     window.addEventListener('touchend', (e) => {
       if (e.touches && e.touches.length === 0) {
-        this.input.left = false;
-        this.input.right = false;
-        this.input.down = false;
-        const leftBtn = document.getElementById('touch-left');
-        const rightBtn = document.getElementById('touch-right');
-        const downBtn = document.getElementById('touch-down');
-        if (leftBtn) leftBtn.classList.remove('active');
-        if (rightBtn) rightBtn.classList.remove('active');
-        if (downBtn) downBtn.classList.remove('active');
+        endJoystick();
       }
     });
 
     window.addEventListener('touchcancel', () => {
-      this.input.left = false;
-      this.input.right = false;
-      this.input.down = false;
+      endJoystick();
     });
   }
 

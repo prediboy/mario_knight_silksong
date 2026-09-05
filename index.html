@@ -236,33 +236,59 @@
       </div>
     </div>
 
-    <!-- Universal Virtual Battle Controls & Hotkey Action Bar -->
+    <!-- Mobile & Desktop Virtual Arcade Battle Controls (Joystick + A/B Buttons) -->
     <div id="touch-controls" class="touch-controls">
-      <!-- Left D-Pad Controls -->
-      <div class="dpad-container" id="dpad-container">
-        <button class="touch-btn touch-left" id="touch-left" title="Move Left [A / ←]">◀</button>
-        <button class="touch-btn touch-down" id="touch-down" title="Ground Slam [S / ↓]">▼</button>
-        <button class="touch-btn touch-right" id="touch-right" title="Move Right [D / →]">▶</button>
+      <!-- Left Thumb Virtual Joystick -->
+      <div class="joystick-zone" id="joystick-zone">
+        <div class="joystick-base" id="joystick-base">
+          <div class="joystick-guide vertical"></div>
+          <div class="joystick-guide horizontal"></div>
+          <div class="joystick-knob" id="joystick-knob">
+            <span class="joystick-center-dot">✦</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Right Action Controls -->
-      <div class="action-buttons" id="action-buttons">
-        <div class="sub-actions-row">
-          <button class="touch-btn action-pause" id="touch-pause" title="Pause Game [P / Esc]"><span class="btn-icon-sub">⏸️</span><span>PAUSE</span></button>
-          <button class="touch-btn action-heal" id="touch-heal" title="Soul Focus Heal [H / U]"><span class="btn-icon-sub">✨</span><span>HEAL</span></button>
-          <button class="touch-btn action-spell" id="touch-spell" title="Cast Spell [Q / E]"><span class="btn-icon-sub">🔥</span><span>SPELL</span></button>
-          <button class="touch-btn action-dash" id="touch-dash" title="Tornado Dash [Shift / L]"><span class="btn-icon-sub">🌪️</span><span>DASH</span></button>
-        </div>
-        <div class="main-actions-row">
-          <button class="touch-btn action-slash" id="touch-slash" title="Axe Cleave [J / Z / Left Click]">
-            <span class="btn-icon-main">⚔️</span>
-            <span class="btn-label-main">AXE</span>
-            <span class="key-badge">J</span>
+      <!-- Right Thumb Arcade A/B/X/Y Cluster & Power Controls -->
+      <div class="arcade-zone" id="arcade-zone">
+        <!-- Top row: Pause & Focus Heal -->
+        <div class="arcade-top-row">
+          <button class="arcade-mini-btn btn-pause" id="touch-pause" title="Pause Game [P / Esc]">
+            <span class="mini-icon">⏸️</span> PAUSE
           </button>
-          <button class="touch-btn action-jump" id="touch-jump" title="Super Jump [W / Space]">
-            <span class="btn-icon-main">🪽</span>
-            <span class="btn-label-main">JUMP</span>
-            <span class="key-badge">W / Space</span>
+          <button class="arcade-mini-btn btn-heal" id="touch-heal" title="Soul Focus Heal (10/10) [H / U]">
+            <span class="mini-icon">✨</span> HEAL
+          </button>
+        </div>
+
+        <!-- Classic Arcade Diamond Controller -->
+        <div class="arcade-diamond">
+          <!-- Top Button: Y (SPELL / 🔥) -->
+          <button class="arcade-btn btn-y" id="touch-spell" title="Cast Meteor / Void [Q / E]">
+            <span class="arcade-badge">Y</span>
+            <span class="arcade-icon">🔥</span>
+            <span class="arcade-label">SPELL</span>
+          </button>
+
+          <!-- Left Button: X (DASH / 🌪️) -->
+          <button class="arcade-btn btn-x" id="touch-dash" title="Tornado Silk Dash [Shift / L]">
+            <span class="arcade-badge">X</span>
+            <span class="arcade-icon">🌪️</span>
+            <span class="arcade-label">DASH</span>
+          </button>
+
+          <!-- Right Button: B (ATTACK / AXE / ⚔️) -->
+          <button class="arcade-btn btn-b" id="touch-slash" title="Axe Cleave [J / Z / Click]">
+            <span class="arcade-badge">B</span>
+            <span class="arcade-icon">⚔️</span>
+            <span class="arcade-label">AXE</span>
+          </button>
+
+          <!-- Bottom Button: A (JUMP / 🪽) -->
+          <button class="arcade-btn btn-a" id="touch-jump" title="Super Jump [W / Space]">
+            <span class="arcade-badge">A</span>
+            <span class="arcade-icon">🪽</span>
+            <span class="arcade-label">JUMP</span>
           </button>
         </div>
       </div>
