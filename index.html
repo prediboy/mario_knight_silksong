@@ -162,7 +162,7 @@
           </div>
         </div>
 
-        <button id="btn-play-game" class="btn-gold pulse-btn" onclick="if(window.game) window.game.startLevel(1);">START JOURNEY (30s RUSH)</button>
+        <button id="btn-play-game" class="btn-gold pulse-btn">START JOURNEY (30s RUSH)</button>
       </div>
     </div>
 
@@ -197,7 +197,7 @@
           </div>
         </div>
 
-        <button id="btn-next-level" class="btn-gold pulse-btn" onclick="if(window.game) { window.game.modalLevelClear.classList.remove('active'); window.game.startLevel(window.game.currentLevel + 1); }">ADVANCE TO NEXT LEVEL</button>
+        <button id="btn-next-level" class="btn-gold pulse-btn">ADVANCE TO NEXT LEVEL</button>
       </div>
     </div>
 
@@ -208,7 +208,7 @@
         <h2 class="death-title">YOU HAVE FALLEN</h2>
         <p class="death-reason" id="death-reason">Your Life Masks shattered completely.</p>
         <div class="restart-note">You will restart from the beginning of <strong id="death-level-text">Level 1</strong> with 30s.</div>
-        <button id="btn-retry" class="btn-crimson" onclick="if(window.game) window.game.startLevel(window.game.currentLevel);">RETRY LEVEL (30s)</button>
+        <button id="btn-retry" class="btn-crimson">RETRY LEVEL (30s)</button>
       </div>
     </div>
 
@@ -232,24 +232,39 @@
           <div class="final-stat-item"><span>Title Earned:</span> <strong>Grand Silksong Champion</strong></div>
         </div>
 
-        <button id="btn-play-again" class="btn-gold" onclick="if(window.game) window.game.startLevel(1);">PLAY FROM LEVEL 1 AGAIN</button>
+        <button id="btn-play-again" class="btn-gold">PLAY FROM LEVEL 1 AGAIN</button>
       </div>
     </div>
 
     <!-- Universal Virtual Battle Controls & Hotkey Action Bar -->
     <div id="touch-controls" class="touch-controls">
-      <div class="dpad-container">
+      <!-- Left D-Pad Controls -->
+      <div class="dpad-container" id="dpad-container">
         <button class="touch-btn touch-left" id="touch-left" title="Move Left [A / ←]">◀</button>
-        <button class="touch-btn touch-right" id="touch-right" title="Move Right [D / →]">▶</button>
         <button class="touch-btn touch-down" id="touch-down" title="Ground Slam [S / ↓]">▼</button>
+        <button class="touch-btn touch-right" id="touch-right" title="Move Right [D / →]">▶</button>
       </div>
-      <div class="action-buttons">
-        <button class="touch-btn action-pause" id="touch-pause" title="Pause Game [P / Esc]"><span class="btn-icon-sub">⏸️</span><span>PAUSE</span><span class="key-badge">P</span></button>
-        <button class="touch-btn action-heal" id="touch-heal" title="Soul Focus Heal (10/10) [H / U]"><span class="btn-icon-sub">✨</span><span>FOCUS</span><span class="key-badge">H</span></button>
-        <button class="touch-btn action-spell" id="touch-spell" title="Cast Meteor / Void Spell [Q / E]"><span class="btn-icon-sub">🔥</span><span>SPELL</span><span class="key-badge">Q</span></button>
-        <button class="touch-btn action-dash" id="touch-dash" title="Tornado Silk Dash [Shift / L / Right Click]"><span class="btn-icon-sub">🌪️</span><span>DASH</span><span class="key-badge">Shift</span></button>
-        <button class="touch-btn action-slash" id="touch-slash" title="Great Axe Cleave [J / Z / Left Click]"><span class="btn-icon-sub">⚔️</span><span>AXE</span><span class="key-badge">J / Click</span></button>
-        <button class="touch-btn action-jump" id="touch-jump" title="Super Jump / Triple Jump [W / Space]"><span class="btn-icon-sub">🪽</span><span>JUMP</span><span class="key-badge">Space</span></button>
+
+      <!-- Right Action Controls -->
+      <div class="action-buttons" id="action-buttons">
+        <div class="sub-actions-row">
+          <button class="touch-btn action-pause" id="touch-pause" title="Pause Game [P / Esc]"><span class="btn-icon-sub">⏸️</span><span>PAUSE</span></button>
+          <button class="touch-btn action-heal" id="touch-heal" title="Soul Focus Heal [H / U]"><span class="btn-icon-sub">✨</span><span>HEAL</span></button>
+          <button class="touch-btn action-spell" id="touch-spell" title="Cast Spell [Q / E]"><span class="btn-icon-sub">🔥</span><span>SPELL</span></button>
+          <button class="touch-btn action-dash" id="touch-dash" title="Tornado Dash [Shift / L]"><span class="btn-icon-sub">🌪️</span><span>DASH</span></button>
+        </div>
+        <div class="main-actions-row">
+          <button class="touch-btn action-slash" id="touch-slash" title="Axe Cleave [J / Z / Left Click]">
+            <span class="btn-icon-main">⚔️</span>
+            <span class="btn-label-main">AXE</span>
+            <span class="key-badge">J</span>
+          </button>
+          <button class="touch-btn action-jump" id="touch-jump" title="Super Jump [W / Space]">
+            <span class="btn-icon-main">🪽</span>
+            <span class="btn-label-main">JUMP</span>
+            <span class="key-badge">W / Space</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>

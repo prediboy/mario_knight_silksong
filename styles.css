@@ -911,35 +911,43 @@ html, body {
   justify-content: space-between;
   align-items: flex-end;
   pointer-events: none;
-  z-index: 30;
+  z-index: 100;
+  touch-action: none;
 }
 
 .dpad-container {
-  display: none;
-  gap: 8px;
+  display: flex;
+  gap: 10px;
   pointer-events: auto;
-}
-
-@media (pointer: coarse), (max-width: 900px) {
-  .dpad-container {
-    display: flex;
-  }
+  align-items: center;
 }
 
 .action-buttons {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
   pointer-events: auto;
   margin-left: auto;
 }
 
+.sub-actions-row {
+  display: flex;
+  gap: 8px;
+}
+
+.main-actions-row {
+  display: flex;
+  gap: 12px;
+}
+
 .touch-btn {
   height: 48px;
-  min-width: 52px;
-  padding: 4px 10px;
-  border-radius: 24px;
-  background: rgba(18, 23, 38, 0.85);
-  border: 1.5px solid rgba(240, 195, 85, 0.6);
+  min-width: 48px;
+  padding: 4px 8px;
+  border-radius: 14px;
+  background: rgba(18, 23, 38, 0.88);
+  border: 2px solid rgba(240, 195, 85, 0.6);
   color: #ffffff;
   font-weight: 700;
   font-size: 11px;
@@ -947,29 +955,94 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
+  gap: 2px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.8), 0 0 10px rgba(240, 195, 85, 0.2);
-  touch-action: manipulation;
-  cursor: pointer;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
   user-select: none;
-  transition: transform 0.1s ease, border-color 0.15s ease;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.1s ease;
 }
 
-.touch-btn:hover {
+.touch-btn:active, .touch-btn.active {
+  background: var(--gold-primary) !important;
+  color: #000000 !important;
+  transform: scale(0.92) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 16px var(--gold-primary) !important;
+}
+
+.touch-left, .touch-right, .touch-down {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: 900;
+  background: rgba(16, 21, 35, 0.92);
   border-color: var(--gold-primary);
-  background: rgba(28, 36, 58, 0.95);
-  box-shadow: 0 4px 18px rgba(0,0,0,0.9), 0 0 14px rgba(240, 195, 85, 0.4);
 }
 
-.touch-btn:active {
-  background: var(--gold-primary);
-  color: #000;
-  transform: scale(0.94);
-}
-
-.btn-icon-sub {
+.sub-actions-row .touch-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  padding: 0;
   font-size: 14px;
+}
+
+.sub-actions-row .touch-btn span:not(.btn-icon-sub) {
+  display: none;
+}
+
+.action-pause {
+  border-color: #3fe0d0;
+}
+
+.action-heal {
+  border-color: #3fe0d0;
+  background: rgba(18, 45, 42, 0.92);
+}
+
+.action-spell {
+  border-color: #ff5722;
+  background: rgba(45, 20, 18, 0.92);
+}
+
+.action-dash {
+  border-color: #ffffff;
+  background: rgba(30, 36, 52, 0.92);
+}
+
+/* Big Main Thumb Buttons */
+.main-actions-row .touch-btn {
+  height: 60px;
+  min-width: 70px;
+  padding: 6px 14px;
+  border-radius: 18px;
+}
+
+.action-slash {
+  border-color: #ffd700;
+  background: linear-gradient(180deg, rgba(60, 40, 15, 0.95) 0%, rgba(30, 20, 10, 0.95) 100%);
+}
+
+.action-jump {
+  border-color: #3fe0d0;
+  background: linear-gradient(180deg, rgba(18, 55, 60, 0.95) 0%, rgba(10, 30, 35, 0.95) 100%);
+}
+
+.btn-icon-main {
+  font-size: 20px;
   line-height: 1;
+}
+
+.btn-label-main {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
 }
 
 .key-badge {
@@ -979,67 +1052,97 @@ html, body {
   padding: 1px 4px;
   border-radius: 4px;
   border: 1px solid rgba(240, 195, 85, 0.4);
-  margin-top: 1px;
 }
 
-.action-slash {
-  border-color: #ffd700;
-  background: rgba(38, 28, 18, 0.9);
+/* Mobile & Tablet Optimizations */
+@media (max-width: 900px) {
+  .touch-controls {
+    display: flex !important;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+  }
+  .dpad-container {
+    display: flex !important;
+  }
+  .main-actions-row .touch-btn {
+    height: 54px;
+    min-width: 64px;
+  }
+  .touch-left, .touch-right, .touch-down {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
 }
 
-.action-jump {
-  border-color: #3fe0d0;
-  background: rgba(18, 38, 45, 0.9);
-}
-
-.action-dash {
-  border-color: #ffffff;
-}
-
-.action-spell {
-  border-color: #ff5722;
-  background: rgba(45, 20, 18, 0.9);
-}
-
-.action-heal {
-  border-color: #3fe0d0;
-  background: rgba(18, 45, 42, 0.9);
-}
-
-.touch-left, .touch-right, .touch-down {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  font-size: 16px;
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
   #hud {
-    height: 70px;
+    height: 64px;
     padding: 4px 8px;
   }
+  .hud-left {
+    gap: 8px;
+  }
   .mask {
-    width: 16px;
-    height: 20px;
+    width: 15px;
+    height: 19px;
+    border-radius: 6px;
+  }
+  .mask::after {
+    font-size: 8px;
+    top: 3px;
   }
   .soul-vessel {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
   }
   .hud-center {
-    min-width: 180px;
+    min-width: 140px;
+  }
+  .level-badge {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .timer-wrapper {
+    font-size: 11px;
+  }
+  .distance-text {
+    font-size: 9px;
   }
   .powers-container {
-    display: none;
+    display: none !important;
   }
   .modal-content {
-    padding: 18px 16px;
+    max-height: 88vh;
+    overflow-y: auto;
+    touch-action: pan-y;
+    padding: 18px 14px;
+    gap: 12px;
+  }
+  .rules-card {
+    max-height: 180px;
+    overflow-y: auto;
+    font-size: 11px;
+    padding: 10px;
+  }
+  .controls-guide {
+    display: none;
   }
   .game-title {
-    font-size: 22px;
+    font-size: 20px;
+    letter-spacing: 3px;
   }
   .subtitle {
-    font-size: 16px;
+    font-size: 14px;
+    letter-spacing: 4px;
+  }
+  .btn-gold, .btn-crimson {
+    font-size: 13px;
+    padding: 10px 20px;
+    letter-spacing: 1.5px;
+  }
+  .key-badge {
+    display: none;
   }
 }

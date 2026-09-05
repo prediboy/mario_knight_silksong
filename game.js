@@ -273,22 +273,29 @@ class Game {
       btnSound.textContent = isAudible ? '🔊' : '🔇';
     });
 
-    // Modal Button Helper with both click and pointerdown
+    // Modal Button Helper with instant touch response & debouncing
     const addAction = (id, fn) => {
       const el = document.getElementById(id);
       if (!el) return;
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+
+      let lastTriggerTime = 0;
+      const trigger = (e) => {
+        const now = performance.now();
+        if (now - lastTriggerTime < 350) return; // Prevent double trigger from touch+click
+        lastTriggerTime = now;
+
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        try { window.soundEngine.init(); } catch (err) {}
         if (document.activeElement) document.activeElement.blur();
         fn();
-      });
-      el.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (document.activeElement) document.activeElement.blur();
-        fn();
-      });
+      };
+
+      el.addEventListener('pointerup', trigger);
+      el.addEventListener('touchend', trigger, { passive: false });
+      el.addEventListener('click', trigger);
     };
 
     // Pause Modal Buttons
@@ -304,14 +311,14 @@ class Game {
 
     // Start Journey Button
     addAction('btn-play-game', () => {
-      window.soundEngine.init();
-      this.modalStart.classList.remove('active');
+      try { window.soundEngine.init(); } catch (err) {}
+      if (this.modalStart) this.modalStart.classList.remove('active');
       this.startLevel(1);
     });
 
     // Next Level Button
     addAction('btn-next-level', () => {
-      this.modalLevelClear.classList.remove('active');
+      if (this.modalLevelClear) this.modalLevelClear.classList.remove('active');
       if (this.currentLevel < 8) {
         this.startLevel(this.currentLevel + 1);
       } else {
@@ -321,72 +328,170 @@ class Game {
 
     // Retry Level Button
     addAction('btn-retry', () => {
-      this.modalGameOver.classList.remove('active');
+      if (this.modalGameOver) this.modalGameOver.classList.remove('active');
       this.startLevel(this.currentLevel);
     });
 
     // Play Again (After Win) Button
     addAction('btn-play-again', () => {
-      this.modalGameWin.classList.remove('active');
+      if (this.modalGameWin) this.modalGameWin.classList.remove('active');
       this.startLevel(1);
     });
   }
 
   bindTouchControls() {
-    const bindBtn = (id, onDown, onUp) => {
+    // Multi-touch hold buttons (Left, Right, Down)
+    const bindHoldButton = (id, onStart, onEnd) => {
       const el = document.getElementById(id);
       if (!el) return;
-      
-      const handleDown = (e) => {
+
+      let activeTouchId = null;
+
+      const start = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        window.soundEngine.init();
-        if (document.activeElement) document.activeElement.blur();
-        onDown();
-      };
-      
-      const handleUp = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (onUp) onUp();
+        try { window.soundEngine.init(); } catch (err) {}
+        el.classList.add('active');
+        onStart();
       };
 
-      el.addEventListener('touchstart', handleDown, { passive: false });
-      el.addEventListener('touchend', handleUp, { passive: false });
-      el.addEventListener('pointerdown', handleDown);
-      el.addEventListener('pointerup', handleUp);
-      el.addEventListener('mousedown', handleDown);
-      el.addEventListener('mouseup', handleUp);
+      const end = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.classList.remove('active');
+        onEnd();
+      };
+
+      el.addEventListener('touchstart', (e) => {
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          activeTouchId = e.changedTouches[0].identifier;
+        }
+        start(e);
+      }, { passive: false });
+
+      el.addEventListener('touchend', (e) => {
+        activeTouchId = null;
+        end(e);
+      }, { passive: false });
+
+      el.addEventListener('touchcancel', (e) => {
+        activeTouchId = null;
+        end(e);
+      }, { passive: false });
+
+      el.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return; // Handled by touchstart
+        start(e);
+      });
+
+      el.addEventListener('pointerup', (e) => {
+        if (e.pointerType === 'touch') return;
+        end(e);
+      });
+
+      el.addEventListener('pointercancel', (e) => {
+        if (e.pointerType === 'touch') return;
+        end(e);
+      });
+
+      el.addEventListener('mouseleave', () => {
+        el.classList.remove('active');
+        onEnd();
+      });
     };
 
-    bindBtn('touch-left', () => { this.input.left = true; }, () => { this.input.left = false; });
-    bindBtn('touch-right', () => { this.input.right = true; }, () => { this.input.right = false; });
-    bindBtn('touch-down', () => {
-      this.input.down = true;
-      if (!this.player.grounded) this.player.triggerGroundSlam();
-    }, () => { this.input.down = false; });
+    // Instant Action buttons (Jump, Slash, Dash, Spell, Heal, Pause)
+    const bindActionButton = (id, actionFn) => {
+      const el = document.getElementById(id);
+      if (!el) return;
 
-    bindBtn('touch-jump', () => {
+      const trigger = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try { window.soundEngine.init(); } catch (err) {}
+        el.classList.add('active');
+        setTimeout(() => el.classList.remove('active'), 120);
+        if (this.state === 'PLAYING' || this.state === 'BOSS' || id === 'touch-pause') {
+          actionFn();
+        }
+      };
+
+      el.addEventListener('touchstart', trigger, { passive: false });
+      el.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return; // Handled by touchstart
+        trigger(e);
+      });
+    };
+
+    // Movement D-Pad
+    bindHoldButton('touch-left',
+      () => { this.input.left = true; },
+      () => { this.input.left = false; }
+    );
+
+    bindHoldButton('touch-right',
+      () => { this.input.right = true; },
+      () => { this.input.right = false; }
+    );
+
+    bindHoldButton('touch-down',
+      () => {
+        this.input.down = true;
+        if (!this.player.grounded && (this.state === 'PLAYING' || this.state === 'BOSS')) {
+          this.player.triggerGroundSlam();
+        }
+      },
+      () => { this.input.down = false; }
+    );
+
+    // Primary Actions
+    bindActionButton('touch-jump', () => {
       this.player.jump(this.particles);
     });
-    bindBtn('touch-slash', () => {
+
+    bindActionButton('touch-slash', () => {
       this.player.slash(this.projectiles, this.particles);
     });
-    bindBtn('touch-dash', () => {
+
+    bindActionButton('touch-dash', () => {
       this.player.dash(this.particles);
     });
-    bindBtn('touch-spell', () => {
+
+    bindActionButton('touch-spell', () => {
       this.player.castSpell(this.projectiles);
     });
-    bindBtn('touch-pause', () => {
-      this.togglePause();
-    });
-    bindBtn('touch-heal', () => {
+
+    bindActionButton('touch-heal', () => {
       if (this.player.focusHeal()) {
         this.showToast('✨ 10/10 SOUL FOCUSED: FULL HP RESTORED!');
         this.updateHPUI();
         this.updateSoulUI();
       }
+    });
+
+    bindActionButton('touch-pause', () => {
+      this.togglePause();
+    });
+
+    // Global touch safety: reset movement inputs if all touches end
+    window.addEventListener('touchend', (e) => {
+      if (e.touches && e.touches.length === 0) {
+        this.input.left = false;
+        this.input.right = false;
+        this.input.down = false;
+        const leftBtn = document.getElementById('touch-left');
+        const rightBtn = document.getElementById('touch-right');
+        const downBtn = document.getElementById('touch-down');
+        if (leftBtn) leftBtn.classList.remove('active');
+        if (rightBtn) rightBtn.classList.remove('active');
+        if (downBtn) downBtn.classList.remove('active');
+      }
+    });
+
+    window.addEventListener('touchcancel', () => {
+      this.input.left = false;
+      this.input.right = false;
+      this.input.down = false;
     });
   }
 
