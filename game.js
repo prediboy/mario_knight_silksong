@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 30.0; // 30s Countdown
+    this.levelTimer = 45.0; // Comfortable 45s Countdown
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;

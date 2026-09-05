@@ -225,7 +225,7 @@ class Player {
     this.slashTimer = 0;
     this.slashDuration = 0.22;
     this.slashCooldown = 0.12;
-    this.damage = 32; // Balanced Great Axe damage per hit
+    this.damage = 40; // High-impact Great Axe damage per hit
 
     // Sets to prevent multi-hit frame glitches during a single swing/dash/slam
     this.attackHitEntities = new Set();
@@ -872,16 +872,16 @@ class Boss {
     this.attackTimer = 1.5;
     this.phase = 1;
 
-    // Boss Name & Config by Level
+    // Boss Name & Config by Level (Tuned for approachable, thrilling combat)
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 240, w: 90, h: 80, speed: 2.2 },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 320, w: 80, h: 90, speed: 3.5 },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 420, w: 95, h: 95, speed: 2.8 },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 520, w: 85, h: 100, speed: 3.8 },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 640, w: 110, h: 85, speed: 3.2 },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 760, w: 105, h: 95, speed: 2.5 },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 900, w: 95, h: 110, speed: 4.2 },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 1100, w: 115, h: 115, speed: 4.5 }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 120, w: 90, h: 80, speed: 1.8 },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 160, w: 80, h: 90, speed: 2.8 },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 210, w: 95, h: 95, speed: 2.2 },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 260, w: 85, h: 100, speed: 3.0 },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 320, w: 110, h: 85, speed: 2.5 },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 380, w: 105, h: 95, speed: 2.0 },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 450, w: 95, h: 110, speed: 3.4 },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 550, w: 115, h: 115, speed: 3.6 }
     ];
 
     const cfg = bossConfigs[bossLevel - 1];
@@ -897,9 +897,9 @@ class Boss {
   }
 
   takeDamage(amount, particles, floatingTexts) {
-    if (this.hitFlashTimer > 0.05) return false;
+    if (this.hitFlashTimer > 0.04) return false;
     this.hp -= amount;
-    this.hitFlashTimer = 0.22;
+    this.hitFlashTimer = 0.16;
     window.soundEngine.playHit();
     floatingTexts.push(new FloatingText(`-${amount}`, this.x + this.width / 2, this.y - 15, '#ff4d61', 13));
     floatingTexts.push(new FloatingText('+1 SOUL ✦', this.x + this.width / 2, this.y - 32, '#3fe0d0', 12));
@@ -955,10 +955,10 @@ class Boss {
     const dx = player.x - this.x;
     const dy = player.y - this.y;
 
-    // Execute Boss Attack Patterns
+    // Execute Boss Attack Patterns (Comfortable attack intervals)
     if (this.attackTimer <= 0) {
       this.executeAttack(player, projectiles, particles);
-      this.attackTimer = this.phase === 2 ? 1.6 : 2.4;
+      this.attackTimer = this.phase === 2 ? 2.6 : 3.4;
     }
 
     // Boss Level Specific AI Movement
@@ -1020,13 +1020,13 @@ class Boss {
     const dir = this.facingRight ? 1 : -1;
 
     switch (this.bossLevel) {
-      case 1: // Spore eruption shockwave
-        for (let a = -0.5; a <= 0.5; a += 0.25) {
+      case 1: // Spore eruption shockwave (Gentle arcs)
+        for (let a = -0.4; a <= 0.4; a += 0.4) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            Math.sin(a) * 6 * dir,
-            -Math.cos(a) * 6,
+            Math.sin(a) * 4.5 * dir,
+            -Math.cos(a) * 4.5,
             false,
             'boss_spore',
             1,
@@ -1036,12 +1036,12 @@ class Boss {
         break;
 
       case 2: // Needle Barrage
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
           projectiles.push(new Projectile(
             this.x + (this.facingRight ? this.width : 0),
-            this.y + 20 + i * 18,
-            dir * 8,
-            (i - 1) * 2,
+            this.y + 20 + i * 24,
+            dir * 5.5,
+            (i === 0 ? -1 : 1),
             false,
             'boss_needle',
             1,
@@ -1051,12 +1051,12 @@ class Boss {
         break;
 
       case 3: // Bowser Fireball Breath
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 3; i++) {
           projectiles.push(new Projectile(
             this.x + (this.facingRight ? this.width : 0),
             this.y + 30,
-            dir * (6 + i * 1.5),
-            (Math.random() - 0.5) * 3,
+            dir * (5 + i * 1.2),
+            (Math.random() - 0.5) * 2,
             false,
             'boss_fire',
             1,
@@ -1066,12 +1066,12 @@ class Boss {
         break;
 
       case 4: // Mantis Arcane Blast
-        for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 2) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            Math.cos(a) * 5,
-            Math.sin(a) * 5,
+            Math.cos(a) * 3.8,
+            Math.sin(a) * 3.8,
             false,
             'boss_spore',
             1,
