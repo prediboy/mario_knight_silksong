@@ -771,6 +771,7 @@ class Game {
     // 3. Boss Arena Trigger & Locking at the end of the level
     if (this.state === 'PLAYING' && this.player.x >= this.levelManager.bossArenaStartX - 20) {
       this.state = 'BOSS';
+      this.monsters = []; // Clear monsters for a clean 1-on-1 boss arena
       window.soundEngine.startBGM('boss');
       this.activeBoss = new Boss(this.currentLevel, this.levelManager.bossSpawnX, this.levelManager.bossSpawnY);
       this.bossHud.classList.remove('hidden');

@@ -205,7 +205,7 @@ class Player {
     this.vx = 0;
     this.vy = 0;
     this.speed = 6.2;
-    this.jumpForce = -22.5; // Super high, platform-conquering jump!
+    this.jumpForce = -13.2; // Balanced, responsive jump height
     this.gravity = 0.36;
     this.facingRight = true;
     this.grounded = false;
@@ -804,8 +804,8 @@ class SmallMonster {
       this.x = 30;
       this.vx = Math.abs(this.vx);
       this.facingRight = true;
-    } else if (this.x > 1350) {
-      this.x = 1350;
+    } else if (this.x > 3520) {
+      this.x = 3520;
       this.vx = -Math.abs(this.vx);
       this.facingRight = false;
     }
@@ -994,13 +994,13 @@ class Boss {
         break;
 
       case 7: // Grimm Bowser (Nightmare Swoop)
-        this.y += Math.sin(this.time * 5) * 3;
-        this.x += (dx / 40) * this.baseSpeed;
+        this.y += Math.sin(this.time * 5) * 2.5;
+        this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.7);
         break;
 
       case 8: // Radiance Koopa God (Ascended Solar Halo)
-        this.y += Math.sin(this.time * 3.5) * 3.0;
-        this.x += (dx / 50) * this.baseSpeed;
+        this.y += Math.sin(this.time * 3.5) * 2.5;
+        this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.65);
         break;
     }
 
