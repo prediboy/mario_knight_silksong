@@ -1061,11 +1061,6 @@ html, body {
   transition: transform 0.06s ease, filter 0.08s ease;
 }
 
-.arcade-btn:active, .arcade-btn.active {
-  transform: translate(-50%, -50%) scale(0.90) !important;
-  filter: brightness(1.35) drop-shadow(0 0 16px currentColor);
-}
-
 .arcade-badge {
   font-family: 'Press Start 2P', monospace;
   font-size: 10px;
@@ -1092,12 +1087,17 @@ html, body {
   bottom: 0;
   left: 50%;
   transform: translate(-50%, 0);
-  width: 60px;
-  height: 60px;
+  width: 62px;
+  height: 62px;
   background: radial-gradient(circle at 35% 35%, #62ebd9 0%, #178074 70%, #0c3e38 100%);
   border: 2.5px solid #a8fff5;
   color: #ffffff;
   box-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 14px rgba(63, 224, 208, 0.5);
+}
+
+.btn-a:active, .btn-a.active {
+  transform: translate(-50%, 0) scale(0.92) !important;
+  filter: brightness(1.3) drop-shadow(0 0 16px #3fe0d0);
 }
 
 .btn-a .arcade-badge {
@@ -1109,12 +1109,17 @@ html, body {
   top: 50%;
   right: 0;
   transform: translate(0, -50%);
-  width: 60px;
-  height: 60px;
+  width: 62px;
+  height: 62px;
   background: radial-gradient(circle at 35% 35%, #ff7888 0%, #c4182b 70%, #630a14 100%);
   border: 2.5px solid #ffccd3;
   color: #ffffff;
   box-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 14px rgba(230, 57, 70, 0.5);
+}
+
+.btn-b:active, .btn-b.active {
+  transform: translate(0, -50%) scale(0.92) !important;
+  filter: brightness(1.3) drop-shadow(0 0 16px #ff4d61);
 }
 
 .btn-b .arcade-badge {
@@ -1126,12 +1131,17 @@ html, body {
   top: 50%;
   left: 0;
   transform: translate(0, -50%);
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   background: radial-gradient(circle at 35% 35%, #e2e8f0 0%, #4a5568 70%, #1a202c 100%);
   border: 2px solid #ffffff;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.btn-x:active, .btn-x.active {
+  transform: translate(0, -50%) scale(0.92) !important;
+  filter: brightness(1.3) drop-shadow(0 0 14px #ffffff);
 }
 
 .btn-x .arcade-label {
@@ -1143,12 +1153,17 @@ html, body {
   top: 0;
   left: 50%;
   transform: translate(-50%, 0);
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   background: radial-gradient(circle at 35% 35%, #ffb347 0%, #e65100 70%, #7a2b00 100%);
   border: 2px solid #ffd59e;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 10px rgba(255, 107, 53, 0.5);
+}
+
+.btn-y:active, .btn-y.active {
+  transform: translate(-50%, 0) scale(0.92) !important;
+  filter: brightness(1.3) drop-shadow(0 0 14px #ff6b35);
 }
 
 .btn-y .arcade-label {
