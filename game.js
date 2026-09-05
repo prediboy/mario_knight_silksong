@@ -792,8 +792,9 @@ class Game {
       const m = this.monsters[i];
       m.update(dt, this.player, this.levelManager.platforms, this.projectiles);
 
-      // Monster Attack / Slash Collision with Player
-      if (attackBox && m.checkOverlap(attackBox)) {
+      // Monster Attack / Slash Collision with Player (Single hit per swing)
+      if (attackBox && !this.player.attackHitEntities.has(m) && m.checkOverlap(attackBox)) {
+        this.player.attackHitEntities.add(m);
         const monsterDied = m.takeDamage(this.player.damage, this.particles, this.floatingTexts);
         this.screenShake = 0.2;
         this.player.addSoul(1); // Soul gained on hit!
@@ -807,9 +808,10 @@ class Game {
         }
       }
 
-      // Tornado Dash shred monsters
-      if (this.player.dashing && this.player.powers.tornadoDash && this.player.checkOverlap(m)) {
-        const died = m.takeDamage(50, this.particles, this.floatingTexts);
+      // Tornado Dash shred monsters (Single hit per dash)
+      if (this.player.dashing && this.player.powers.tornadoDash && !this.player.dashHitEntities.has(m) && this.player.checkOverlap(m)) {
+        this.player.dashHitEntities.add(m);
+        const died = m.takeDamage(25, this.particles, this.floatingTexts);
         this.player.addSoul(1);
         this.updateSoulUI();
         if (died) {
@@ -819,9 +821,10 @@ class Game {
         }
       }
 
-      // Ground slam hit monsters
-      if (this.player.groundSlamming && (this.player.checkOverlap(m) || (this.player.powers.seismicSlam && Math.abs(m.x - this.player.x) < 140))) {
-        const died = m.takeDamage(60, this.particles, this.floatingTexts);
+      // Ground slam hit monsters (Single hit per slam)
+      if (this.player.groundSlamming && !this.player.slamHitEntities.has(m) && (this.player.checkOverlap(m) || (this.player.powers.seismicSlam && Math.abs(m.x - this.player.x) < 140))) {
+        this.player.slamHitEntities.add(m);
+        const died = m.takeDamage(40, this.particles, this.floatingTexts);
         this.player.addSoul(1);
         this.updateSoulUI();
         if (died) {
@@ -855,14 +858,37 @@ class Game {
       const bossHpPct = Math.max(0, (this.activeBoss.hp / this.activeBoss.maxHp) * 100);
       this.bossBarFill.style.width = `${bossHpPct}%`;
 
-      // Player attacks Boss
-      if (attackBox && this.activeBoss.checkOverlap(attackBox)) {
+      // Player melee attacks Boss (Single hit per swing)
+      if (attackBox && !this.player.attackHitEntities.has(this.activeBoss) && this.activeBoss.checkOverlap(attackBox)) {
+        this.player.attackHitEntities.add(this.activeBoss);
         const bossDied = this.activeBoss.takeDamage(this.player.damage, this.particles, this.floatingTexts);
         this.screenShake = 0.3;
         this.player.addSoul(1); // Soul gained on Boss hit!
         this.updateSoulUI();
         if (this.player.vy > 0) this.player.pogoBounce();
 
+        if (bossDied) {
+          this.showLevelClear();
+        }
+      }
+
+      // Tornado Dash vs Boss
+      if (this.player.dashing && this.player.powers.tornadoDash && !this.player.dashHitEntities.has(this.activeBoss) && this.player.checkOverlap(this.activeBoss)) {
+        this.player.dashHitEntities.add(this.activeBoss);
+        const bossDied = this.activeBoss.takeDamage(25, this.particles, this.floatingTexts);
+        this.player.addSoul(1);
+        this.updateSoulUI();
+        if (bossDied) {
+          this.showLevelClear();
+        }
+      }
+
+      // Ground Slam vs Boss
+      if (this.player.groundSlamming && !this.player.slamHitEntities.has(this.activeBoss) && (this.player.checkOverlap(this.activeBoss) || (this.player.powers.seismicSlam && Math.abs(this.activeBoss.x - this.player.x) < 140))) {
+        this.player.slamHitEntities.add(this.activeBoss);
+        const bossDied = this.activeBoss.takeDamage(40, this.particles, this.floatingTexts);
+        this.player.addSoul(1);
+        this.updateSoulUI();
         if (bossDied) {
           this.showLevelClear();
         }

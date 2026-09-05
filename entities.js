@@ -225,7 +225,12 @@ class Player {
     this.slashTimer = 0;
     this.slashDuration = 0.22;
     this.slashCooldown = 0.12;
-    this.damage = 65; // Devastating Great Axe damage
+    this.damage = 32; // Balanced Great Axe damage per hit
+
+    // Sets to prevent multi-hit frame glitches during a single swing/dash/slam
+    this.attackHitEntities = new Set();
+    this.dashHitEntities = new Set();
+    this.slamHitEntities = new Set();
 
     // Overhauled 7 Epic Powers - Unlocked by conquering each level!
     this.powers = {
@@ -267,6 +272,9 @@ class Player {
     this.dashing = false;
     this.groundSlamming = false;
     this.airJumpsLeft = 0;
+    this.attackHitEntities.clear();
+    this.dashHitEntities.clear();
+    this.slamHitEntities.clear();
   }
 
   unlockPower(level) {
@@ -326,6 +334,7 @@ class Player {
     this.slashing = true;
     this.slashTimer = 0;
     this.slashCooldown = 0.12;
+    this.attackHitEntities.clear();
 
     if (this.powers.lightningAxe) {
       // Crackling Lightning Thunder Axe Slash!
@@ -338,7 +347,7 @@ class Player {
         0,
         true,
         'lightning',
-        65,
+        25,
         18
       ));
 
@@ -377,6 +386,7 @@ class Player {
     this.dashing = true;
     this.dashTimer = 0.22;
     this.dashCooldown = 0.45;
+    this.dashHitEntities.clear();
     this.vy = 0;
     this.dashSpeed = this.powers.tornadoDash ? 18.0 : 14.5;
     this.vx = (this.facingRight ? 1 : -1) * this.dashSpeed;
@@ -423,7 +433,7 @@ class Player {
         0,
         true,
         'black_hole',
-        90,
+        35,
         24
       ));
     } else if (this.powers.meteorBlaster) {
@@ -437,7 +447,7 @@ class Player {
         0,
         true,
         'meteor',
-        75,
+        50,
         18
       ));
     }
@@ -446,6 +456,7 @@ class Player {
   triggerGroundSlam() {
     if (!this.grounded && !this.groundSlamming) {
       this.groundSlamming = true;
+      this.slamHitEntities.clear();
       this.vy = 20;
       this.vx = 0;
     }
@@ -718,8 +729,9 @@ class SmallMonster {
   }
 
   takeDamage(amount, particles, floatingTexts) {
+    if (this.hitFlashTimer > 0.04) return false;
     this.hp -= amount;
-    this.hitFlashTimer = 0.14;
+    this.hitFlashTimer = 0.18;
     window.soundEngine.playHit();
     floatingTexts.push(new FloatingText(`-${amount}`, this.x, this.y - 10, '#ffd700', 10));
     floatingTexts.push(new FloatingText('+1 SOUL ✦', this.x - 5, this.y - 25, '#3fe0d0', 11));
@@ -740,19 +752,19 @@ class SmallMonster {
 
     if (this.hp <= 0) {
       this.alive = false;
-      window.soundEngine.playHit();
-      for (let i = 0; i < 10; i++) {
+      window.soundEngine.playMonsterDeath();
+      for (let i = 0; i < 14; i++) {
         particles.push(new Particle(
-          this.x + this.width / 2,
-          this.y + this.height / 2,
-          (Math.random() - 0.5) * 8,
-          (Math.random() - 0.5) * 8,
-          '#ffd700',
+          this.x + Math.random() * this.width,
+          this.y + Math.random() * this.height,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 10,
+          '#ff3d00',
           5,
-          0.5
+          0.6
         ));
       }
-      return true; // Monster died
+      return true; // Monster dead
     }
     return false;
   }
@@ -761,67 +773,52 @@ class SmallMonster {
     this.time += dt;
     if (this.hitFlashTimer > 0) this.hitFlashTimer -= dt;
 
-    const dx = player.x - this.x;
-    const dy = player.y - this.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (!this.flying) {
-      this.vy += 0.45 * 60 * dt;
-      if (this.vy > 12) this.vy = 12;
-
-      // Aggro AI: If player is within 450px, actively advance towards player!
-      if (dist < 450) {
-        this.vx = (dx < 0 ? -1 : 1) * this.speed;
-        this.facingRight = this.vx > 0;
-      }
-
-      // Move X
+    // Movement AI
+    if (this.flying) {
+      this.y = this.baseY + Math.sin(this.time * 3) * 35;
       this.x += this.vx * 60 * dt;
-
-      // Move Y & platform floor landing
+    } else {
+      this.vy += 0.35 * 60 * dt; // Gravity
+      this.x += this.vx * 60 * dt;
       this.y += this.vy * 60 * dt;
+
+      // Platform collisions
       for (const p of platforms) {
-        const pw = p.w !== undefined ? p.w : p.width;
-        const ph = p.h !== undefined ? p.h : p.height;
-        if (this.x + this.width > p.x && this.x < p.x + pw) {
-          if (this.y + this.height >= p.y && this.y + this.height <= p.y + ph + 14 && this.vy >= 0) {
+        if (this.checkOverlap(p)) {
+          if (this.vy > 0) {
             this.y = p.y - this.height;
             this.vy = 0;
           }
         }
       }
-    } else {
-      // Flying AI (Needle Wasp / Shadow Wisp)
-      if (dist < 380) {
-        // Swoop directly towards player
-        this.vx = (dx / dist) * this.speed * 1.2;
-        this.vy = (dy / dist) * this.speed * 1.2;
-      } else {
-        // Hover wave
-        this.y = this.baseY + Math.sin(this.time * 3) * 35;
-        this.vx = Math.sin(this.time * 2) * this.speed;
-      }
-
-      this.facingRight = this.vx > 0;
-      this.x += this.vx * 60 * dt;
-      this.y += this.vy * 60 * dt;
     }
 
-    // Piranha Pod Shooting
-    if (this.type === 'piranha_pod') {
+    // Turn around at level borders
+    if (this.x < 30) {
+      this.x = 30;
+      this.vx = Math.abs(this.vx);
+      this.facingRight = true;
+    } else if (this.x > 1350) {
+      this.x = 1350;
+      this.vx = -Math.abs(this.vx);
+      this.facingRight = false;
+    }
+
+    // Ranged attacks for Piranha / Spiny / Wisp
+    if (this.type === 'piranha_pod' || this.type === 'shadow_wisp') {
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
-        this.shootTimer = 2.5;
-        const shootVx = dx < 0 ? -4.5 : 4.5;
+        this.shootTimer = 2.4 + Math.random() * 1.5;
+        const shootVx = (player.x > this.x ? 1 : -1) * 4.5;
         projectiles.push(new Projectile(
           this.x + this.width / 2,
-          this.y + 4,
+          this.y + this.height / 2,
           shootVx,
           -1.5,
           false,
-          'boss_spore',
+          'fireball',
           1,
-          8
+          10
         ));
       }
     }
@@ -831,18 +828,16 @@ class SmallMonster {
     if (!rect) return false;
     const rw = rect.w !== undefined ? rect.w : (rect.width !== undefined ? rect.width : 0);
     const rh = rect.h !== undefined ? rect.h : (rect.height !== undefined ? rect.height : 0);
-    const tw = this.w !== undefined ? this.w : (this.width !== undefined ? this.width : 0);
-    const th = this.h !== undefined ? this.h : (this.height !== undefined ? this.height : 0);
     return (
       this.x < rect.x + rw &&
-      this.x + tw > rect.x &&
+      this.x + this.width > rect.x &&
       this.y < rect.y + rh &&
-      this.y + th > rect.y
+      this.y + this.height > rect.y
     );
   }
 
   draw(ctx) {
-    Sprites.drawSmallMonster(
+    Sprites.drawMonster(
       ctx,
       this.type,
       this.x,
@@ -873,14 +868,14 @@ class Boss {
 
     // Boss Name & Config by Level
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 320, w: 90, h: 80, speed: 2.0 },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 440, w: 80, h: 90, speed: 3.5 },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 560, w: 95, h: 95, speed: 2.8 },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 680, w: 85, h: 100, speed: 3.8 },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 800, w: 110, h: 85, speed: 3.2 },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 950, w: 105, h: 95, speed: 2.5 },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 1150, w: 95, h: 110, speed: 4.2 },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 1400, w: 115, h: 115, speed: 4.5 }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 240, w: 90, h: 80, speed: 2.2 },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 320, w: 80, h: 90, speed: 3.5 },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 420, w: 95, h: 95, speed: 2.8 },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 520, w: 85, h: 100, speed: 3.8 },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 640, w: 110, h: 85, speed: 3.2 },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 760, w: 105, h: 95, speed: 2.5 },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 900, w: 95, h: 110, speed: 4.2 },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 1100, w: 115, h: 115, speed: 4.5 }
     ];
 
     const cfg = bossConfigs[bossLevel - 1];
@@ -896,8 +891,9 @@ class Boss {
   }
 
   takeDamage(amount, particles, floatingTexts) {
+    if (this.hitFlashTimer > 0.05) return false;
     this.hp -= amount;
-    this.hitFlashTimer = 0.12;
+    this.hitFlashTimer = 0.22;
     window.soundEngine.playHit();
     floatingTexts.push(new FloatingText(`-${amount}`, this.x + this.width / 2, this.y - 15, '#ff4d61', 13));
     floatingTexts.push(new FloatingText('+1 SOUL ✦', this.x + this.width / 2, this.y - 32, '#3fe0d0', 12));
