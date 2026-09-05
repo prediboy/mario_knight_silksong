@@ -1295,3 +1295,148 @@ html, body {
     display: none;
   }
 }
+
+/* =========================================
+   LANDSCAPE AUTO-ROTATION OPTIMIZATIONS
+   ========================================= */
+@media (orientation: landscape) and (max-height: 550px) {
+  #hud {
+    height: 48px;
+    padding: 2px 14px;
+  }
+  .hud-label {
+    display: none;
+  }
+  .hp-section {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+  .mask {
+    width: 14px;
+    height: 18px;
+    border-radius: 4px;
+  }
+  .mask::after {
+    font-size: 8px;
+    top: 2px;
+  }
+  .soul-vessel {
+    width: 28px;
+    height: 28px;
+  }
+  .soul-info {
+    font-size: 9px;
+  }
+  .soul-count {
+    font-size: 9px;
+  }
+  .hud-center {
+    min-width: 140px;
+  }
+  .level-badge {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+  .timer-wrapper {
+    font-size: 10px;
+    margin: 0;
+  }
+  .distance-text {
+    font-size: 8px;
+  }
+  .distance-bar-bg {
+    height: 6px;
+  }
+  .powers-container {
+    display: none !important;
+  }
+  #btn-pause {
+    padding: 3px 8px;
+    font-size: 9px;
+  }
+
+  /* Modals in landscape */
+  .modal {
+    padding: 6px 12px;
+  }
+  .modal-content {
+    max-height: 94dvh !important;
+    padding: 10px 20px !important;
+    gap: 6px !important;
+  }
+  .game-title {
+    font-size: 18px !important;
+    letter-spacing: 2px !important;
+    line-height: 1 !important;
+  }
+  .subtitle {
+    font-size: 12px !important;
+    letter-spacing: 3px !important;
+  }
+  .tagline {
+    display: none !important;
+  }
+  .btn-hero {
+    font-size: 13px !important;
+    padding: 8px 20px !important;
+    max-width: 320px !important;
+  }
+  .rules-card {
+    max-height: 80px !important;
+    padding: 6px 10px !important;
+    font-size: 10px !important;
+  }
+  .controls-guide {
+    display: none !important;
+  }
+
+  /* Touch controls in landscape */
+  .touch-controls {
+    display: flex !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 6px)) !important;
+    left: calc(14px + env(safe-area-inset-left, 8px)) !important;
+    right: calc(14px + env(safe-area-inset-right, 8px)) !important;
+  }
+  .joystick-zone {
+    width: 110px !important;
+    height: 110px !important;
+  }
+  .joystick-base {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  .joystick-knob {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  .arcade-diamond {
+    width: 140px !important;
+    height: 140px !important;
+  }
+  .btn-a, .btn-b {
+    width: 52px !important;
+    height: 52px !important;
+  }
+  .btn-x, .btn-y {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .arcade-icon {
+    font-size: 13px !important;
+  }
+  .arcade-badge {
+    font-size: 8px !important;
+  }
+  .arcade-label {
+    font-size: 7px !important;
+  }
+  .arcade-top-row {
+    gap: 6px !important;
+    margin-right: 4px !important;
+  }
+  .arcade-mini-btn {
+    padding: 2px 8px !important;
+    font-size: 8px !important;
+  }
+}

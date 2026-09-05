@@ -84,7 +84,19 @@ class Game {
     // Timing loop
     this.lastTime = performance.now();
     this.resizeCanvas();
-    window.addEventListener('resize', () => this.resizeCanvas());
+    
+    // Viewport & Auto-rotation handling
+    const handleViewportChange = () => {
+      this.resizeCanvas();
+      setTimeout(() => this.resizeCanvas(), 60);
+      setTimeout(() => this.resizeCanvas(), 250);
+    };
+
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('orientationchange', handleViewportChange);
+    if (window.screen && window.screen.orientation) {
+      window.screen.orientation.addEventListener('change', handleViewportChange);
+    }
 
     this.bindEvents();
     this.bindTouchControls();
