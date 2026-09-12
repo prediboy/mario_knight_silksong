@@ -4,15 +4,15 @@ const LEVEL_CONFIGS = [
   {
     level: 1,
     name: 'Forgotten Mushroom Grotto',
-    targetKm: 2500.0,
+    targetKm: 1000.0,
     themeColor: '#7b1fa2',
     bgColor1: '#0a0512',
     bgColor2: '#190d2e',
     groundColor: '#2d1842',
     platformColor: '#4a256d',
     spikeColor: '#e040fb',
-    monsterTypes: ['void_goomba', 'silk_spiny', 'piranha_pod'],
-    spawnInterval: 2.6,
+    monsterTypes: ['void_goomba'],
+    spawnInterval: 4.5,
     reward: {
       icon: '⚡',
       name: 'LIGHTNING THUNDER AXE',
@@ -22,15 +22,15 @@ const LEVEL_CONFIGS = [
   {
     level: 2,
     name: "Queen's Silk Cradle",
-    targetKm: 3000.0,
+    targetKm: 1500.0,
     themeColor: '#fbc02d',
     bgColor1: '#141208',
     bgColor2: '#2c250b',
     groundColor: '#423712',
     platformColor: '#6d5a1e',
     spikeColor: '#ffd54f',
-    monsterTypes: ['silk_spiny', 'needle_wasp', 'void_goomba'],
-    spawnInterval: 2.2,
+    monsterTypes: ['void_goomba', 'silk_spiny'],
+    spawnInterval: 3.5,
     reward: {
       icon: '🌪️',
       name: 'TORNADO SILK DASH',
@@ -40,15 +40,15 @@ const LEVEL_CONFIGS = [
   {
     level: 3,
     name: 'Molten Koopa Core',
-    targetKm: 3500.0,
+    targetKm: 2000.0,
     themeColor: '#e64a19',
     bgColor1: '#140602',
     bgColor2: '#2d0c04',
     groundColor: '#451608',
     platformColor: '#75260e',
     spikeColor: '#ff5722',
-    monsterTypes: ['shield_beetle', 'silk_spiny', 'piranha_pod'],
-    spawnInterval: 1.9,
+    monsterTypes: ['silk_spiny', 'shield_beetle'],
+    spawnInterval: 3.0,
     reward: {
       icon: '🔥',
       name: 'METEOR MAGMA BLASTER',
@@ -58,15 +58,15 @@ const LEVEL_CONFIGS = [
   {
     level: 4,
     name: 'Mantis Sanctum Spire',
-    targetKm: 4000.0,
+    targetKm: 2500.0,
     themeColor: '#1976d2',
     bgColor1: '#040b17',
     bgColor2: '#081730',
     groundColor: '#0e274f',
     platformColor: '#184285',
     spikeColor: '#40c4ff',
-    monsterTypes: ['needle_wasp', 'shield_beetle', 'shadow_wisp'],
-    spawnInterval: 1.7,
+    monsterTypes: ['needle_wasp', 'void_goomba'],
+    spawnInterval: 2.5,
     reward: {
       icon: '🪽',
       name: 'HOLY MONARCH TRIPLE JUMP',
@@ -76,15 +76,15 @@ const LEVEL_CONFIGS = [
   {
     level: 5,
     name: 'Abyssal Mariana Trench',
-    targetKm: 4500.0,
+    targetKm: 3000.0,
     themeColor: '#00897b',
     bgColor1: '#011210',
     bgColor2: '#032622',
     groundColor: '#063d36',
     platformColor: '#0b665b',
     spikeColor: '#64ffda',
-    monsterTypes: ['shadow_wisp', 'piranha_pod', 'void_goomba'],
-    spawnInterval: 1.5,
+    monsterTypes: ['shadow_wisp', 'piranha_pod'],
+    spawnInterval: 2.2,
     reward: {
       icon: '🛡️',
       name: 'DIVINE AEGIS REFLECTOR',
@@ -94,15 +94,15 @@ const LEVEL_CONFIGS = [
   {
     level: 6,
     name: 'Crystal Geode Cavern',
-    targetKm: 5000.0,
+    targetKm: 3500.0,
     themeColor: '#ab47bc',
     bgColor1: '#120417',
     bgColor2: '#24082e',
     groundColor: '#3c0e4c',
     platformColor: '#651780',
     spikeColor: '#ea80fc',
-    monsterTypes: ['silk_spiny', 'shield_beetle', 'needle_wasp'],
-    spawnInterval: 1.3,
+    monsterTypes: ['silk_spiny', 'needle_wasp'],
+    spawnInterval: 2.0,
     reward: {
       icon: '🌋',
       name: 'TITAN SEISMIC EARTHQUAKE',
@@ -112,15 +112,15 @@ const LEVEL_CONFIGS = [
   {
     level: 7,
     name: 'Scarlet Nightmare Realm',
-    targetKm: 5500.0,
+    targetKm: 4000.0,
     themeColor: '#d32f2f',
     bgColor1: '#1a0406',
     bgColor2: '#33080b',
     groundColor: '#4f0d12',
     platformColor: '#80151d',
     spikeColor: '#ff1744',
-    monsterTypes: ['shadow_wisp', 'needle_wasp', 'shield_beetle', 'void_goomba'],
-    spawnInterval: 1.2,
+    monsterTypes: ['shadow_wisp', 'shield_beetle'],
+    spawnInterval: 1.8,
     reward: {
       icon: '🌌',
       name: 'ABYSSAL BLACK HOLE VOID',
@@ -130,15 +130,15 @@ const LEVEL_CONFIGS = [
   {
     level: 8,
     name: 'The Pantheon of Radiance',
-    targetKm: 6500.0,
+    targetKm: 5000.0,
     themeColor: '#fbc02d',
     bgColor1: '#1a1705',
     bgColor2: '#3b3309',
     groundColor: '#5c4f0d',
     platformColor: '#8f7b15',
     spikeColor: '#ffee58',
-    monsterTypes: ['needle_wasp', 'shadow_wisp', 'shield_beetle', 'silk_spiny', 'void_goomba'],
-    spawnInterval: 1.0,
+    monsterTypes: ['needle_wasp', 'silk_spiny', 'void_goomba'],
+    spawnInterval: 1.5,
     reward: {
       icon: '👑',
       name: 'CHAMPION OF SILKSONG',
@@ -151,19 +151,36 @@ class LevelManager {
   constructor() {
     this.currentLevel = 1;
     this.config = LEVEL_CONFIGS[0];
-    this.levelWidth = 5800; // Grand 5800px expedition
+    this.levelWidth = 2700;
     this.levelHeight = 600;
     this.platforms = [];
     this.spikes = [];
-    this.bossArenaStartX = 4400; // Longer 4400px traversal before Boss Colosseum
-    this.bossSpawnX = 5100;
-    this.bossSpawnY = 360;
+    this.bossArenaStartX = 1600;
+    this.bossSpawnX = 2150;
+    this.bossSpawnY = 380;
     this.spawnTimer = 0;
   }
 
   loadLevel(levelIndex) {
     this.currentLevel = levelIndex;
     this.config = LEVEL_CONFIGS[levelIndex - 1];
+
+    const arenaMap = [
+      { start: 1600, width: 2700, spawnX: 2150, spawnY: 380 },
+      { start: 2000, width: 3100, spawnX: 2550, spawnY: 380 },
+      { start: 2400, width: 3500, spawnX: 2950, spawnY: 380 },
+      { start: 2800, width: 3900, spawnX: 3350, spawnY: 380 },
+      { start: 3200, width: 4300, spawnX: 3750, spawnY: 380 },
+      { start: 3600, width: 4700, spawnX: 4150, spawnY: 380 },
+      { start: 4000, width: 5100, spawnX: 4550, spawnY: 380 },
+      { start: 4400, width: 5600, spawnX: 5000, spawnY: 380 },
+    ];
+    const aCfg = arenaMap[levelIndex - 1] || arenaMap[0];
+    this.bossArenaStartX = aCfg.start;
+    this.levelWidth = aCfg.width;
+    this.bossSpawnX = aCfg.spawnX;
+    this.bossSpawnY = aCfg.spawnY;
+
     this.generateMap();
   }
 
@@ -178,7 +195,7 @@ class LevelManager {
     this.platforms.push({ x: -40, y: 0, w: 40, h: 600 });
     this.platforms.push({ x: this.levelWidth, y: 0, w: 40, h: 600 });
 
-    // Stepped Traversal Platforms leading up to Boss Arena (0 -> 4400px)
+    // Stepped Traversal Platforms leading up to Boss Arena
     const chunkWidth = 300;
     const totalChunks = Math.floor(this.bossArenaStartX / chunkWidth);
 
@@ -202,19 +219,19 @@ class LevelManager {
         this.platforms.push({ x: cx + 160, y: step2, w: 140, h: 20 });
       }
 
-      // Ground spike hazards with platforms above
-      if (c % 2 === 1 && cx < this.bossArenaStartX - 200) {
+      // Ground spike hazards only on later levels (Level 3+)
+      if (this.currentLevel >= 3 && c % 3 === 1 && cx < this.bossArenaStartX - 200) {
         this.spikes.push({ x: cx + 50, y: 504, w: 80, h: 16 });
       }
     }
 
-    // Boss Arena Tactical Platforms at the end of the level (4400 -> 5800px)
-    // Wide open Colosseum layout with aerial tactical perches
-    this.platforms.push({ x: 4520, y: 410, w: 170, h: 20 });
-    this.platforms.push({ x: 5500, y: 410, w: 170, h: 20 });
-    this.platforms.push({ x: 4740, y: 310, w: 200, h: 20 });
-    this.platforms.push({ x: 5280, y: 310, w: 200, h: 20 });
-    this.platforms.push({ x: 5000, y: 180, w: 280, h: 20 });
+    // Boss Arena Tactical Platforms at the end of the level
+    const bx = this.bossArenaStartX;
+    this.platforms.push({ x: bx + 120, y: 410, w: 170, h: 20 });
+    this.platforms.push({ x: bx + 780, y: 410, w: 170, h: 20 });
+    this.platforms.push({ x: bx + 320, y: 310, w: 200, h: 20 });
+    this.platforms.push({ x: bx + 560, y: 310, w: 200, h: 20 });
+    this.platforms.push({ x: bx + 420, y: 180, w: 240, h: 20 });
   }
 
   updateMonsterSpawns(dt, player, monsters, isBossActive) {

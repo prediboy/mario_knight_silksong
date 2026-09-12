@@ -53,7 +53,7 @@ class Game {
     this.state = 'START'; // START, PLAYING, BOSS, LEVEL_CLEAR, GAME_OVER, WIN
     this.paused = false;
     this.currentLevel = 1;
-    this.levelTimer = 60.0; // Balanced 60-Second Expedition Countdown!
+    this.levelTimer = 90.0; // Relaxed 90-Second Expedition Countdown!
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.cameraX = 0;
@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 60.0; // Balanced 60s Expedition Countdown
+    this.levelTimer = 90.0; // Relaxed 90s Expedition Countdown
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -583,10 +583,10 @@ class Game {
 
     // Initial monsters in traversal path (Spaced out comfortably)
     const types = this.levelManager.config.monsterTypes;
-    const monsterCount = levelNum === 1 ? 6 : 9;
-    const spacing = levelNum === 1 ? 550 : 420;
+    const monsterCount = levelNum === 1 ? 4 : 7;
+    const spacing = levelNum === 1 ? 320 : 420;
     for (let i = 0; i < monsterCount; i++) {
-      const sx = (levelNum === 1 ? 500 : 380) + i * spacing;
+      const sx = (levelNum === 1 ? 520 : 400) + i * spacing;
       const type = types[i % types.length];
       const sy = (type === 'needle_wasp' || type === 'shadow_wisp') ? 240 + Math.random() * 100 : 490;
       this.monsters.push(new SmallMonster(sx, sy, type));
@@ -606,7 +606,7 @@ class Game {
 
     this.state = 'PLAYING';
     window.soundEngine.startBGM('ambient');
-    this.showToast(`⚡ 60s EXPEDITION STARTED: ${this.levelManager.config.name} ⚡`);
+    this.showToast(`✨ LEVEL ${levelNum} EXPEDITION: ${this.levelManager.config.name} ✨`);
   }
 
   handleBossDefeat() {
@@ -747,18 +747,18 @@ class Game {
   }
 
   update(dt) {
-    // 1. Timer Countdown (60 seconds)
+    // 1. Timer Countdown (90 seconds)
     this.levelTimer -= dt;
     this.timerDisplay.textContent = Math.max(0, this.levelTimer).toFixed(1);
 
-    if (this.levelTimer <= 10.0) {
+    if (this.levelTimer <= 12.0) {
       this.timerDisplay.parentElement.classList.add('danger');
     } else {
       this.timerDisplay.parentElement.classList.remove('danger');
     }
 
     if (this.levelTimer <= 0) {
-      this.showGameOver('TIME RAN OUT! You ran out of your 60 seconds.');
+      this.showGameOver('TIME RAN OUT! You ran out of your 90 seconds.');
       return;
     }
 

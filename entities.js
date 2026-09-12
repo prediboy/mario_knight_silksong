@@ -224,8 +224,8 @@ class Player {
     this.slashing = false;
     this.slashTimer = 0;
     this.slashDuration = 0.22;
-    this.slashCooldown = 0.12;
-    this.damage = 30; // Solid Great Axe damage per hit
+    this.slashCooldown = 0.08;
+    this.damage = 35; // Heroic Great Axe damage per hit
 
     // Sets to prevent multi-hit frame glitches during a single swing/dash/slam
     this.attackHitEntities = new Set();
@@ -294,7 +294,7 @@ class Player {
     if (this.invulnerableTimer > 0 || this.dead || this.dashing) return false;
 
     this.masks = Math.max(0, this.masks - amountMasks);
-    this.invulnerableTimer = 1.0; // Forgiving 1.0s invulnerability window
+    this.invulnerableTimer = 1.2; // Generous 1.2s recovery invulnerability
     window.soundEngine.playHurt();
 
     if (this.masks <= 0) {
@@ -304,7 +304,7 @@ class Player {
     return true;
   }
 
-  addSoul(amount = 1) {
+  addSoul(amount = 2) {
     if (this.soul < this.maxSoul) {
       this.soul = Math.min(this.maxSoul, this.soul + amount);
       window.soundEngine.playSoulAbsorb();
@@ -315,9 +315,9 @@ class Player {
   }
 
   focusHeal() {
-    // 10/10 Soul restores +2 Life Masks
+    // 10/10 Soul completely restores all Life Masks to full!
     if (this.soul >= this.maxSoul && this.masks < this.maxMasks) {
-      this.masks = Math.min(this.maxMasks, this.masks + 2);
+      this.masks = this.maxMasks;
       this.soul = 0;
       window.soundEngine.playFocusHeal();
       return true;
@@ -666,63 +666,63 @@ class SmallMonster {
     this.time = Math.random() * 10;
     this.hitFlashTimer = 0;
 
-    // Attributes by monster type
+    // Attributes by monster type (Balanced & Punchy)
     switch (type) {
       case 'void_goomba':
         this.width = 30;
         this.height = 28;
-        this.hp = 40;
-        this.speed = 1.6;
+        this.hp = 25; // 1-hit kill with Great Axe (35 dmg)!
+        this.speed = 1.2;
         this.flying = false;
         break;
       case 'silk_spiny':
         this.width = 32;
         this.height = 24;
-        this.hp = 60;
-        this.speed = 2.0;
+        this.hp = 35;
+        this.speed = 1.4;
         this.flying = false;
         break;
       case 'needle_wasp':
         this.width = 28;
         this.height = 28;
-        this.hp = 35;
-        this.speed = 3.2;
+        this.hp = 25;
+        this.speed = 2.0;
         this.flying = true;
         this.baseY = y;
         break;
       case 'piranha_pod':
         this.width = 28;
         this.height = 36;
-        this.hp = 70;
+        this.hp = 40;
         this.speed = 0;
         this.flying = false;
         break;
       case 'shield_beetle':
         this.width = 32;
         this.height = 30;
-        this.hp = 90;
-        this.speed = 1.8;
+        this.hp = 50;
+        this.speed = 1.4;
         this.flying = false;
         break;
       case 'shadow_wisp':
         this.width = 26;
         this.height = 26;
-        this.hp = 32;
-        this.speed = 2.6;
+        this.hp = 25;
+        this.speed = 1.8;
         this.flying = true;
         this.baseY = y;
         break;
       default:
         this.width = 28;
         this.height = 28;
-        this.hp = 40;
-        this.speed = 1.6;
+        this.hp = 25;
+        this.speed = 1.2;
         this.flying = false;
     }
 
     this.vx = -this.speed;
     this.vy = 0;
-    this.shootTimer = 1.5 + Math.random() * 1.5;
+    this.shootTimer = 3.0 + Math.random() * 2.0;
   }
 
   takeDamage(amount, particles, floatingTexts) {
@@ -884,14 +884,14 @@ class Boss {
 
     // Balanced & Enjoyable Boss Progression across all 8 Titans
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 200, w: 90, h: 80, speed: 2.2, isFlying: false },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 350, w: 80, h: 90, speed: 3.2, isFlying: true },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 550, w: 95, h: 95, speed: 2.8, isFlying: false },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 800, w: 85, h: 100, speed: 3.5, isFlying: true },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 1100, w: 110, h: 85, speed: 3.2, isFlying: true },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 1450, w: 105, h: 95, speed: 2.8, isFlying: false },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 1850, w: 95, h: 110, speed: 3.8, isFlying: true },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 2300, w: 115, h: 115, speed: 4.2, isFlying: true }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 120, w: 90, h: 80, speed: 1.6, isFlying: false },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 220, w: 80, h: 90, speed: 2.5, isFlying: true },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 360, w: 95, h: 95, speed: 2.2, isFlying: false },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 500, w: 85, h: 100, speed: 2.6, isFlying: true },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 700, w: 110, h: 85, speed: 2.5, isFlying: true },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 950, w: 105, h: 95, speed: 2.2, isFlying: false },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 1200, w: 95, h: 110, speed: 3.0, isFlying: true },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 1500, w: 115, h: 115, speed: 3.2, isFlying: true }
     ];
 
     const cfg = bossConfigs[bossLevel - 1];
@@ -929,10 +929,10 @@ class Boss {
       ));
     }
 
-    // Phase shift at 40% HP (Enraged & Speed boost)
-    if (this.hp < this.maxHp * 0.4 && this.phase === 1) {
+    // Phase shift at 35% HP (Enraged & Speed boost)
+    if (this.hp < this.maxHp * 0.35 && this.phase === 1) {
       this.phase = 2;
-      this.baseSpeed *= 1.25;
+      this.baseSpeed *= 1.2;
       window.soundEngine.playBossRoar();
       floatingTexts.push(new FloatingText('⚡ PHASE 2 ENRAGED! ⚡', this.x, this.y - 45, '#ffd700', 14));
     }
@@ -970,7 +970,7 @@ class Boss {
     // Readable boss attack frequency
     if (this.attackTimer <= 0) {
       this.executeAttack(player, projectiles, particles);
-      this.attackTimer = this.phase === 2 ? 1.0 : 1.5;
+      this.attackTimer = this.phase === 2 ? 1.4 : 2.0;
     }
 
     // Boss Level Specific AI Movement
@@ -1019,13 +1019,13 @@ class Boss {
     const dir = this.facingRight ? 1 : -1;
 
     switch (this.bossLevel) {
-      case 1: // Spore Eruption Shockwave & Ground Volleys
-        for (let a = -0.6; a <= 0.6; a += 0.3) {
+      case 1: // Spore Eruption (2 slow bouncy spores)
+        for (let a = -0.2; a <= 0.2; a += 0.4) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            Math.sin(a) * 5.8 * dir,
-            -Math.cos(a) * 5.5,
+            dir * 3.6,
+            -3.5,
             false,
             'boss_spore',
             1,
