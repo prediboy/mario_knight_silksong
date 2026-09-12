@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 45.0; // Comfortable 45s Countdown
+    this.levelTimer = 60.0; // Challenging 60s Expedition Countdown
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -581,12 +581,12 @@ class Game {
     // Hornet cage appears strictly after defeating the final boss (Level 8)
     this.hornetCage = null;
 
-    // Initial monsters in traversal path
+    // Initial monsters in 4400px traversal path
     const types = this.levelManager.config.monsterTypes;
-    for (let i = 0; i < 5; i++) {
-      const sx = 450 + i * 380;
+    for (let i = 0; i < 11; i++) {
+      const sx = 380 + i * 350;
       const type = types[i % types.length];
-      const sy = (type === 'needle_wasp' || type === 'shadow_wisp') ? 260 + Math.random() * 80 : 490;
+      const sy = (type === 'needle_wasp' || type === 'shadow_wisp') ? 240 + Math.random() * 100 : 490;
       this.monsters.push(new SmallMonster(sx, sy, type));
     }
 
@@ -604,13 +604,13 @@ class Game {
 
     this.state = 'PLAYING';
     window.soundEngine.startBGM('ambient');
-    this.showToast(`⚡ 45s RUSH STARTED: ${this.levelManager.config.name} ⚡`);
+    this.showToast(`⚡ 60s EXPEDITION STARTED: ${this.levelManager.config.name} ⚡`);
   }
 
   handleBossDefeat() {
     if (this.currentLevel === 8) {
       // Spawn Hornet's Trapping Cage right where Radiance Koopa God was slain!
-      const spawnX = this.activeBoss ? Math.max(2480, Math.min(2920, this.activeBoss.x)) : (this.levelManager.bossSpawnX + 240);
+      const spawnX = this.activeBoss ? Math.max(this.levelManager.bossArenaStartX + 80, Math.min(this.levelManager.levelWidth - 250, this.activeBoss.x)) : (this.levelManager.bossSpawnX + 240);
       this.hornetCage = new HornetCage(spawnX, 420);
       this.screenShake = 1.0;
       window.soundEngine.playBossRoar();

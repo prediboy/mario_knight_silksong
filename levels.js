@@ -4,7 +4,7 @@ const LEVEL_CONFIGS = [
   {
     level: 1,
     name: 'Forgotten Mushroom Grotto',
-    targetKm: 1000.0,
+    targetKm: 2500.0,
     themeColor: '#7b1fa2',
     bgColor1: '#0a0512',
     bgColor2: '#190d2e',
@@ -12,7 +12,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#4a256d',
     spikeColor: '#e040fb',
     monsterTypes: ['void_goomba', 'silk_spiny', 'piranha_pod'],
-    spawnInterval: 1.8,
+    spawnInterval: 1.3,
     reward: {
       icon: '⚡',
       name: 'LIGHTNING THUNDER AXE',
@@ -22,7 +22,7 @@ const LEVEL_CONFIGS = [
   {
     level: 2,
     name: "Queen's Silk Cradle",
-    targetKm: 1015.0,
+    targetKm: 3000.0,
     themeColor: '#fbc02d',
     bgColor1: '#141208',
     bgColor2: '#2c250b',
@@ -30,7 +30,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#6d5a1e',
     spikeColor: '#ffd54f',
     monsterTypes: ['silk_spiny', 'needle_wasp', 'void_goomba'],
-    spawnInterval: 1.6,
+    spawnInterval: 1.2,
     reward: {
       icon: '🌪️',
       name: 'TORNADO SILK DASH',
@@ -40,7 +40,7 @@ const LEVEL_CONFIGS = [
   {
     level: 3,
     name: 'Molten Koopa Core',
-    targetKm: 1030.0,
+    targetKm: 3500.0,
     themeColor: '#e64a19',
     bgColor1: '#140602',
     bgColor2: '#2d0c04',
@@ -48,7 +48,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#75260e',
     spikeColor: '#ff5722',
     monsterTypes: ['shield_beetle', 'silk_spiny', 'piranha_pod'],
-    spawnInterval: 1.5,
+    spawnInterval: 1.1,
     reward: {
       icon: '🔥',
       name: 'METEOR MAGMA BLASTER',
@@ -58,7 +58,7 @@ const LEVEL_CONFIGS = [
   {
     level: 4,
     name: 'Mantis Sanctum Spire',
-    targetKm: 1045.0,
+    targetKm: 4000.0,
     themeColor: '#1976d2',
     bgColor1: '#040b17',
     bgColor2: '#081730',
@@ -66,7 +66,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#184285',
     spikeColor: '#40c4ff',
     monsterTypes: ['needle_wasp', 'shield_beetle', 'shadow_wisp'],
-    spawnInterval: 1.4,
+    spawnInterval: 1.0,
     reward: {
       icon: '🪽',
       name: 'HOLY MONARCH TRIPLE JUMP',
@@ -76,7 +76,7 @@ const LEVEL_CONFIGS = [
   {
     level: 5,
     name: 'Abyssal Mariana Trench',
-    targetKm: 1060.0,
+    targetKm: 4500.0,
     themeColor: '#00897b',
     bgColor1: '#011210',
     bgColor2: '#032622',
@@ -84,7 +84,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#0b665b',
     spikeColor: '#64ffda',
     monsterTypes: ['shadow_wisp', 'piranha_pod', 'void_goomba'],
-    spawnInterval: 1.3,
+    spawnInterval: 0.9,
     reward: {
       icon: '🛡️',
       name: 'DIVINE AEGIS REFLECTOR',
@@ -94,7 +94,7 @@ const LEVEL_CONFIGS = [
   {
     level: 6,
     name: 'Crystal Geode Cavern',
-    targetKm: 1075.0,
+    targetKm: 5000.0,
     themeColor: '#ab47bc',
     bgColor1: '#120417',
     bgColor2: '#24082e',
@@ -102,7 +102,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#651780',
     spikeColor: '#ea80fc',
     monsterTypes: ['silk_spiny', 'shield_beetle', 'needle_wasp'],
-    spawnInterval: 1.2,
+    spawnInterval: 0.85,
     reward: {
       icon: '🌋',
       name: 'TITAN SEISMIC EARTHQUAKE',
@@ -112,7 +112,7 @@ const LEVEL_CONFIGS = [
   {
     level: 7,
     name: 'Scarlet Nightmare Realm',
-    targetKm: 1090.0,
+    targetKm: 5500.0,
     themeColor: '#d32f2f',
     bgColor1: '#1a0406',
     bgColor2: '#33080b',
@@ -120,7 +120,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#80151d',
     spikeColor: '#ff1744',
     monsterTypes: ['shadow_wisp', 'needle_wasp', 'shield_beetle', 'void_goomba'],
-    spawnInterval: 1.1,
+    spawnInterval: 0.8,
     reward: {
       icon: '🌌',
       name: 'ABYSSAL BLACK HOLE VOID',
@@ -130,7 +130,7 @@ const LEVEL_CONFIGS = [
   {
     level: 8,
     name: 'The Pantheon of Radiance',
-    targetKm: 1105.0,
+    targetKm: 6500.0,
     themeColor: '#fbc02d',
     bgColor1: '#1a1705',
     bgColor2: '#3b3309',
@@ -138,7 +138,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#8f7b15',
     spikeColor: '#ffee58',
     monsterTypes: ['needle_wasp', 'shadow_wisp', 'shield_beetle', 'silk_spiny', 'void_goomba'],
-    spawnInterval: 1.0,
+    spawnInterval: 0.7,
     reward: {
       icon: '👑',
       name: 'CHAMPION OF SILKSONG',
@@ -151,13 +151,13 @@ class LevelManager {
   constructor() {
     this.currentLevel = 1;
     this.config = LEVEL_CONFIGS[0];
-    this.levelWidth = 3600;
+    this.levelWidth = 5800; // Grand 5800px expedition
     this.levelHeight = 600;
     this.platforms = [];
     this.spikes = [];
-    this.bossArenaStartX = 2500;
-    this.bossSpawnX = 3000;
-    this.bossSpawnY = 380;
+    this.bossArenaStartX = 4400; // Longer 4400px traversal before Boss Colosseum
+    this.bossSpawnX = 5100;
+    this.bossSpawnY = 360;
     this.spawnTimer = 0;
   }
 
@@ -178,8 +178,8 @@ class LevelManager {
     this.platforms.push({ x: -40, y: 0, w: 40, h: 600 });
     this.platforms.push({ x: this.levelWidth, y: 0, w: 40, h: 600 });
 
-    // Stepped Traversal Platforms leading up to Boss Arena (0 -> 2500px)
-    const chunkWidth = 320;
+    // Stepped Traversal Platforms leading up to Boss Arena (0 -> 4400px)
+    const chunkWidth = 300;
     const totalChunks = Math.floor(this.bossArenaStartX / chunkWidth);
 
     for (let c = 1; c < totalChunks; c++) {
@@ -187,29 +187,34 @@ class LevelManager {
       const step1 = 430; // Low step
       const step2 = 330; // Mid step
       const step3 = 230; // High ledge
+      const step4 = 150; // Sky perch
 
-      if (c % 2 === 0) {
-        this.platforms.push({ x: cx, y: step1, w: 150, h: 20 });
-        this.platforms.push({ x: cx + 110, y: step2, w: 150, h: 20 });
-        this.platforms.push({ x: cx + 200, y: step3, w: 130, h: 20 });
+      if (c % 3 === 0) {
+        this.platforms.push({ x: cx, y: step1, w: 140, h: 20 });
+        this.platforms.push({ x: cx + 100, y: step2, w: 140, h: 20 });
+        this.platforms.push({ x: cx + 180, y: step3, w: 130, h: 20 });
+        this.platforms.push({ x: cx + 80, y: step4, w: 110, h: 20 });
+      } else if (c % 3 === 1) {
+        this.platforms.push({ x: cx + 20, y: step2, w: 150, h: 20 });
+        this.platforms.push({ x: cx + 150, y: step1, w: 130, h: 20 });
       } else {
-        this.platforms.push({ x: cx + 30, y: step2, w: 160, h: 20 });
-        this.platforms.push({ x: cx + 160, y: step1, w: 140, h: 20 });
+        this.platforms.push({ x: cx + 40, y: step3, w: 160, h: 20 });
+        this.platforms.push({ x: cx + 160, y: step2, w: 140, h: 20 });
       }
 
-      // Small ground spike hazards with platforms above
-      if (c % 3 === 1 && cx < this.bossArenaStartX - 200) {
-        this.spikes.push({ x: cx + 60, y: 504, w: 60, h: 16 });
+      // Ground spike hazards with platforms above
+      if (c % 2 === 1 && cx < this.bossArenaStartX - 200) {
+        this.spikes.push({ x: cx + 50, y: 504, w: 80, h: 16 });
       }
     }
 
-    // Boss Arena Tactical Platforms at the end of the level (2500 -> 3600px)
-    // Wide OPEN entry - NO blocking poles!
-    this.platforms.push({ x: 2620, y: 410, w: 160, h: 20 });
-    this.platforms.push({ x: 3340, y: 410, w: 160, h: 20 });
-    this.platforms.push({ x: 2820, y: 320, w: 180, h: 20 });
-    this.platforms.push({ x: 3120, y: 320, w: 180, h: 20 });
-    this.platforms.push({ x: 2940, y: 190, w: 240, h: 20 });
+    // Boss Arena Tactical Platforms at the end of the level (4400 -> 5800px)
+    // Wide open Colosseum layout with aerial tactical perches
+    this.platforms.push({ x: 4520, y: 410, w: 170, h: 20 });
+    this.platforms.push({ x: 5500, y: 410, w: 170, h: 20 });
+    this.platforms.push({ x: 4740, y: 310, w: 200, h: 20 });
+    this.platforms.push({ x: 5280, y: 310, w: 200, h: 20 });
+    this.platforms.push({ x: 5000, y: 180, w: 280, h: 20 });
   }
 
   updateMonsterSpawns(dt, player, monsters, isBossActive) {
@@ -221,15 +226,15 @@ class LevelManager {
 
       // Spawn monster ahead or behind player within viewing distance
       const spawnAhead = Math.random() > 0.35;
-      const spawnX = player.x + (spawnAhead ? 450 + Math.random() * 200 : -350 - Math.random() * 150);
+      const spawnX = player.x + (spawnAhead ? 450 + Math.random() * 250 : -350 - Math.random() * 180);
 
       // Don't spawn outside level or inside boss arena
       if (spawnX > 80 && spawnX < this.bossArenaStartX - 80) {
         const types = this.config.monsterTypes;
         const chosenType = types[Math.floor(Math.random() * types.length)];
-        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp') ? 260 + Math.random() * 120 : 490;
+        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp') ? 240 + Math.random() * 140 : 490;
         
-        if (monsters.length < 16) {
+        if (monsters.length < 24) {
           monsters.push(new SmallMonster(spawnX, spawnY, chosenType));
         }
       }

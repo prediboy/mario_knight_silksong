@@ -680,58 +680,58 @@ class SmallMonster {
       case 'void_goomba':
         this.width = 30;
         this.height = 28;
-        this.hp = 25;
-        this.speed = 1.2;
+        this.hp = 40;
+        this.speed = 1.6;
         this.flying = false;
         break;
       case 'silk_spiny':
         this.width = 32;
         this.height = 24;
-        this.hp = 35;
-        this.speed = 1.6;
+        this.hp = 60;
+        this.speed = 2.0;
         this.flying = false;
         break;
       case 'needle_wasp':
         this.width = 28;
         this.height = 28;
-        this.hp = 20;
-        this.speed = 2.4;
+        this.hp = 35;
+        this.speed = 3.2;
         this.flying = true;
         this.baseY = y;
         break;
       case 'piranha_pod':
         this.width = 28;
         this.height = 36;
-        this.hp = 40;
+        this.hp = 70;
         this.speed = 0;
         this.flying = false;
         break;
       case 'shield_beetle':
         this.width = 32;
         this.height = 30;
-        this.hp = 50;
-        this.speed = 1.4;
+        this.hp = 90;
+        this.speed = 1.8;
         this.flying = false;
         break;
       case 'shadow_wisp':
         this.width = 26;
         this.height = 26;
-        this.hp = 18;
-        this.speed = 2.0;
+        this.hp = 32;
+        this.speed = 2.6;
         this.flying = true;
         this.baseY = y;
         break;
       default:
         this.width = 28;
         this.height = 28;
-        this.hp = 25;
-        this.speed = 1.2;
+        this.hp = 40;
+        this.speed = 1.6;
         this.flying = false;
     }
 
     this.vx = -this.speed;
     this.vy = 0;
-    this.shootTimer = 2.0 + Math.random() * 2.0;
+    this.shootTimer = 1.5 + Math.random() * 1.5;
   }
 
   takeDamage(amount, particles, floatingTexts) {
@@ -781,7 +781,7 @@ class SmallMonster {
 
     // Movement AI
     if (this.flying) {
-      this.y = this.baseY + Math.sin(this.time * 3) * 35;
+      this.y = this.baseY + Math.sin(this.time * 3.5) * 40;
       this.x += this.vx * 60 * dt;
     } else {
       // 1. Horizontal movement and wall turnaround
@@ -822,8 +822,8 @@ class SmallMonster {
       this.x = 30;
       this.vx = Math.abs(this.vx);
       this.facingRight = true;
-    } else if (this.x > 3520) {
-      this.x = 3520;
+    } else if (this.x > 5720) {
+      this.x = 5720;
       this.vx = -Math.abs(this.vx);
       this.facingRight = false;
     }
@@ -832,13 +832,13 @@ class SmallMonster {
     if (this.type === 'piranha_pod' || this.type === 'shadow_wisp') {
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
-        this.shootTimer = 2.4 + Math.random() * 1.5;
-        const shootVx = (player.x > this.x ? 1 : -1) * 4.5;
+        this.shootTimer = 1.6 + Math.random() * 1.2;
+        const shootVx = (player.x > this.x ? 1 : -1) * 5.2;
         projectiles.push(new Projectile(
           this.x + this.width / 2,
           this.y + this.height / 2,
           shootVx,
-          -1.5,
+          -1.8,
           false,
           'fireball',
           1,
@@ -888,19 +888,19 @@ class Boss {
     this.time = 0;
     this.hitFlashTimer = 0;
     this.facingRight = false;
-    this.attackTimer = 1.5;
+    this.attackTimer = 1.2;
     this.phase = 1;
 
-    // Boss Name & Config by Level (Tuned for approachable, thrilling combat)
+    // Hardcore Boss Scaling across all 8 Titans
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 120, w: 90, h: 80, speed: 1.8, isFlying: false },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 160, w: 80, h: 90, speed: 2.8, isFlying: true },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 210, w: 95, h: 95, speed: 2.2, isFlying: false },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 260, w: 85, h: 100, speed: 3.0, isFlying: true },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 320, w: 110, h: 85, speed: 2.5, isFlying: true },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 380, w: 105, h: 95, speed: 2.0, isFlying: false },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 450, w: 95, h: 110, speed: 3.4, isFlying: true },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 550, w: 115, h: 115, speed: 3.6, isFlying: true }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 380, w: 90, h: 80, speed: 2.5, isFlying: false },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 560, w: 80, h: 90, speed: 3.6, isFlying: true },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 820, w: 95, h: 95, speed: 3.0, isFlying: false },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 1100, w: 85, h: 100, speed: 3.8, isFlying: true },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 1450, w: 110, h: 85, speed: 3.4, isFlying: true },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 1800, w: 105, h: 95, speed: 2.8, isFlying: false },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 2300, w: 95, h: 110, speed: 4.2, isFlying: true },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 3000, w: 115, h: 115, speed: 4.6, isFlying: true }
     ];
 
     const cfg = bossConfigs[bossLevel - 1];
@@ -938,23 +938,24 @@ class Boss {
       ));
     }
 
-    // Phase shift at 50% HP
+    // Phase shift at 50% HP (Enraged & Double Speed!)
     if (this.hp < this.maxHp * 0.5 && this.phase === 1) {
       this.phase = 2;
+      this.baseSpeed *= 1.35;
       window.soundEngine.playBossRoar();
-      floatingTexts.push(new FloatingText('PHASE 2 ENRAGED!', this.x, this.y - 45, '#ffd700', 14));
+      floatingTexts.push(new FloatingText('⚡ PHASE 2 ENRAGED! ⚡', this.x, this.y - 45, '#ffd700', 14));
     }
 
     if (this.hp <= 0) {
       this.alive = false;
       window.soundEngine.playBossRoar();
       // Grand boss burst
-      for (let i = 0; i < 35; i++) {
+      for (let i = 0; i < 40; i++) {
         particles.push(new Particle(
           this.x + Math.random() * this.width,
           this.y + Math.random() * this.height,
-          (Math.random() - 0.5) * 14,
-          (Math.random() - 0.5) * 14,
+          (Math.random() - 0.5) * 16,
+          (Math.random() - 0.5) * 16,
           '#ffd700',
           6,
           1.2
@@ -975,10 +976,10 @@ class Boss {
     const dx = player.x - this.x;
     const dy = player.y - this.y;
 
-    // Execute Boss Attack Patterns (Comfortable attack intervals)
+    // Relentless boss attack frequency
     if (this.attackTimer <= 0) {
       this.executeAttack(player, projectiles, particles);
-      this.attackTimer = this.phase === 2 ? 2.6 : 3.4;
+      this.attackTimer = this.phase === 2 ? 1.0 : 1.5;
     }
 
     // Boss Level Specific AI Movement
@@ -986,30 +987,30 @@ class Boss {
       this.vy = 0;
       switch (this.bossLevel) {
         case 2: // Hornet Queen
-          this.y = this.baseY + Math.sin(this.time * 3.5) * 35;
-          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.5;
-          break;
-        case 4: // Mantis Kamek
-          this.y = this.baseY + Math.cos(this.time * 3.0) * 40;
-          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.45;
-          break;
-        case 5: // Abyssal Leviathan
-          this.y = this.baseY + Math.sin(this.time * 2.5) * 45;
+          this.y = this.baseY + Math.sin(this.time * 4.0) * 45;
           this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.6;
           break;
+        case 4: // Mantis Kamek
+          this.y = this.baseY + Math.cos(this.time * 3.5) * 50;
+          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.55;
+          break;
+        case 5: // Abyssal Leviathan
+          this.y = this.baseY + Math.sin(this.time * 3.0) * 55;
+          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.7;
+          break;
         case 7: // Grimm Bowser
-          this.y = this.baseY + Math.sin(this.time * 4.0) * 35;
-          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.7);
+          this.y = this.baseY + Math.sin(this.time * 4.5) * 45;
+          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.85);
           break;
         case 8: // Radiance Koopa God
-          this.y = this.baseY + Math.sin(this.time * 3.0) * 30;
-          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.65);
+          this.y = this.baseY + Math.sin(this.time * 3.8) * 40;
+          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.8);
           break;
       }
     } else {
       // Ground-based bosses
-      this.vy += 0.4 * 60 * dt;
-      this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.7;
+      this.vy += 0.45 * 60 * dt;
+      this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.8;
       this.y += this.vy * 60 * dt;
 
       for (const p of platforms) {
@@ -1027,13 +1028,13 @@ class Boss {
     const dir = this.facingRight ? 1 : -1;
 
     switch (this.bossLevel) {
-      case 1: // Spore eruption shockwave (Gentle arcs)
-        for (let a = -0.4; a <= 0.4; a += 0.4) {
+      case 1: // Spore Eruption Shockwave & Ground Volleys
+        for (let a = -0.6; a <= 0.6; a += 0.3) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            Math.sin(a) * 4.5 * dir,
-            -Math.cos(a) * 4.5,
+            Math.sin(a) * 5.8 * dir,
+            -Math.cos(a) * 5.5,
             false,
             'boss_spore',
             1,
@@ -1042,13 +1043,13 @@ class Boss {
         }
         break;
 
-      case 2: // Needle Barrage
-        for (let i = 0; i < 2; i++) {
+      case 2: // Needle Barrage (4 high-speed needles)
+        for (let i = 0; i < 4; i++) {
           projectiles.push(new Projectile(
             this.x + (this.facingRight ? this.width : 0),
-            this.y + 20 + i * 24,
-            dir * 5.5,
-            (i === 0 ? -1 : 1),
+            this.y + 10 + i * 20,
+            dir * (6.5 + i * 0.8),
+            (i % 2 === 0 ? -1.2 : 1.2),
             false,
             'boss_needle',
             1,
@@ -1057,13 +1058,13 @@ class Boss {
         }
         break;
 
-      case 3: // Bowser Fireball Breath
-        for (let i = 0; i < 3; i++) {
+      case 3: // Bowser Fireball Cone Blast (5 Fireballs)
+        for (let i = 0; i < 5; i++) {
           projectiles.push(new Projectile(
             this.x + (this.facingRight ? this.width : 0),
-            this.y + 30,
-            dir * (5 + i * 1.2),
-            (Math.random() - 0.5) * 2,
+            this.y + 25 + i * 8,
+            dir * (6.0 + i * 1.0),
+            (i - 2) * 1.5,
             false,
             'boss_fire',
             1,
@@ -1072,43 +1073,43 @@ class Boss {
         }
         break;
 
-      case 4: // Mantis Arcane Blast
-        for (let a = 0; a < Math.PI * 2; a += Math.PI / 2) {
+      case 4: // Mantis Arcane Starburst (8-way Nova)
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            Math.cos(a) * 3.8,
-            Math.sin(a) * 3.8,
+            Math.cos(a) * 5.0,
+            Math.sin(a) * 5.0,
             false,
             'boss_spore',
             1,
-            8
+            9
           ));
         }
         break;
 
-      case 5: // Bubble mines & Angler surge
-        for (let i = 0; i < 5; i++) {
+      case 5: // Bubble Mine Barrage & Hydro Spikes
+        for (let i = 0; i < 7; i++) {
           projectiles.push(new Projectile(
             this.x + Math.random() * this.width,
             this.y + this.height / 2,
-            (Math.random() - 0.5) * 7,
-            -Math.random() * 8,
+            (Math.random() - 0.5) * 9,
+            -Math.random() * 9 - 1,
             false,
             'boss_needle',
             1,
-            8
+            9
           ));
         }
         break;
 
-      case 6: // Crystal Gem Shards
-        for (let a = -0.6; a <= 0.6; a += 0.3) {
+      case 6: // Crystal Prismatic Gem Shards (7 Shards)
+        for (let a = -0.8; a <= 0.8; a += 0.26) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + 10,
-            Math.sin(a) * 8 * dir,
-            -Math.abs(Math.cos(a)) * 7,
+            Math.sin(a) * 9.5 * dir,
+            -Math.abs(Math.cos(a)) * 8.5,
             false,
             'boss_sun_lance',
             1,
@@ -1117,28 +1118,29 @@ class Boss {
         }
         break;
 
-      case 7: // Grimm Scarlet Bat Storm
-        for (let i = 0; i < 6; i++) {
+      case 7: // Grimm Scarlet Bat Storm (8 Bats)
+        for (let i = 0; i < 8; i++) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
-            this.y + 20 + i * 10,
-            dir * (7 + i * 0.8),
-            Math.sin(i) * 3,
+            this.y + 15 + i * 8,
+            dir * (8.0 + i * 0.7),
+            Math.sin(i * 1.2) * 4.0,
             false,
             'boss_fire',
             1,
-            10
+            11
           ));
         }
         break;
 
-      case 8: // Radiance Koopa God Sun Lance Barrage
-        for (let a = 0; a < Math.PI * 2; a += Math.PI / 5) {
+      case 8: // Radiance Koopa God Sun Lance Supernova (12-Ray Solar Burst)
+        const rayCount = this.phase === 2 ? 14 : 10;
+        for (let a = 0; a < Math.PI * 2; a += (Math.PI * 2) / rayCount) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            Math.cos(a) * 7,
-            Math.sin(a) * 7,
+            Math.cos(a) * 8.5,
+            Math.sin(a) * 8.5,
             false,
             'boss_sun_lance',
             1,
