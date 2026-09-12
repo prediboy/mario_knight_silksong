@@ -293,14 +293,8 @@ class Player {
   takeDamage(amountMasks = 1) {
     if (this.invulnerableTimer > 0 || this.dead || this.dashing) return false;
 
-    // Divine Aegis Reflect Deflects Damage!
-    if (this.parryActive || (this.powers.aegisReflect && this.parryActive)) {
-      window.soundEngine.playPogo();
-      return false;
-    }
-
     this.masks = Math.max(0, this.masks - amountMasks);
-    this.invulnerableTimer = 1.3; // 1.3 seconds invulnerability
+    this.invulnerableTimer = 0.55; // Crisp 0.55s invulnerability window
     window.soundEngine.playHurt();
 
     if (this.masks <= 0) {
@@ -545,12 +539,9 @@ class Player {
       this.airJumpsLeft = this.powers.monarchTripleJump ? 2 : 0;
     }
 
-    // Parry Shield Active Timer
-    if (input.down && this.grounded) {
-      this.parryActive = true;
-    } else {
-      this.parryActive = false;
-    }
+    // Crouch on ground
+    this.crouching = input.down && this.grounded;
+    this.parryActive = false;
   }
 
   jump(particles = null) {
@@ -893,14 +884,14 @@ class Boss {
 
     // Hardcore Boss Scaling across all 8 Titans
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 380, w: 90, h: 80, speed: 2.5, isFlying: false },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 560, w: 80, h: 90, speed: 3.6, isFlying: true },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 820, w: 95, h: 95, speed: 3.0, isFlying: false },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 1100, w: 85, h: 100, speed: 3.8, isFlying: true },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 1450, w: 110, h: 85, speed: 3.4, isFlying: true },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 1800, w: 105, h: 95, speed: 2.8, isFlying: false },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 2300, w: 95, h: 110, speed: 4.2, isFlying: true },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 3000, w: 115, h: 115, speed: 4.6, isFlying: true }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 450, w: 90, h: 80, speed: 2.6, isFlying: false },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 700, w: 80, h: 90, speed: 3.8, isFlying: true },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 1050, w: 95, h: 95, speed: 3.2, isFlying: false },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 1450, w: 85, h: 100, speed: 4.0, isFlying: true },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 1950, w: 110, h: 85, speed: 3.6, isFlying: true },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 2500, w: 105, h: 95, speed: 3.0, isFlying: false },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 3200, w: 95, h: 110, speed: 4.4, isFlying: true },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 4200, w: 115, h: 115, speed: 4.8, isFlying: true }
     ];
 
     const cfg = bossConfigs[bossLevel - 1];
@@ -979,7 +970,7 @@ class Boss {
     // Relentless boss attack frequency
     if (this.attackTimer <= 0) {
       this.executeAttack(player, projectiles, particles);
-      this.attackTimer = this.phase === 2 ? 1.0 : 1.5;
+      this.attackTimer = this.phase === 2 ? 0.75 : 1.2;
     }
 
     // Boss Level Specific AI Movement
