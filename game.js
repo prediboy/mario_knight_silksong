@@ -53,7 +53,7 @@ class Game {
     this.state = 'START'; // START, PLAYING, BOSS, LEVEL_CLEAR, GAME_OVER, WIN
     this.paused = false;
     this.currentLevel = 1;
-    this.levelTimer = 35.0; // Strict 35-Second Rush Countdown!
+    this.levelTimer = 60.0; // Balanced 60-Second Expedition Countdown!
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.cameraX = 0;
@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 35.0; // Intense 35s Hardcore Speedrun Countdown!
+    this.levelTimer = 60.0; // Balanced 60s Expedition Countdown
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -581,10 +581,12 @@ class Game {
     // Hornet cage appears strictly after defeating the final boss (Level 8)
     this.hornetCage = null;
 
-    // Initial monsters in 4400px traversal path
+    // Initial monsters in traversal path (Spaced out comfortably)
     const types = this.levelManager.config.monsterTypes;
-    for (let i = 0; i < 11; i++) {
-      const sx = 380 + i * 350;
+    const monsterCount = levelNum === 1 ? 6 : 9;
+    const spacing = levelNum === 1 ? 550 : 420;
+    for (let i = 0; i < monsterCount; i++) {
+      const sx = (levelNum === 1 ? 500 : 380) + i * spacing;
       const type = types[i % types.length];
       const sy = (type === 'needle_wasp' || type === 'shadow_wisp') ? 240 + Math.random() * 100 : 490;
       this.monsters.push(new SmallMonster(sx, sy, type));
@@ -604,7 +606,7 @@ class Game {
 
     this.state = 'PLAYING';
     window.soundEngine.startBGM('ambient');
-    this.showToast(`⚡ 35s HARDCORE RUSH: ${this.levelManager.config.name} ⚡`);
+    this.showToast(`⚡ 60s EXPEDITION STARTED: ${this.levelManager.config.name} ⚡`);
   }
 
   handleBossDefeat() {
@@ -745,18 +747,18 @@ class Game {
   }
 
   update(dt) {
-    // 1. Timer Countdown (35 seconds)
+    // 1. Timer Countdown (60 seconds)
     this.levelTimer -= dt;
     this.timerDisplay.textContent = Math.max(0, this.levelTimer).toFixed(1);
 
-    if (this.levelTimer <= 8.0) {
+    if (this.levelTimer <= 10.0) {
       this.timerDisplay.parentElement.classList.add('danger');
     } else {
       this.timerDisplay.parentElement.classList.remove('danger');
     }
 
     if (this.levelTimer <= 0) {
-      this.showGameOver('TIME RAN OUT! You ran out of your 35 seconds.');
+      this.showGameOver('TIME RAN OUT! You ran out of your 60 seconds.');
       return;
     }
 
@@ -798,7 +800,7 @@ class Game {
     // Player Spike Hazard Check
     for (const s of this.levelManager.spikes) {
       if (this.player.checkOverlap(s)) {
-        if (this.player.takeDamage(2)) {
+        if (this.player.takeDamage(1)) {
           this.screenShake = 0.5;
           this.player.pogoBounce();
           this.updateHPUI();
@@ -869,13 +871,13 @@ class Game {
         }
       }
 
-      // Monster Bites Player -> Loses 2/6 HP (2 Masks)
+      // Monster Bites Player -> Loses 1/6 HP (1 Mask)
       if (this.player.checkOverlap(m)) {
-        if (this.player.takeDamage(2)) {
+        if (this.player.takeDamage(1)) {
           this.screenShake = 0.5;
           this.updateHPUI();
-          this.floatingTexts.push(new FloatingText('💥 BITTEN! -2/6 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
-          this.showToast(`⚠️ BITTEN BY MONSTER! -2/6 HP (${this.player.masks}/6 MASKS LEFT)`);
+          this.floatingTexts.push(new FloatingText('💥 BITTEN! -1/6 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
+          this.showToast(`⚠️ BITTEN BY MONSTER! -1/6 HP (${this.player.masks}/6 MASKS LEFT)`);
         }
       }
 
@@ -931,10 +933,10 @@ class Game {
 
       // Boss bites / hits Player
       if (this.player.checkOverlap(this.activeBoss)) {
-        if (this.player.takeDamage(3)) {
+        if (this.player.takeDamage(1)) {
           this.screenShake = 0.5;
           this.updateHPUI();
-          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -3/6 HP', this.player.x - 25, this.player.y - 25, '#ff4d61', 12));
+          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -1/6 HP', this.player.x - 25, this.player.y - 25, '#ff4d61', 12));
         }
       }
     }
@@ -1039,10 +1041,10 @@ class Game {
         if (p.x > this.player.x && p.x < this.player.x + this.player.width &&
             p.y > this.player.y && p.y < this.player.y + this.player.height) {
           p.alive = false;
-          if (this.player.takeDamage(2)) {
+          if (this.player.takeDamage(1)) {
             this.screenShake = 0.4;
             this.updateHPUI();
-            this.floatingTexts.push(new FloatingText('⚡ BLASTED! -2/6 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
+            this.floatingTexts.push(new FloatingText('⚡ BLASTED! -1/6 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
           }
         }
       }

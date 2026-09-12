@@ -12,7 +12,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#4a256d',
     spikeColor: '#e040fb',
     monsterTypes: ['void_goomba', 'silk_spiny', 'piranha_pod'],
-    spawnInterval: 1.3,
+    spawnInterval: 2.6,
     reward: {
       icon: '⚡',
       name: 'LIGHTNING THUNDER AXE',
@@ -30,7 +30,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#6d5a1e',
     spikeColor: '#ffd54f',
     monsterTypes: ['silk_spiny', 'needle_wasp', 'void_goomba'],
-    spawnInterval: 1.2,
+    spawnInterval: 2.2,
     reward: {
       icon: '🌪️',
       name: 'TORNADO SILK DASH',
@@ -48,7 +48,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#75260e',
     spikeColor: '#ff5722',
     monsterTypes: ['shield_beetle', 'silk_spiny', 'piranha_pod'],
-    spawnInterval: 1.1,
+    spawnInterval: 1.9,
     reward: {
       icon: '🔥',
       name: 'METEOR MAGMA BLASTER',
@@ -66,7 +66,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#184285',
     spikeColor: '#40c4ff',
     monsterTypes: ['needle_wasp', 'shield_beetle', 'shadow_wisp'],
-    spawnInterval: 1.0,
+    spawnInterval: 1.7,
     reward: {
       icon: '🪽',
       name: 'HOLY MONARCH TRIPLE JUMP',
@@ -84,7 +84,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#0b665b',
     spikeColor: '#64ffda',
     monsterTypes: ['shadow_wisp', 'piranha_pod', 'void_goomba'],
-    spawnInterval: 0.9,
+    spawnInterval: 1.5,
     reward: {
       icon: '🛡️',
       name: 'DIVINE AEGIS REFLECTOR',
@@ -102,7 +102,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#651780',
     spikeColor: '#ea80fc',
     monsterTypes: ['silk_spiny', 'shield_beetle', 'needle_wasp'],
-    spawnInterval: 0.85,
+    spawnInterval: 1.3,
     reward: {
       icon: '🌋',
       name: 'TITAN SEISMIC EARTHQUAKE',
@@ -120,7 +120,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#80151d',
     spikeColor: '#ff1744',
     monsterTypes: ['shadow_wisp', 'needle_wasp', 'shield_beetle', 'void_goomba'],
-    spawnInterval: 0.8,
+    spawnInterval: 1.2,
     reward: {
       icon: '🌌',
       name: 'ABYSSAL BLACK HOLE VOID',
@@ -138,7 +138,7 @@ const LEVEL_CONFIGS = [
     platformColor: '#8f7b15',
     spikeColor: '#ffee58',
     monsterTypes: ['needle_wasp', 'shadow_wisp', 'shield_beetle', 'silk_spiny', 'void_goomba'],
-    spawnInterval: 0.7,
+    spawnInterval: 1.0,
     reward: {
       icon: '👑',
       name: 'CHAMPION OF SILKSONG',
