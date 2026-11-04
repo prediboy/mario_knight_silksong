@@ -4,15 +4,15 @@ const LEVEL_CONFIGS = [
   {
     level: 1,
     name: 'Forgotten Mushroom Grotto',
-    targetKm: 1000.0,
+    targetKm: 1200.0,
     themeColor: '#7b1fa2',
     bgColor1: '#0a0512',
     bgColor2: '#190d2e',
     groundColor: '#2d1842',
     platformColor: '#4a256d',
     spikeColor: '#e040fb',
-    monsterTypes: ['void_goomba'],
-    spawnInterval: 4.5,
+    monsterTypes: ['void_goomba', 'silk_spiny'],
+    spawnInterval: 3.2,
     reward: {
       icon: '⚡',
       name: 'LIGHTNING THUNDER AXE',
@@ -22,15 +22,15 @@ const LEVEL_CONFIGS = [
   {
     level: 2,
     name: "Queen's Silk Cradle",
-    targetKm: 1500.0,
+    targetKm: 1600.0,
     themeColor: '#fbc02d',
     bgColor1: '#141208',
     bgColor2: '#2c250b',
     groundColor: '#423712',
     platformColor: '#6d5a1e',
     spikeColor: '#ffd54f',
-    monsterTypes: ['void_goomba', 'silk_spiny'],
-    spawnInterval: 3.5,
+    monsterTypes: ['void_goomba', 'silk_spiny', 'needle_wasp'],
+    spawnInterval: 2.8,
     reward: {
       icon: '🌪️',
       name: 'TORNADO SILK DASH',
@@ -47,8 +47,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#451608',
     platformColor: '#75260e',
     spikeColor: '#ff5722',
-    monsterTypes: ['silk_spiny', 'shield_beetle'],
-    spawnInterval: 3.0,
+    monsterTypes: ['silk_spiny', 'shield_beetle', 'piranha_pod'],
+    spawnInterval: 2.5,
     reward: {
       icon: '🔥',
       name: 'METEOR MAGMA BLASTER',
@@ -58,15 +58,15 @@ const LEVEL_CONFIGS = [
   {
     level: 4,
     name: 'Mantis Sanctum Spire',
-    targetKm: 2500.0,
+    targetKm: 2400.0,
     themeColor: '#1976d2',
     bgColor1: '#040b17',
     bgColor2: '#081730',
     groundColor: '#0e274f',
     platformColor: '#184285',
     spikeColor: '#40c4ff',
-    monsterTypes: ['needle_wasp', 'void_goomba'],
-    spawnInterval: 2.5,
+    monsterTypes: ['needle_wasp', 'shield_beetle', 'shadow_wisp'],
+    spawnInterval: 2.2,
     reward: {
       icon: '🪽',
       name: 'HOLY MONARCH TRIPLE JUMP',
@@ -76,15 +76,15 @@ const LEVEL_CONFIGS = [
   {
     level: 5,
     name: 'Abyssal Mariana Trench',
-    targetKm: 3000.0,
+    targetKm: 2800.0,
     themeColor: '#00897b',
     bgColor1: '#011210',
     bgColor2: '#032622',
     groundColor: '#063d36',
     platformColor: '#0b665b',
     spikeColor: '#64ffda',
-    monsterTypes: ['shadow_wisp', 'piranha_pod'],
-    spawnInterval: 2.2,
+    monsterTypes: ['shadow_wisp', 'piranha_pod', 'void_shade'],
+    spawnInterval: 2.0,
     reward: {
       icon: '🛡️',
       name: 'DIVINE AEGIS REFLECTOR',
@@ -94,15 +94,15 @@ const LEVEL_CONFIGS = [
   {
     level: 6,
     name: 'Crystal Geode Cavern',
-    targetKm: 3500.0,
+    targetKm: 3200.0,
     themeColor: '#ab47bc',
     bgColor1: '#120417',
     bgColor2: '#24082e',
     groundColor: '#3c0e4c',
     platformColor: '#651780',
     spikeColor: '#ea80fc',
-    monsterTypes: ['silk_spiny', 'needle_wasp'],
-    spawnInterval: 2.0,
+    monsterTypes: ['silk_spiny', 'needle_wasp', 'cog_sentinel'],
+    spawnInterval: 1.8,
     reward: {
       icon: '🌋',
       name: 'TITAN SEISMIC EARTHQUAKE',
@@ -112,15 +112,15 @@ const LEVEL_CONFIGS = [
   {
     level: 7,
     name: 'Scarlet Nightmare Realm',
-    targetKm: 4000.0,
+    targetKm: 3600.0,
     themeColor: '#d32f2f',
     bgColor1: '#1a0406',
     bgColor2: '#33080b',
     groundColor: '#4f0d12',
     platformColor: '#80151d',
     spikeColor: '#ff1744',
-    monsterTypes: ['shadow_wisp', 'shield_beetle'],
-    spawnInterval: 1.8,
+    monsterTypes: ['shadow_wisp', 'shield_beetle', 'void_shade'],
+    spawnInterval: 1.6,
     reward: {
       icon: '🌌',
       name: 'ABYSSAL BLACK HOLE VOID',
@@ -130,19 +130,91 @@ const LEVEL_CONFIGS = [
   {
     level: 8,
     name: 'The Pantheon of Radiance',
-    targetKm: 5000.0,
+    targetKm: 4000.0,
     themeColor: '#fbc02d',
     bgColor1: '#1a1705',
     bgColor2: '#3b3309',
     groundColor: '#5c4f0d',
     platformColor: '#8f7b15',
     spikeColor: '#ffee58',
-    monsterTypes: ['needle_wasp', 'silk_spiny', 'void_goomba'],
+    monsterTypes: ['needle_wasp', 'astral_phantom', 'void_goomba'],
     spawnInterval: 1.5,
     reward: {
+      icon: '☀️',
+      name: 'RADIANT SOLAR AURA',
+      desc: 'Unleashes radiant blinding solar halos on every Great Axe swing that incinerates nearby foes!'
+    }
+  },
+  {
+    level: 9,
+    name: 'Astral Weaver Citadel',
+    targetKm: 4500.0,
+    themeColor: '#9c27b0',
+    bgColor1: '#12002b',
+    bgColor2: '#240046',
+    groundColor: '#3c096c',
+    platformColor: '#5a189a',
+    spikeColor: '#e0aaff',
+    monsterTypes: ['astral_phantom', 'needle_wasp', 'void_shade'],
+    spawnInterval: 1.4,
+    reward: {
+      icon: '🌟',
+      name: 'STELLAR PRISM LANCE',
+      desc: 'Press [Q]/[E] to loose a piercing cosmic starlight lance that shatters through enemy lines!'
+    }
+  },
+  {
+    level: 10,
+    name: 'Clockwork Core of Pharloom',
+    targetKm: 5000.0,
+    themeColor: '#ff6f00',
+    bgColor1: '#1b0d00',
+    bgColor2: '#3e1f00',
+    groundColor: '#5d2e00',
+    platformColor: '#8d4600',
+    spikeColor: '#ffab00',
+    monsterTypes: ['cog_sentinel', 'shield_beetle', 'piranha_pod'],
+    spawnInterval: 1.3,
+    reward: {
+      icon: '⚙️',
+      name: 'TIME-WARP CHRONO GEAR',
+      desc: 'Releases a localized temporal shockwave that damages and freezes all surrounding foes!'
+    }
+  },
+  {
+    level: 11,
+    name: 'The Void Throne of the Shadow King',
+    targetKm: 5500.0,
+    themeColor: '#00e5ff',
+    bgColor1: '#050a14',
+    bgColor2: '#0b162c',
+    groundColor: '#102347',
+    platformColor: '#17366d',
+    spikeColor: '#18ffff',
+    monsterTypes: ['void_shade', 'astral_phantom', 'shadow_wisp'],
+    spawnInterval: 1.2,
+    reward: {
+      icon: '👁️',
+      name: 'SHADOW SOUL CLEAVE',
+      desc: 'Slashes summon ethereal void scythes that track and destroy distant enemies!'
+    }
+  },
+  {
+    level: 12,
+    name: 'Apex of Silksong - The Infinite Godweaver',
+    targetKm: 6500.0,
+    themeColor: '#ffd700',
+    bgColor1: '#261c00',
+    bgColor2: '#4a3700',
+    groundColor: '#6e5200',
+    platformColor: '#997300',
+    spikeColor: '#fff59d',
+    monsterTypes: ['astral_phantom', 'void_shade', 'cog_sentinel', 'needle_wasp'],
+    spawnInterval: 1.0,
+    reward: {
       icon: '👑',
-      name: 'CHAMPION OF SILKSONG',
-      desc: 'You have slain all 8 Colossal Monsters and saved the Mushroom Realm of Pharloom!'
+      name: 'ASCENDED CHAMPION OF SILKSONG',
+      desc: 'You have slain the Infinite Godweaver, freed Hornet from the Golden Cage, and restored eternal peace to Pharloom!'
     }
   }
 ];
@@ -151,29 +223,33 @@ class LevelManager {
   constructor() {
     this.currentLevel = 1;
     this.config = LEVEL_CONFIGS[0];
-    this.levelWidth = 2700;
+    this.levelWidth = 3300;
     this.levelHeight = 600;
     this.platforms = [];
     this.spikes = [];
-    this.bossArenaStartX = 1600;
-    this.bossSpawnX = 2150;
+    this.bossArenaStartX = 2200;
+    this.bossSpawnX = 2750;
     this.bossSpawnY = 380;
     this.spawnTimer = 0;
   }
 
   loadLevel(levelIndex) {
     this.currentLevel = levelIndex;
-    this.config = LEVEL_CONFIGS[levelIndex - 1];
+    this.config = LEVEL_CONFIGS[levelIndex - 1] || LEVEL_CONFIGS[0];
 
     const arenaMap = [
-      { start: 1600, width: 2700, spawnX: 2150, spawnY: 380 },
-      { start: 2000, width: 3100, spawnX: 2550, spawnY: 380 },
-      { start: 2400, width: 3500, spawnX: 2950, spawnY: 380 },
+      { start: 2200, width: 3300, spawnX: 2750, spawnY: 380 },
+      { start: 2500, width: 3600, spawnX: 3050, spawnY: 380 },
       { start: 2800, width: 3900, spawnX: 3350, spawnY: 380 },
-      { start: 3200, width: 4300, spawnX: 3750, spawnY: 380 },
-      { start: 3600, width: 4700, spawnX: 4150, spawnY: 380 },
+      { start: 3100, width: 4200, spawnX: 3650, spawnY: 380 },
+      { start: 3400, width: 4500, spawnX: 3950, spawnY: 380 },
+      { start: 3700, width: 4800, spawnX: 4250, spawnY: 380 },
       { start: 4000, width: 5100, spawnX: 4550, spawnY: 380 },
-      { start: 4400, width: 5600, spawnX: 5000, spawnY: 380 },
+      { start: 4300, width: 5400, spawnX: 4850, spawnY: 380 },
+      { start: 4600, width: 5700, spawnX: 5150, spawnY: 380 },
+      { start: 4900, width: 6000, spawnX: 5450, spawnY: 380 },
+      { start: 5200, width: 6300, spawnX: 5750, spawnY: 380 },
+      { start: 5600, width: 6800, spawnX: 6200, spawnY: 380 },
     ];
     const aCfg = arenaMap[levelIndex - 1] || arenaMap[0];
     this.bossArenaStartX = aCfg.start;
@@ -196,7 +272,7 @@ class LevelManager {
     this.platforms.push({ x: this.levelWidth, y: 0, w: 40, h: 600 });
 
     // Stepped Traversal Platforms leading up to Boss Arena
-    const chunkWidth = 300;
+    const chunkWidth = 280;
     const totalChunks = Math.floor(this.bossArenaStartX / chunkWidth);
 
     for (let c = 1; c < totalChunks; c++) {
@@ -219,9 +295,15 @@ class LevelManager {
         this.platforms.push({ x: cx + 160, y: step2, w: 140, h: 20 });
       }
 
-      // Ground spike hazards only on later levels (Level 3+)
-      if (this.currentLevel >= 3 && c % 3 === 1 && cx < this.bossArenaStartX - 200) {
-        this.spikes.push({ x: cx + 50, y: 504, w: 80, h: 16 });
+      // Ground spike hazards
+      if (this.currentLevel === 1) {
+        if (c % 4 === 1 && cx < this.bossArenaStartX - 250) {
+          this.spikes.push({ x: cx + 60, y: 504, w: 60, h: 16 });
+        }
+      } else {
+        if (c % 2 === 1 && cx < this.bossArenaStartX - 200) {
+          this.spikes.push({ x: cx + 50, y: 504, w: 80, h: 16 });
+        }
       }
     }
 
@@ -249,7 +331,7 @@ class LevelManager {
       if (spawnX > 80 && spawnX < this.bossArenaStartX - 80) {
         const types = this.config.monsterTypes;
         const chosenType = types[Math.floor(Math.random() * types.length)];
-        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp') ? 240 + Math.random() * 140 : 490;
+        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp' || chosenType === 'astral_phantom') ? 220 + Math.random() * 140 : 490;
         
         if (monsters.length < 24) {
           monsters.push(new SmallMonster(spawnX, spawnY, chosenType));

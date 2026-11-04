@@ -472,6 +472,85 @@ const Sprites = {
         ctx.shadowBlur = 0;
         break;
       }
+
+      case 'astral_phantom': {
+        // Floating Cosmic Astral Phantom
+        const floatY = Math.sin(time * 5) * 5;
+        ctx.fillStyle = 'rgba(156, 39, 176, 0.85)';
+        ctx.shadowColor = '#e1bee7';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.ellipse(0, floatY, 13, 16, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Orbiting Astral Starlight Motes
+        ctx.fillStyle = '#00e5ff';
+        for (let i = 0; i < 3; i++) {
+          const ang = time * 4 + (i * Math.PI * 2) / 3;
+          ctx.beginPath();
+          ctx.arc(Math.cos(ang) * 18, floatY + Math.sin(ang) * 8, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Phantom Violet Eyes
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(4, floatY - 3, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        break;
+      }
+
+      case 'cog_sentinel': {
+        // Steampunk Clockwork Cog Sentinel
+        ctx.fillStyle = '#d84315';
+        ctx.beginPath();
+        ctx.roundRect(-14, -12 + bob, 28, 24, 6);
+        ctx.fill();
+
+        // Rotating Brass Gear Rim
+        ctx.strokeStyle = '#ffd54f';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(-12, -10 + bob, 24, 20);
+
+        // Blazing Furnace Optic Eye
+        ctx.fillStyle = '#ff3d00';
+        ctx.shadowColor = '#ffab00';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(4, -2 + bob, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        break;
+      }
+
+      case 'void_shade': {
+        // Pure Shadow Void Shade
+        ctx.fillStyle = '#0a0a14';
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.ellipse(0, 0 + bob, 14, 18, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Curved Void Horns
+        ctx.strokeStyle = '#18ffff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-5, -14 + bob);
+        ctx.quadraticCurveTo(-10, -26 + bob, -2, -28 + bob);
+        ctx.moveTo(5, -14 + bob);
+        ctx.quadraticCurveTo(10, -26 + bob, 2, -28 + bob);
+        ctx.stroke();
+
+        // Glowing Cyan Mask Eyes
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(5, -4 + bob, 3, 6, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        break;
+      }
     }
 
     ctx.restore();
@@ -849,6 +928,246 @@ const Sprites = {
         ctx.ellipse(12, -6 + bob, 6, 12, 0.1, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
+        break;
+      }
+
+      case 9: {
+        // BOSS 9: The Celestial Weaver Matron (Astral Silk Weaver)
+        // Cosmic Aura
+        ctx.fillStyle = 'rgba(106, 27, 154, 0.5)';
+        ctx.shadowColor = '#e040fb';
+        ctx.shadowBlur = 28;
+        ctx.beginPath();
+        ctx.arc(0, 0 + bob, width * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Astral Robe Core
+        ctx.fillStyle = '#4a148c';
+        ctx.beginPath();
+        ctx.ellipse(0, 5 + bob, 32, 48, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 6 Gossamer Spider Arms
+        ctx.strokeStyle = '#e040fb';
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 6; i++) {
+          const side = i < 3 ? 1 : -1;
+          const armY = -25 + (i % 3) * 25 + bob;
+          const reach = 55 + Math.sin(time * 6 + i) * 12;
+          ctx.beginPath();
+          ctx.moveTo(side * 18, armY);
+          ctx.quadraticCurveTo(side * (reach + 15), armY - 30, side * reach, armY + 25);
+          ctx.stroke();
+
+          // Glowing Starlight Fingertip
+          ctx.fillStyle = '#00e5ff';
+          ctx.beginPath();
+          ctx.arc(side * reach, armY + 25, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Weaver Porcelain Mask
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(8, -32 + bob, 18, 24, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4 Glowing Starlight Eyes
+        ctx.fillStyle = '#ff007f';
+        ctx.shadowColor = '#ff007f';
+        ctx.shadowBlur = 10;
+        [-4, 4].forEach((ey) => {
+          ctx.beginPath();
+          ctx.arc(14, -36 + ey + bob, 3, 0, Math.PI * 2);
+          ctx.arc(6, -34 + ey + bob, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.shadowBlur = 0;
+        break;
+      }
+
+      case 10: {
+        // BOSS 10: Chronos Automaton Prime (Steampunk Clockwork Titan)
+        // Heavy Brass Body Frame
+        ctx.fillStyle = '#795548';
+        ctx.beginPath();
+        ctx.roundRect(-width * 0.42, -height * 0.4 + bob, width * 0.84, height * 0.78, 16);
+        ctx.fill();
+        ctx.strokeStyle = '#ffd54f';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Rotating Gear Shoulders
+        ctx.strokeStyle = '#ff9800';
+        ctx.lineWidth = 3;
+        [-1, 1].forEach((dir) => {
+          const gx = dir * 42;
+          const gy = -height * 0.35 + bob;
+          ctx.save();
+          ctx.translate(gx, gy);
+          ctx.rotate(time * 8 * dir);
+          for (let g = 0; g < 6; g++) {
+            ctx.strokeRect(-4, -18, 8, 36);
+            ctx.rotate(Math.PI / 3);
+          }
+          ctx.fillStyle = '#ffd54f';
+          ctx.beginPath();
+          ctx.arc(0, 0, 10, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Blazing Molten Furnace Chest
+        ctx.fillStyle = '#ff3d00';
+        ctx.shadowColor = '#ffab00';
+        ctx.shadowBlur = 24;
+        ctx.beginPath();
+        ctx.roundRect(-22, -10 + bob, 44, 34, 8);
+        ctx.fill();
+
+        // Furnace Grate
+        ctx.strokeStyle = '#212121';
+        ctx.lineWidth = 3;
+        for (let gr = -14; gr <= 14; gr += 7) {
+          ctx.beginPath();
+          ctx.moveTo(gr, -10 + bob);
+          ctx.lineTo(gr, 24 + bob);
+          ctx.stroke();
+        }
+
+        // Steampunk Optic Eye Visor
+        ctx.fillStyle = '#ffff00';
+        ctx.shadowColor = '#ffea00';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.roundRect(5, -height * 0.28 + bob, 26, 12, 4);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        break;
+      }
+
+      case 11: {
+        // BOSS 11: The Hollow Shadow King (Monarch of the Void)
+        // Abyssal Darkness Tendril Aura
+        ctx.fillStyle = 'rgba(5, 10, 20, 0.95)';
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 25;
+        ctx.beginPath();
+        ctx.ellipse(0, 0 + bob, width * 0.42, height * 0.45, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Billowing Void Tendril Wings
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 4;
+        for (let w = 0; w < 4; w++) {
+          const sy = -30 + w * 20 + bob;
+          const curve = Math.sin(time * 6 + w) * 20;
+          ctx.beginPath();
+          ctx.moveTo(-15, sy);
+          ctx.quadraticCurveTo(-70, sy - 25 + curve, -95, sy + 15);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(15, sy);
+          ctx.quadraticCurveTo(70, sy - 25 + curve, 95, sy + 15);
+          ctx.stroke();
+        }
+
+        // Jagged Void Crown & Mask
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(10, -32 + bob, 18, 24, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Triple Crown Spikes
+        ctx.fillStyle = '#00e5ff';
+        ctx.beginPath();
+        ctx.moveTo(-5, -45 + bob);
+        ctx.lineTo(-2, -75 + bob);
+        ctx.lineTo(8, -45 + bob);
+        ctx.lineTo(14, -85 + bob);
+        ctx.lineTo(20, -45 + bob);
+        ctx.lineTo(26, -72 + bob);
+        ctx.lineTo(28, -45 + bob);
+        ctx.fill();
+
+        // Piercing Cyan Void Eyes
+        ctx.fillStyle = '#00e5ff';
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.ellipse(14, -30 + bob, 5, 11, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        break;
+      }
+
+      case 12: {
+        // BOSS 12: The Ascended Godweaver Koopa (Supreme Divine Godweaver)
+        // Multi-Layered Rotating Cosmic Halos
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#ffd700';
+        ctx.shadowBlur = 35;
+        for (let ring = 1; ring <= 3; ring++) {
+          ctx.beginPath();
+          ctx.ellipse(0, 0 + bob, width * 0.4 + ring * 16, height * 0.2 + ring * 12, time * (ring % 2 === 0 ? 3 : -3), 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // 16-Ray Solar Nova Burst
+        const rays = 16;
+        ctx.fillStyle = '#fff9c4';
+        for (let r = 0; r < rays; r++) {
+          const angle = (r / rays) * Math.PI * 2 + time * 2.5;
+          ctx.beginPath();
+          ctx.moveTo(0, 0 + bob);
+          ctx.lineTo(Math.cos(angle - 0.12) * 95, Math.sin(angle - 0.12) * 95 + bob);
+          ctx.lineTo(Math.cos(angle) * 135, Math.sin(angle) * 135 + bob);
+          ctx.lineTo(Math.cos(angle + 0.12) * 95, Math.sin(angle + 0.12) * 95 + bob);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // 4 Ascended Celestial Wings
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 3;
+        [-1, 1].forEach((dir) => {
+          ctx.beginPath();
+          ctx.ellipse(dir * 55, -35 + bob, 75, 26, dir * -0.4, 0, Math.PI * 2);
+          ctx.ellipse(dir * 50, 35 + bob, 65, 22, dir * 0.35, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        });
+
+        // Blazing Divine Koopa Shell Core
+        ctx.fillStyle = '#ffd700';
+        ctx.beginPath();
+        ctx.arc(0, 0 + bob, 42, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Holy Spines
+        ctx.fillStyle = '#ffffff';
+        for (let s = 0; s < 5; s++) {
+          const ang = -Math.PI * 0.6 + s * (Math.PI * 0.3);
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(ang - 0.15) * 38, Math.sin(ang - 0.15) * 38 + bob);
+          ctx.lineTo(Math.cos(ang) * 62, Math.sin(ang) * 62 + bob);
+          ctx.lineTo(Math.cos(ang + 0.15) * 38, Math.sin(ang + 0.15) * 38 + bob);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Dual Ascended Holy Gaze
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.ellipse(14, -8 + bob, 7, 14, 0.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.restore();
         break;
       }
     }

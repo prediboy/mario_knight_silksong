@@ -53,7 +53,7 @@ class Game {
     this.state = 'START'; // START, PLAYING, BOSS, LEVEL_CLEAR, GAME_OVER, WIN
     this.paused = false;
     this.currentLevel = 1;
-    this.levelTimer = 90.0; // Relaxed 90-Second Expedition Countdown!
+    this.levelTimer = 65.0; // Dynamic 65-Second Expedition Rush!
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.cameraX = 0;
@@ -154,7 +154,7 @@ class Game {
         if (code === 'Space' || code === 'Enter' || code === 'KeyW' || code === 'KeyJ' || code === 'KeyZ') {
           e.preventDefault();
           this.modalLevelClear.classList.remove('active');
-          if (this.currentLevel < 8) {
+          if (this.currentLevel < 12) {
             this.startLevel(this.currentLevel + 1);
           } else {
             this.showGameWin();
@@ -333,7 +333,7 @@ class Game {
     // Next Level Button
     addAction('btn-next-level', () => {
       if (this.modalLevelClear) this.modalLevelClear.classList.remove('active');
-      if (this.currentLevel < 8) {
+      if (this.currentLevel < 12) {
         this.startLevel(this.currentLevel + 1);
       } else {
         this.showGameWin();
@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 90.0; // Relaxed 90s Expedition Countdown
+    this.levelTimer = 65.0; // Dynamic 65s Expedition Rush
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -578,17 +578,19 @@ class Game {
     this.floatingTexts = [];
     this.activeBoss = null;
 
-    // Hornet cage appears strictly after defeating the final boss (Level 8)
+    // Hornet cage appears strictly after defeating the ultimate boss (Level 12)
     this.hornetCage = null;
 
-    // Initial monsters in traversal path (Spaced out comfortably)
+    // Initial monsters in traversal path
     const types = this.levelManager.config.monsterTypes;
-    const monsterCount = levelNum === 1 ? 4 : 7;
-    const spacing = levelNum === 1 ? 320 : 420;
+    const monsterCount = Math.min(16, 5 + levelNum);
+    const spacing = Math.max(220, 340 - levelNum * 6);
     for (let i = 0; i < monsterCount; i++) {
-      const sx = (levelNum === 1 ? 520 : 400) + i * spacing;
+      const sx = 400 + i * spacing;
+      if (sx >= this.levelManager.bossArenaStartX - 100) break;
       const type = types[i % types.length];
-      const sy = (type === 'needle_wasp' || type === 'shadow_wisp') ? 240 + Math.random() * 100 : 490;
+      const isFly = type === 'needle_wasp' || type === 'shadow_wisp' || type === 'astral_phantom' || type === 'void_shade';
+      const sy = isFly ? 220 + Math.random() * 120 : 490;
       this.monsters.push(new SmallMonster(sx, sy, type));
     }
 
@@ -610,8 +612,8 @@ class Game {
   }
 
   handleBossDefeat() {
-    if (this.currentLevel === 8) {
-      // Spawn Hornet's Trapping Cage right where Radiance Koopa God was slain!
+    if (this.currentLevel === 12) {
+      // Spawn Hornet's Golden Cage right where The Ascended Godweaver Koopa was slain!
       const spawnX = this.activeBoss ? Math.max(this.levelManager.bossArenaStartX + 80, Math.min(this.levelManager.levelWidth - 250, this.activeBoss.x)) : (this.levelManager.bossSpawnX + 240);
       this.hornetCage = new HornetCage(spawnX, 420);
       this.screenShake = 1.0;
@@ -631,7 +633,7 @@ class Game {
         ));
       }
       this.floatingTexts.push(new FloatingText('🪡 HORNET TRAPPED IN CAGE! BREAK IT! ⚔️', spawnX - 30, 370, '#ffd700', 14));
-      this.showToast('⚔️ THE RADIANCE GOD IS SLAIN! THE CAGE APPEARED! STRIKE IT WITH YOUR NAIL TO FREE HORNET! ⚔️');
+      this.showToast('⚔️ THE ASCENDED GODWEAVER IS SLAIN! THE CAGE APPEARED! STRIKE IT WITH YOUR AXE TO FREE HORNET! ⚔️');
     } else {
       this.showLevelClear();
     }
@@ -672,6 +674,10 @@ class Game {
       { id: 'power-p5', unlocked: this.player.powers.aegisReflect },
       { id: 'power-p6', unlocked: this.player.powers.seismicSlam },
       { id: 'power-p7', unlocked: this.player.powers.voidVortex },
+      { id: 'power-p8', unlocked: this.player.powers.radiantAura },
+      { id: 'power-p9', unlocked: this.player.powers.stellarPrism },
+      { id: 'power-p10', unlocked: this.player.powers.chronoGear },
+      { id: 'power-p11', unlocked: this.player.powers.shadowSoul },
     ];
 
     powerMap.forEach((p) => {
@@ -721,7 +727,7 @@ class Game {
 
     this.statTime.textContent = `${this.levelTimer.toFixed(1)}s`;
     this.statKills.textContent = `${this.levelKills}`;
-    this.statNextDist.textContent = this.currentLevel < 8 ? `${(1000 + this.currentLevel * 15)} km` : 'FINAL';
+    this.statNextDist.textContent = this.currentLevel < 12 ? `${(1000 + this.currentLevel * 15)} km` : 'FINAL';
 
     this.modalLevelClear.classList.add('active');
   }
@@ -931,17 +937,17 @@ class Game {
         }
       }
 
-      // Boss bites / hits Player
+      // Boss bites / hits Player (Direct titan body collision deals 2 masks!)
       if (this.player.checkOverlap(this.activeBoss)) {
-        if (this.player.takeDamage(1)) {
-          this.screenShake = 0.5;
+        if (this.player.takeDamage(2)) {
+          this.screenShake = 0.55;
           this.updateHPUI();
-          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -1/6 HP', this.player.x - 25, this.player.y - 25, '#ff4d61', 12));
+          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -2/6 HP', this.player.x - 25, this.player.y - 25, '#ff4d61', 13));
         }
       }
     }
 
-    // 6.5 Update Hornet Cage (Level 8 Climax)
+    // 6.5 Update Hornet Cage (Level 12 Climax)
     if (this.hornetCage) {
       this.hornetCage.update(dt, this.particles);
 

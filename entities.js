@@ -189,6 +189,54 @@ class Projectile {
       ctx.beginPath();
       ctx.ellipse(0, 0, 20, 6, Math.atan2(this.vy, this.vx), 0, Math.PI * 2);
       ctx.fill();
+    } else if (this.type === 'boss_gear') {
+      ctx.rotate(this.time * 12);
+      ctx.fillStyle = '#ff6f00';
+      ctx.strokeStyle = '#ffd54f';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#ffab00';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(0, 0, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // Gear teeth
+      for (let g = 0; g < 4; g++) {
+        ctx.strokeRect(-3, -15, 6, 30);
+        ctx.rotate(Math.PI / 4);
+      }
+    } else if (this.type === 'boss_void') {
+      ctx.fillStyle = '#0d1117';
+      ctx.strokeStyle = '#00e5ff';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      ctx.arc(0, 0, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    } else if (this.type === 'stellar_lance') {
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 22;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 24, 7, Math.atan2(this.vy, this.vx), 0, Math.PI * 2);
+      ctx.fill();
+    } else if (this.type === 'chrono_pulse') {
+      ctx.rotate(this.time * 10);
+      ctx.fillStyle = '#ffab00';
+      ctx.shadowColor = '#ffd700';
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(0, 0, 16, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (this.type === 'shadow_strike') {
+      ctx.fillStyle = '#00e5ff';
+      ctx.shadowColor = '#18ffff';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(0, 0, 14, -Math.PI * 0.4, Math.PI * 0.4);
+      ctx.fill();
     }
 
     ctx.restore();
@@ -216,7 +264,7 @@ class Player {
     this.invulnerableTimer = 0;
     this.dead = false;
 
-    // Soul System (10 notches, charged on every monster hit!)
+    // Soul System (10 notches, charged on monster hits!)
     this.maxSoul = 10;
     this.soul = 0;
 
@@ -224,15 +272,15 @@ class Player {
     this.slashing = false;
     this.slashTimer = 0;
     this.slashDuration = 0.22;
-    this.slashCooldown = 0.08;
-    this.damage = 35; // Heroic Great Axe damage per hit
+    this.slashCooldown = 0.10;
+    this.damage = 28; // Engaging Great Axe damage per hit
 
     // Sets to prevent multi-hit frame glitches during a single swing/dash/slam
     this.attackHitEntities = new Set();
     this.dashHitEntities = new Set();
     this.slamHitEntities = new Set();
 
-    // Overhauled 7 Epic Powers - Unlocked by conquering each level!
+    // 11 Epic Powers - Unlocked by conquering each level!
     this.powers = {
       lightningAxe: false,       // Level 1: Thunderbolts & chain lightning
       tornadoDash: false,        // Level 2: Invincible razor tornado whirlwind
@@ -241,6 +289,10 @@ class Player {
       aegisReflect: false,       // Level 5: Divine Aegis barrier that reflects hits
       seismicSlam: false,        // Level 6: Screen-wide earthquake with lava pillars
       voidVortex: false,         // Level 7: Abyssal black hole gravity vortex
+      radiantAura: false,        // Level 8: Blinding solar halos on slash
+      stellarPrism: false,       // Level 9: Piercing cosmic starlight javelins [Q]/[E]
+      chronoGear: false,         // Level 10: Clockwork temporal pulse
+      shadowSoul: false,         // Level 11: Ethereal shadow scythe barrage
     };
 
     // Movement state
@@ -288,13 +340,17 @@ class Player {
     if (level === 5) this.powers.aegisReflect = true;
     if (level === 6) this.powers.seismicSlam = true;
     if (level === 7) this.powers.voidVortex = true;
+    if (level === 8) this.powers.radiantAura = true;
+    if (level === 9) this.powers.stellarPrism = true;
+    if (level === 10) this.powers.chronoGear = true;
+    if (level === 11) this.powers.shadowSoul = true;
   }
 
   takeDamage(amountMasks = 1) {
     if (this.invulnerableTimer > 0 || this.dead || this.dashing) return false;
 
     this.masks = Math.max(0, this.masks - amountMasks);
-    this.invulnerableTimer = 1.2; // Generous 1.2s recovery invulnerability
+    this.invulnerableTimer = 0.7; // Crisp 0.7s recovery invulnerability
     window.soundEngine.playHurt();
 
     if (this.masks <= 0) {
@@ -304,7 +360,7 @@ class Player {
     return true;
   }
 
-  addSoul(amount = 2) {
+  addSoul(amount = 1) {
     if (this.soul < this.maxSoul) {
       this.soul = Math.min(this.maxSoul, this.soul + amount);
       window.soundEngine.playSoulAbsorb();
@@ -315,9 +371,9 @@ class Player {
   }
 
   focusHeal() {
-    // 10/10 Soul completely restores all Life Masks to full!
+    // 10/10 Soul restores +2 Life Masks (Balanced, non-cheating recovery)
     if (this.soul >= this.maxSoul && this.masks < this.maxMasks) {
-      this.masks = this.maxMasks;
+      this.masks = Math.min(this.maxMasks, this.masks + 2);
       this.soul = 0;
       window.soundEngine.playFocusHeal();
       return true;
@@ -334,7 +390,32 @@ class Player {
     if (!this.attackHitEntities) this.attackHitEntities = new Set();
     else this.attackHitEntities.clear();
 
-    if (this.powers.lightningAxe) {
+    if (this.powers.radiantAura) {
+      // Blinding Solar Lance Aura
+      window.soundEngine.playThunder();
+      const beamVx = (this.facingRight ? 1 : -1) * 18;
+      projectiles.push(new Projectile(
+        this.x + (this.facingRight ? this.width + 12 : -12),
+        this.y + this.height / 2,
+        beamVx,
+        0,
+        true,
+        'stellar_lance',
+        40,
+        20
+      ));
+      for (let i = 0; i < 8; i++) {
+        particles.push(new Particle(
+          this.x + (this.facingRight ? this.width + 15 : -15),
+          this.y + this.height / 2 + (Math.random() - 0.5) * 20,
+          (Math.random() - 0.5) * 10 + (this.facingRight ? 5 : -5),
+          (Math.random() - 0.5) * 10,
+          '#ffd700',
+          5,
+          0.35
+        ));
+      }
+    } else if (this.powers.lightningAxe) {
       // Crackling Lightning Thunder Axe Slash!
       window.soundEngine.playThunder();
       const beamVx = (this.facingRight ? 1 : -1) * 16;
@@ -421,7 +502,49 @@ class Player {
   }
 
   castSpell(projectiles) {
-    if (this.powers.voidVortex) {
+    if (this.powers.shadowSoul) {
+      // Cast Void Shadow Scythe Barrage!
+      window.soundEngine.playBlackHole();
+      const vx = (this.facingRight ? 1 : -1) * 14;
+      projectiles.push(new Projectile(
+        this.x + (this.facingRight ? this.width + 16 : -16),
+        this.y + this.height / 2 - 8,
+        vx,
+        0,
+        true,
+        'shadow_strike',
+        55,
+        22
+      ));
+    } else if (this.powers.chronoGear) {
+      // Cast Chronos Time-Displacement Pulse!
+      window.soundEngine.playTornado();
+      const vx = (this.facingRight ? 1 : -1) * 12;
+      projectiles.push(new Projectile(
+        this.x + (this.facingRight ? this.width + 16 : -16),
+        this.y + this.height / 2 - 6,
+        vx,
+        0,
+        true,
+        'chrono_pulse',
+        45,
+        20
+      ));
+    } else if (this.powers.stellarPrism) {
+      // Cast Piercing Starlight Lance!
+      window.soundEngine.playThunder();
+      const vx = (this.facingRight ? 1 : -1) * 16;
+      projectiles.push(new Projectile(
+        this.x + (this.facingRight ? this.width + 16 : -16),
+        this.y + this.height / 2,
+        vx,
+        0,
+        true,
+        'stellar_lance',
+        50,
+        22
+      ));
+    } else if (this.powers.voidVortex) {
       // Cast Abyssal Black Hole Singularity!
       window.soundEngine.playBlackHole();
       const vx = (this.facingRight ? 1 : -1) * 7;
@@ -666,57 +789,80 @@ class SmallMonster {
     this.time = Math.random() * 10;
     this.hitFlashTimer = 0;
 
-    // Attributes by monster type (Balanced & Punchy)
+    // Attributes by monster type (Challenging & Thrilling)
     switch (type) {
       case 'void_goomba':
         this.width = 30;
         this.height = 28;
-        this.hp = 25; // 1-hit kill with Great Axe (35 dmg)!
-        this.speed = 1.2;
+        this.hp = 45; // 2 solid Great Axe hits (28x2 = 56)
+        this.speed = 1.4;
         this.flying = false;
         break;
       case 'silk_spiny':
         this.width = 32;
         this.height = 24;
-        this.hp = 35;
-        this.speed = 1.4;
+        this.hp = 60;
+        this.speed = 1.6;
         this.flying = false;
         break;
       case 'needle_wasp':
         this.width = 28;
         this.height = 28;
-        this.hp = 25;
-        this.speed = 2.0;
+        this.hp = 40;
+        this.speed = 2.4;
         this.flying = true;
         this.baseY = y;
         break;
       case 'piranha_pod':
         this.width = 28;
         this.height = 36;
-        this.hp = 40;
+        this.hp = 65;
         this.speed = 0;
         this.flying = false;
         break;
       case 'shield_beetle':
         this.width = 32;
         this.height = 30;
-        this.hp = 50;
-        this.speed = 1.4;
+        this.hp = 80;
+        this.speed = 1.5;
         this.flying = false;
         break;
       case 'shadow_wisp':
         this.width = 26;
         this.height = 26;
-        this.hp = 25;
-        this.speed = 1.8;
+        this.hp = 45;
+        this.speed = 2.0;
+        this.flying = true;
+        this.baseY = y;
+        break;
+      case 'astral_phantom':
+        this.width = 32;
+        this.height = 32;
+        this.hp = 55;
+        this.speed = 2.4;
+        this.flying = true;
+        this.baseY = y;
+        break;
+      case 'cog_sentinel':
+        this.width = 32;
+        this.height = 34;
+        this.hp = 75;
+        this.speed = 1.6;
+        this.flying = false;
+        break;
+      case 'void_shade':
+        this.width = 30;
+        this.height = 34;
+        this.hp = 60;
+        this.speed = 2.6;
         this.flying = true;
         this.baseY = y;
         break;
       default:
         this.width = 28;
         this.height = 28;
-        this.hp = 25;
-        this.speed = 1.2;
+        this.hp = 40;
+        this.speed = 1.4;
         this.flying = false;
     }
 
@@ -819,7 +965,7 @@ class SmallMonster {
       this.facingRight = false;
     }
 
-    // Ranged attacks for Piranha / Spiny / Wisp
+    // Ranged attacks for Piranha / Spiny / Wisp / Astral Phantom / Cog Sentinel
     if (this.type === 'piranha_pod' || this.type === 'shadow_wisp') {
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
@@ -834,6 +980,38 @@ class SmallMonster {
           'fireball',
           1,
           10
+        ));
+      }
+    } else if (this.type === 'cog_sentinel') {
+      this.shootTimer -= dt;
+      if (this.shootTimer <= 0) {
+        this.shootTimer = 2.0 + Math.random() * 1.0;
+        const shootVx = (player.x > this.x ? 1 : -1) * 5.5;
+        projectiles.push(new Projectile(
+          this.x + this.width / 2,
+          this.y + this.height / 2,
+          shootVx,
+          -1.2,
+          false,
+          'boss_gear',
+          1,
+          11
+        ));
+      }
+    } else if (this.type === 'astral_phantom') {
+      this.shootTimer -= dt;
+      if (this.shootTimer <= 0) {
+        this.shootTimer = 2.2 + Math.random() * 1.2;
+        const shootVx = (player.x > this.x ? 1 : -1) * 6.0;
+        projectiles.push(new Projectile(
+          this.x + this.width / 2,
+          this.y + this.height / 2,
+          shootVx,
+          -0.5,
+          false,
+          'boss_sun_lance',
+          1,
+          9
         ));
       }
     }
@@ -866,7 +1044,7 @@ class SmallMonster {
   }
 }
 
-// Giant Boss Class (8 Distinct Bosses)
+// Giant Boss Class (12 Distinct Bosses)
 class Boss {
   constructor(bossLevel, arenaX, arenaY) {
     this.bossLevel = bossLevel;
@@ -879,22 +1057,26 @@ class Boss {
     this.time = 0;
     this.hitFlashTimer = 0;
     this.facingRight = false;
-    this.attackTimer = 1.2;
+    this.attackTimer = 1.0;
     this.phase = 1;
 
-    // Balanced & Enjoyable Boss Progression across all 8 Titans
+    // Challenging & Epic Boss Progression across all 12 Titans
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 120, w: 90, h: 80, speed: 1.6, isFlying: false },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 220, w: 80, h: 90, speed: 2.5, isFlying: true },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 360, w: 95, h: 95, speed: 2.2, isFlying: false },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 500, w: 85, h: 100, speed: 2.6, isFlying: true },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 700, w: 110, h: 85, speed: 2.5, isFlying: true },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 950, w: 105, h: 95, speed: 2.2, isFlying: false },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 1200, w: 95, h: 110, speed: 3.0, isFlying: true },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 1500, w: 115, h: 115, speed: 3.2, isFlying: true }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 350, w: 90, h: 80, speed: 1.8, isFlying: false },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 520, w: 80, h: 90, speed: 2.6, isFlying: true },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 750, w: 95, h: 95, speed: 2.4, isFlying: false },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 980, w: 85, h: 100, speed: 2.7, isFlying: true },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 1250, w: 110, h: 85, speed: 2.6, isFlying: true },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 1600, w: 105, h: 95, speed: 2.3, isFlying: false },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 2000, w: 95, h: 110, speed: 3.2, isFlying: true },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 2500, w: 115, h: 115, speed: 3.4, isFlying: true },
+      { name: 'CELESTIAL WEAVER MATRON', title: 'Spinner of Astral Fates', maxHp: 3000, w: 100, h: 105, speed: 3.2, isFlying: true },
+      { name: 'CHRONOS AUTOMATON PRIME', title: 'Clockwork Eternal Warden', maxHp: 3600, w: 110, h: 100, speed: 2.4, isFlying: false },
+      { name: 'THE HOLLOW SHADOW KING', title: 'Monarch of Abyssal Despair', maxHp: 4300, w: 95, h: 115, speed: 3.5, isFlying: true },
+      { name: 'THE ASCENDED GODWEAVER KOOPA', title: 'Supreme Weaver of the Cosmos', maxHp: 5200, w: 120, h: 120, speed: 3.6, isFlying: true }
     ];
 
-    const cfg = bossConfigs[bossLevel - 1];
+    const cfg = bossConfigs[bossLevel - 1] || bossConfigs[0];
     this.name = cfg.name;
     this.title = cfg.title;
     this.maxHp = cfg.maxHp;
@@ -929,10 +1111,10 @@ class Boss {
       ));
     }
 
-    // Phase shift at 35% HP (Enraged & Speed boost)
-    if (this.hp < this.maxHp * 0.35 && this.phase === 1) {
+    // Phase shift at 50% HP (Enraged & Speed boost)
+    if (this.hp < this.maxHp * 0.5 && this.phase === 1) {
       this.phase = 2;
-      this.baseSpeed *= 1.2;
+      this.baseSpeed *= 1.25;
       window.soundEngine.playBossRoar();
       floatingTexts.push(new FloatingText('⚡ PHASE 2 ENRAGED! ⚡', this.x, this.y - 45, '#ffd700', 14));
     }
@@ -967,10 +1149,10 @@ class Boss {
     const dx = player.x - this.x;
     const dy = player.y - this.y;
 
-    // Readable boss attack frequency
+    // Fast, intense bullet-hell cadence
     if (this.attackTimer <= 0) {
       this.executeAttack(player, projectiles, particles);
-      this.attackTimer = this.phase === 2 ? 1.4 : 2.0;
+      this.attackTimer = this.phase === 2 ? 0.75 : 1.15;
     }
 
     // Boss Level Specific AI Movement
@@ -997,6 +1179,18 @@ class Boss {
           this.y = this.baseY + Math.sin(this.time * 3.8) * 40;
           this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.8);
           break;
+        case 9: // Celestial Weaver Matron
+          this.y = this.baseY + Math.sin(this.time * 4.2) * 50;
+          this.x += (this.facingRight ? 1 : -1) * this.baseSpeed * 60 * dt * 0.7;
+          break;
+        case 11: // The Hollow Shadow King
+          this.y = this.baseY + Math.sin(this.time * 5.0) * 40;
+          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.95);
+          break;
+        case 12: // The Ascended Godweaver Koopa
+          this.y = this.baseY + Math.sin(this.time * 3.2) * 60;
+          this.x += Math.sign(dx) * Math.min(Math.abs(dx), this.baseSpeed * 60 * dt * 0.85);
+          break;
       }
     } else {
       // Ground-based bosses
@@ -1019,12 +1213,12 @@ class Boss {
     const dir = this.facingRight ? 1 : -1;
 
     switch (this.bossLevel) {
-      case 1: // Spore Eruption (2 slow bouncy spores)
-        for (let a = -0.2; a <= 0.2; a += 0.4) {
+      case 1: // Spore Eruption (3 slow bouncy spores)
+        for (let a = -0.3; a <= 0.3; a += 0.3) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            dir * 3.6,
+            dir * 4.0 + a * 3,
             -3.5,
             false,
             'boss_spore',
@@ -1034,13 +1228,13 @@ class Boss {
         }
         break;
 
-      case 2: // Needle Barrage (4 high-speed needles)
-        for (let i = 0; i < 4; i++) {
+      case 2: // Needle Barrage (5 high-speed needles)
+        for (let i = 0; i < 5; i++) {
           projectiles.push(new Projectile(
             this.x + (this.facingRight ? this.width : 0),
-            this.y + 10 + i * 20,
-            dir * (6.5 + i * 0.8),
-            (i % 2 === 0 ? -1.2 : 1.2),
+            this.y + 10 + i * 16,
+            dir * (7.0 + i * 0.8),
+            (i % 2 === 0 ? -1.5 : 1.5),
             false,
             'boss_needle',
             1,
@@ -1049,13 +1243,13 @@ class Boss {
         }
         break;
 
-      case 3: // Bowser Fireball Cone Blast (5 Fireballs)
-        for (let i = 0; i < 5; i++) {
+      case 3: // Bowser Fireball Cone Blast (6 Fireballs)
+        for (let i = 0; i < 6; i++) {
           projectiles.push(new Projectile(
             this.x + (this.facingRight ? this.width : 0),
-            this.y + 25 + i * 8,
-            dir * (6.0 + i * 1.0),
-            (i - 2) * 1.5,
+            this.y + 20 + i * 10,
+            dir * (6.5 + i * 0.9),
+            (i - 2.5) * 1.6,
             false,
             'boss_fire',
             1,
@@ -1069,8 +1263,8 @@ class Boss {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + this.height / 2,
-            Math.cos(a) * 5.0,
-            Math.sin(a) * 5.0,
+            Math.cos(a) * 5.8,
+            Math.sin(a) * 5.8,
             false,
             'boss_spore',
             1,
@@ -1079,12 +1273,12 @@ class Boss {
         }
         break;
 
-      case 5: // Bubble Mine Barrage & Hydro Spikes
-        for (let i = 0; i < 7; i++) {
+      case 5: // Bubble Mine Barrage & Hydro Spikes (8 spikes)
+        for (let i = 0; i < 8; i++) {
           projectiles.push(new Projectile(
             this.x + Math.random() * this.width,
             this.y + this.height / 2,
-            (Math.random() - 0.5) * 9,
+            (Math.random() - 0.5) * 10,
             -Math.random() * 9 - 1,
             false,
             'boss_needle',
@@ -1094,13 +1288,13 @@ class Boss {
         }
         break;
 
-      case 6: // Crystal Prismatic Gem Shards (7 Shards)
-        for (let a = -0.8; a <= 0.8; a += 0.26) {
+      case 6: // Crystal Prismatic Gem Shards (8 Shards)
+        for (let a = -0.9; a <= 0.9; a += 0.26) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
             this.y + 10,
-            Math.sin(a) * 9.5 * dir,
-            -Math.abs(Math.cos(a)) * 8.5,
+            Math.sin(a) * 10.0 * dir,
+            -Math.abs(Math.cos(a)) * 9.0,
             false,
             'boss_sun_lance',
             1,
@@ -1109,13 +1303,13 @@ class Boss {
         }
         break;
 
-      case 7: // Grimm Scarlet Bat Storm (8 Bats)
-        for (let i = 0; i < 8; i++) {
+      case 7: // Grimm Scarlet Bat Storm (9 Bats)
+        for (let i = 0; i < 9; i++) {
           projectiles.push(new Projectile(
             this.x + this.width / 2,
-            this.y + 15 + i * 8,
-            dir * (8.0 + i * 0.7),
-            Math.sin(i * 1.2) * 4.0,
+            this.y + 10 + i * 8,
+            dir * (8.5 + i * 0.7),
+            Math.sin(i * 1.3) * 4.5,
             false,
             'boss_fire',
             1,
@@ -1136,6 +1330,128 @@ class Boss {
             'boss_sun_lance',
             1,
             12
+          ));
+        }
+        break;
+
+      case 9: // Celestial Weaver Matron (Cosmic Web Needles + Starlight)
+        for (let i = 0; i < 6; i++) {
+          projectiles.push(new Projectile(
+            this.x + (this.facingRight ? this.width : 0),
+            this.y + 15 + i * 14,
+            dir * (7.5 + i * 0.8),
+            (i - 2.5) * 2.0,
+            false,
+            'boss_needle',
+            1,
+            9
+          ));
+        }
+        // Central starlight lance
+        projectiles.push(new Projectile(
+          this.x + this.width / 2,
+          this.y + this.height / 2,
+          dir * 11,
+          0,
+          false,
+          'boss_sun_lance',
+          1,
+          13
+        ));
+        break;
+
+      case 10: // Chronos Automaton Prime (Rotating Clockwork Gears + Steam Burst)
+        for (let i = 0; i < 4; i++) {
+          projectiles.push(new Projectile(
+            this.x + (this.facingRight ? this.width : 0),
+            this.y + 20 + i * 18,
+            dir * (7.0 + i * 1.2),
+            (i % 2 === 0 ? -1.8 : 1.8),
+            false,
+            'boss_gear',
+            1,
+            12
+          ));
+        }
+        for (let a = -0.4; a <= 0.4; a += 0.8) {
+          projectiles.push(new Projectile(
+            this.x + this.width / 2,
+            this.y + this.height / 2,
+            dir * 6.5,
+            a * 6,
+            false,
+            'boss_fire',
+            1,
+            10
+          ));
+        }
+        break;
+
+      case 11: // The Hollow Shadow King (Abyssal Void Nova + Scythes)
+        const voidCount = this.phase === 2 ? 10 : 8;
+        for (let a = 0; a < Math.PI * 2; a += (Math.PI * 2) / voidCount) {
+          projectiles.push(new Projectile(
+            this.x + this.width / 2,
+            this.y + this.height / 2,
+            Math.cos(a) * 7.5,
+            Math.sin(a) * 7.5,
+            false,
+            'boss_void',
+            1,
+            12
+          ));
+        }
+        projectiles.push(new Projectile(
+          this.x + (this.facingRight ? this.width : 0),
+          this.y + this.height / 2,
+          dir * 12,
+          0,
+          false,
+          'boss_fire',
+          1,
+          13
+        ));
+        break;
+
+      case 12: // The Ascended Godweaver Koopa (Ultimate Divine Tri-Barrage)
+        const godRays = this.phase === 2 ? 16 : 12;
+        // Solar Lance Nova
+        for (let a = 0; a < Math.PI * 2; a += (Math.PI * 2) / godRays) {
+          projectiles.push(new Projectile(
+            this.x + this.width / 2,
+            this.y + this.height / 2,
+            Math.cos(a) * 9.0,
+            Math.sin(a) * 9.0,
+            false,
+            'boss_sun_lance',
+            1,
+            12
+          ));
+        }
+        // Void Pulsars
+        for (let i = 0; i < 4; i++) {
+          projectiles.push(new Projectile(
+            this.x + this.width / 2,
+            this.y + 15 + i * 20,
+            dir * (9.0 + i * 1.5),
+            (i - 1.5) * 2.5,
+            false,
+            'boss_void',
+            1,
+            12
+          ));
+        }
+        // Spinning Gears
+        for (let a = -0.5; a <= 0.5; a += 0.5) {
+          projectiles.push(new Projectile(
+            this.x + this.width / 2,
+            this.y + 10,
+            dir * 8.0,
+            a * 8,
+            false,
+            'boss_gear',
+            1,
+            11
           ));
         }
         break;

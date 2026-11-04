@@ -88,6 +88,10 @@
             <div class="power-icon locked" id="power-p5" title="Level 5: Divine Aegis Reflector">🛡️</div>
             <div class="power-icon locked" id="power-p6" title="Level 6: Titan Seismic Slam">🌋</div>
             <div class="power-icon locked" id="power-p7" title="Level 7: Abyssal Black Hole">🌌</div>
+            <div class="power-icon locked" id="power-p8" title="Level 8: Radiant Sun Aura">☀️</div>
+            <div class="power-icon locked" id="power-p9" title="Level 9: Starlight Prism Lance">🌟</div>
+            <div class="power-icon locked" id="power-p10" title="Level 10: Chrono Gear Stasis">⚙️</div>
+            <div class="power-icon locked" id="power-p11" title="Level 11: Abyssal Shadow Soul">👁️</div>
           </div>
         </div>
         <div class="sound-controls">
@@ -133,18 +137,18 @@
       <div class="modal-content title-modal">
         <div class="silksong-crest">❖ 🍄 ❖</div>
         <h1 class="game-title">MARIO KNIGHT<br><span class="subtitle">SILKSONG</span></h1>
-        <p class="tagline">8 Epic Boss Levels • Pharloom's Mushroom Chasm</p>
+        <p class="tagline">12 Epic Boss Levels • Pharloom's Mushroom Chasm</p>
 
         <!-- Big Instant Start Button at Top for Mobile -->
-        <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY (45s RUSH) ⚔️</button>
+        <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY (65s RUSH) ⚔️</button>
 
         <div class="rules-card">
           <h3>✦ QUICK CODEX ✦</h3>
           <ul>
-            <li><strong>60s Expedition:</strong> Exactly <strong>60.0s</strong> to conquer the treacherous path & slay the Colossal Boss!</li>
+            <li><strong>65s Expedition:</strong> Exactly <strong>65.0s</strong> to conquer the treacherous path & slay the Colossal Boss!</li>
             <li><strong>Arena Lock:</strong> The arena <strong>locks</strong> during the Colossus fight!</li>
-            <li><strong>Soul on Hit:</strong> Every axe strike gives <strong>+1 Soul</strong>! At <strong>10/10 Soul</strong>, tap <strong>HEAL</strong> for Full HP!</li>
-            <li><strong>New Powers:</strong> Slaying bosses unlocks Thunder Axe, Tornado Dash, Meteor, and Black Hole!</li>
+            <li><strong>Soul on Hit:</strong> Every axe strike gives <strong>+1 Soul</strong>! At <strong>10/10 Soul</strong>, tap <strong>HEAL</strong> to restore Life Masks!</li>
+            <li><strong>12 Legendary Powers:</strong> Slaying bosses unlocks Thunder Axe, Tornado Dash, Meteor, Wings, Black Hole, Solar Aura, Chrono Gear, and Shadow Scythes!</li>
           </ul>
         </div>
 
@@ -159,7 +163,7 @@
           </div>
         </div>
 
-        <button id="btn-play-game-bottom" class="btn-gold pulse-btn">START EXPEDITION (60s RUSH) ⚔️</button>
+        <button id="btn-play-game-bottom" class="btn-gold pulse-btn">START EXPEDITION (65s RUSH) ⚔️</button>
       </div>
     </div>
 
@@ -204,28 +208,28 @@
         <div class="death-skull">💀</div>
         <h2 class="death-title">YOU HAVE FALLEN</h2>
         <p class="death-reason" id="death-reason">Your Life Masks shattered completely.</p>
-        <div class="restart-note">You will restart from the beginning of <strong id="death-level-text">Level 1</strong> with 90s.</div>
-        <button id="btn-retry" class="btn-crimson">RETRY LEVEL (90s)</button>
+        <div class="restart-note">You will restart from the beginning of <strong id="death-level-text">Level 1</strong> with 65s.</div>
+        <button id="btn-retry" class="btn-crimson">RETRY LEVEL (65s)</button>
       </div>
     </div>
 
-    <!-- Grand Victory Modal (All 8 Levels Complete & Hornet Freed) -->
+    <!-- Grand Victory Modal (All 12 Levels Complete & Hornet Freed) -->
     <div id="modal-game-win" class="modal">
       <div class="modal-content champion-modal">
         <div class="crest-icon">🌟 🪡 🍄 👑 🌟</div>
         <h1 class="victory-heading">MARIO KNIGHT OF SILKSONG</h1>
-        <p class="tagline">The Radiance Koopa God Slain • Hornet Freed from the Golden Cage • Pharloom Saved!</p>
+        <p class="tagline">The Ascended Godweaver Koopa Slain • Hornet Freed from the Golden Cage • Pharloom Saved!</p>
         
         <div class="champion-powers-recap">
-          <h3>ALL 8 GODLIKE POWERS UNLOCKED</h3>
+          <h3>ALL 11 GODLIKE POWERS UNLOCKED</h3>
           <div class="champion-icons">
-            <span>⚡</span><span>🌪️</span><span>🔥</span><span>🪽</span><span>🛡️</span><span>🌋</span><span>🌌</span><span>👑</span>
+            <span>⚡</span><span>🌪️</span><span>🔥</span><span>🪽</span><span>🛡️</span><span>🌋</span><span>🌌</span><span>☀️</span><span>🌟</span><span>⚙️</span><span>👁️</span><span>👑</span>
           </div>
         </div>
 
         <div class="final-stats">
-          <div class="final-stat-item"><span>Total Distance Conquered:</span> <strong>8,420 km</strong></div>
-          <div class="final-stat-item"><span>Final Titan Slain:</span> <strong>The Radiance Koopa God</strong></div>
+          <div class="final-stat-item"><span>Total Distance Conquered:</span> <strong>12,800 km</strong></div>
+          <div class="final-stat-item"><span>Final Titan Slain:</span> <strong>The Ascended Godweaver Koopa</strong></div>
           <div class="final-stat-item"><span>Companion Saved:</span> <strong>Hornet (Needle Princess) ❤️</strong></div>
           <div class="final-stat-item"><span>Title Earned:</span> <strong>Grand Silksong Champion</strong></div>
         </div>
@@ -294,10 +298,10 @@
   </div>
 
   <!-- Game Scripts -->
-  <script src="audio.js?v=14"></script>
-  <script src="sprites.js?v=14"></script>
-  <script src="entities.js?v=14"></script>
-  <script src="levels.js?v=14"></script>
-  <script src="game.js?v=14"></script>
+  <script src="audio.js?v=15"></script>
+  <script src="sprites.js?v=15"></script>
+  <script src="entities.js?v=15"></script>
+  <script src="levels.js?v=15"></script>
+  <script src="game.js?v=15"></script>
 </body>
 </html>
