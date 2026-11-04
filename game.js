@@ -53,7 +53,7 @@ class Game {
     this.state = 'START'; // START, PLAYING, BOSS, LEVEL_CLEAR, GAME_OVER, WIN
     this.paused = false;
     this.currentLevel = 1;
-    this.levelTimer = 80.0; // Grand 80s Expedition Rush for Longer Distances!
+    this.levelTimer = 120.0; // Grand 120s Epic Expedition across Super-Extended Distances!
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.cameraX = 0;
@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 80.0; // Grand 80s Expedition Rush across Extended Distances
+    this.levelTimer = 120.0; // Grand 120s Epic Expedition across Super-Extended Distances
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -581,12 +581,12 @@ class Game {
     // Hornet cage appears strictly after defeating the ultimate boss (Level 12)
     this.hornetCage = null;
 
-    // Initial monsters in traversal path across the extended terrain
+    // Initial monsters in traversal path across the super-extended terrain
     const types = this.levelManager.config.monsterTypes;
-    const monsterCount = Math.min(28, 8 + levelNum * 2);
-    const spacing = Math.max(260, 420 - levelNum * 8);
+    const monsterCount = Math.min(48, 14 + levelNum * 3);
+    const spacing = Math.max(300, 520 - levelNum * 10);
     for (let i = 0; i < monsterCount; i++) {
-      const sx = 450 + i * spacing;
+      const sx = 500 + i * spacing;
       if (sx >= this.levelManager.bossArenaStartX - 100) break;
       const type = types[i % types.length];
       const isFly = type === 'needle_wasp' || type === 'shadow_wisp' || type === 'astral_phantom' || type === 'void_shade';
