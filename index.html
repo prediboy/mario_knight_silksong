@@ -56,12 +56,12 @@
         </div>
       </div>
 
-      <!-- Center: Level Distance & 300s Timer -->
+      <!-- Center: Level Distance -->
       <div class="hud-center">
         <div class="level-badge" id="level-badge">LEVEL 1</div>
-        <div class="timer-wrapper">
+        <div class="timer-wrapper" style="display: none;">
           <span class="timer-icon">⏳</span>
-          <span id="timer-display">300.0</span>s
+          <span id="timer-display">∞</span>
         </div>
         <div class="distance-track-container">
           <div class="distance-text">
@@ -140,12 +140,12 @@
         <p class="tagline">12 Epic Boss Levels • Pharloom's Mushroom Chasm</p>
 
         <!-- Big Instant Start Button at Top for Mobile -->
-        <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY (180s EXPEDITION) ⚔️</button>
+        <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY ⚔️</button>
 
         <div class="rules-card">
           <h3>✦ QUICK CODEX ✦</h3>
           <ul>
-            <li><strong>180s Expedition:</strong> Exactly <strong>180.0s (3 Full Minutes)</strong> to conquer the colossal distance & slay the Colossal Boss!</li>
+            <li><strong>Epic Expedition:</strong> Traverse the colossal distances at your own pace & slay the Colossal Boss!</li>
             <li><strong>Arena Lock:</strong> The arena <strong>locks</strong> during the Colossus fight!</li>
             <li><strong>Soul on Hit:</strong> Every axe strike gives <strong>+1 Soul</strong>! At <strong>10/10 Soul</strong>, tap <strong>HEAL</strong> to restore Life Masks!</li>
             <li><strong>12 Legendary Powers:</strong> Slaying bosses unlocks Thunder Axe, Tornado Dash, Meteor, Wings, Black Hole, Solar Aura, Chrono Gear, and Shadow Scythes!</li>
@@ -163,7 +163,7 @@
           </div>
         </div>
 
-        <button id="btn-play-game-bottom" class="btn-gold pulse-btn">START EXPEDITION (180s) ⚔️</button>
+        <button id="btn-play-game-bottom" class="btn-gold pulse-btn">START EXPEDITION ⚔️</button>
       </div>
     </div>
 
@@ -185,7 +185,7 @@
 
         <div class="level-stats">
           <div class="stat-box">
-            <span class="stat-label">TIME REMAINING</span>
+            <span class="stat-label">TIME TAKEN</span>
             <span class="stat-val" id="stat-time">24.2s</span>
           </div>
           <div class="stat-box">
@@ -208,8 +208,8 @@
         <div class="death-skull">💀</div>
         <h2 class="death-title">YOU HAVE FALLEN</h2>
         <p class="death-reason" id="death-reason">Your Life Masks shattered completely.</p>
-        <div class="restart-note">You will restart from the beginning of <strong id="death-level-text">Level 1</strong> with 180s.</div>
-        <button id="btn-retry" class="btn-crimson">RETRY LEVEL (180s)</button>
+        <div class="restart-note">You will restart from the beginning of <strong id="death-level-text">Level 1</strong>.</div>
+        <button id="btn-retry" class="btn-crimson">RETRY LEVEL</button>
       </div>
     </div>
 
@@ -298,10 +298,10 @@
   </div>
 
   <!-- Game Scripts -->
-  <script src="audio.js?v=19"></script>
-  <script src="sprites.js?v=19"></script>
-  <script src="entities.js?v=19"></script>
-  <script src="levels.js?v=19"></script>
-  <script src="game.js?v=19"></script>
+  <script src="audio.js?v=20"></script>
+  <script src="sprites.js?v=20"></script>
+  <script src="entities.js?v=20"></script>
+  <script src="levels.js?v=20"></script>
+  <script src="game.js?v=20"></script>
 </body>
 </html>

@@ -53,7 +53,7 @@ class Game {
     this.state = 'START'; // START, PLAYING, BOSS, LEVEL_CLEAR, GAME_OVER, WIN
     this.paused = false;
     this.currentLevel = 1;
-    this.levelTimer = 180.0; // Ultra-Marathon 180s (3 Full Minutes) Expedition!
+    this.elapsedTime = 0.0; // Unlimited exploration time!
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.cameraX = 0;
@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 180.0; // Ultra-Marathon 180s (3 Full Minutes) Expedition
+    this.elapsedTime = 0.0; // Unlimited exploration time (no time limit!)
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -721,7 +721,7 @@ class Game {
     this.rewardName.textContent = reward.name;
     this.rewardDesc.textContent = reward.desc;
 
-    this.statTime.textContent = `${this.levelTimer.toFixed(1)}s`;
+    this.statTime.textContent = `${this.elapsedTime.toFixed(1)}s`;
     this.statKills.textContent = `${this.levelKills}`;
     this.statNextDist.textContent = this.currentLevel < 12 ? `${LEVEL_CONFIGS[this.currentLevel].targetKm.toFixed(0)} km` : 'FINAL';
 
@@ -749,20 +749,8 @@ class Game {
   }
 
   update(dt) {
-    // 1. Timer Countdown (90 seconds)
-    this.levelTimer -= dt;
-    this.timerDisplay.textContent = Math.max(0, this.levelTimer).toFixed(1);
-
-    if (this.levelTimer <= 12.0) {
-      this.timerDisplay.parentElement.classList.add('danger');
-    } else {
-      this.timerDisplay.parentElement.classList.remove('danger');
-    }
-
-    if (this.levelTimer <= 0) {
-      this.showGameOver('TIME RAN OUT! You ran out of your 90 seconds.');
-      return;
-    }
+    // 1. Elapsed Exploration Time (No time limits!)
+    this.elapsedTime += dt;
 
     // 2. Traveled Distance Calculation
     const targetKm = this.levelManager.config.targetKm;
