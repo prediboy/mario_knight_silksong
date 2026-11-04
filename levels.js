@@ -4,7 +4,7 @@ const LEVEL_CONFIGS = [
   {
     level: 1,
     name: 'Forgotten Mushroom Grotto',
-    targetKm: 6000.0,
+    targetKm: 15000.0,
     themeColor: '#7b1fa2',
     bgColor1: '#0a0512',
     bgColor2: '#190d2e',
@@ -22,7 +22,7 @@ const LEVEL_CONFIGS = [
   {
     level: 2,
     name: "Queen's Silk Cradle",
-    targetKm: 8000.0,
+    targetKm: 22000.0,
     themeColor: '#fbc02d',
     bgColor1: '#141208',
     bgColor2: '#2c250b',
@@ -40,7 +40,7 @@ const LEVEL_CONFIGS = [
   {
     level: 3,
     name: 'Molten Koopa Core',
-    targetKm: 10000.0,
+    targetKm: 30000.0,
     themeColor: '#e64a19',
     bgColor1: '#140602',
     bgColor2: '#2d0c04',
@@ -58,7 +58,7 @@ const LEVEL_CONFIGS = [
   {
     level: 4,
     name: 'Mantis Sanctum Spire',
-    targetKm: 12500.0,
+    targetKm: 40000.0,
     themeColor: '#1976d2',
     bgColor1: '#040b17',
     bgColor2: '#081730',
@@ -76,7 +76,7 @@ const LEVEL_CONFIGS = [
   {
     level: 5,
     name: 'Abyssal Mariana Trench',
-    targetKm: 15000.0,
+    targetKm: 52000.0,
     themeColor: '#00897b',
     bgColor1: '#011210',
     bgColor2: '#032622',
@@ -94,7 +94,7 @@ const LEVEL_CONFIGS = [
   {
     level: 6,
     name: 'Crystal Geode Cavern',
-    targetKm: 18000.0,
+    targetKm: 65000.0,
     themeColor: '#ab47bc',
     bgColor1: '#120417',
     bgColor2: '#24082e',
@@ -112,7 +112,7 @@ const LEVEL_CONFIGS = [
   {
     level: 7,
     name: 'Scarlet Nightmare Realm',
-    targetKm: 22000.0,
+    targetKm: 80000.0,
     themeColor: '#d32f2f',
     bgColor1: '#1a0406',
     bgColor2: '#33080b',
@@ -130,7 +130,7 @@ const LEVEL_CONFIGS = [
   {
     level: 8,
     name: 'The Pantheon of Radiance',
-    targetKm: 26000.0,
+    targetKm: 100000.0,
     themeColor: '#fbc02d',
     bgColor1: '#1a1705',
     bgColor2: '#3b3309',
@@ -148,7 +148,7 @@ const LEVEL_CONFIGS = [
   {
     level: 9,
     name: 'Astral Weaver Citadel',
-    targetKm: 31000.0,
+    targetKm: 125000.0,
     themeColor: '#9c27b0',
     bgColor1: '#12002b',
     bgColor2: '#240046',
@@ -166,7 +166,7 @@ const LEVEL_CONFIGS = [
   {
     level: 10,
     name: 'Clockwork Core of Pharloom',
-    targetKm: 36000.0,
+    targetKm: 155000.0,
     themeColor: '#ff6f00',
     bgColor1: '#1b0d00',
     bgColor2: '#3e1f00',
@@ -184,7 +184,7 @@ const LEVEL_CONFIGS = [
   {
     level: 11,
     name: 'The Void Throne of the Shadow King',
-    targetKm: 42000.0,
+    targetKm: 190000.0,
     themeColor: '#00e5ff',
     bgColor1: '#050a14',
     bgColor2: '#0b162c',
@@ -202,7 +202,7 @@ const LEVEL_CONFIGS = [
   {
     level: 12,
     name: 'Apex of Silksong - The Infinite Godweaver',
-    targetKm: 50000.0,
+    targetKm: 250000.0,
     themeColor: '#ffd700',
     bgColor1: '#261c00',
     bgColor2: '#4a3700',
@@ -223,12 +223,12 @@ class LevelManager {
   constructor() {
     this.currentLevel = 1;
     this.config = LEVEL_CONFIGS[0];
-    this.levelWidth = 9600;
+    this.levelWidth = 20500;
     this.levelHeight = 600;
     this.platforms = [];
     this.spikes = [];
-    this.bossArenaStartX = 8000;
-    this.bossSpawnX = 8800;
+    this.bossArenaStartX = 18000;
+    this.bossSpawnX = 19200;
     this.bossSpawnY = 380;
     this.spawnTimer = 0;
   }
@@ -237,20 +237,20 @@ class LevelManager {
     this.currentLevel = levelIndex;
     this.config = LEVEL_CONFIGS[levelIndex - 1] || LEVEL_CONFIGS[0];
 
-    // Grand Long-Haul Expedition maps scaling from 8,000px up to 42,000px!
+    // Ultra-Marathon Expedition maps scaling from 18,000px up to 136,000px!
     const arenaMap = [
-      { start: 8000, width: 9600, spawnX: 8800, spawnY: 380 },
-      { start: 10000, width: 11800, spawnX: 10900, spawnY: 380 },
-      { start: 12000, width: 14000, spawnX: 13000, spawnY: 380 },
-      { start: 14500, width: 16700, spawnX: 15600, spawnY: 380 },
-      { start: 17000, width: 19400, spawnX: 18200, spawnY: 380 },
-      { start: 20000, width: 22600, spawnX: 21300, spawnY: 380 },
-      { start: 23000, width: 25800, spawnX: 24400, spawnY: 380 },
-      { start: 26500, width: 29500, spawnX: 28000, spawnY: 380 },
-      { start: 30000, width: 33200, spawnX: 31600, spawnY: 380 },
-      { start: 34000, width: 37400, spawnX: 35700, spawnY: 380 },
-      { start: 38000, width: 41600, spawnX: 39800, spawnY: 380 },
-      { start: 42000, width: 46000, spawnX: 44000, spawnY: 380 },
+      { start: 18000, width: 20500, spawnX: 19200, spawnY: 380 },
+      { start: 24000, width: 26800, spawnX: 25300, spawnY: 380 },
+      { start: 30000, width: 33000, spawnX: 31400, spawnY: 380 },
+      { start: 38000, width: 41200, spawnX: 39500, spawnY: 380 },
+      { start: 46000, width: 49500, spawnX: 47600, spawnY: 380 },
+      { start: 55000, width: 58800, spawnX: 56800, spawnY: 380 },
+      { start: 65000, width: 69000, spawnX: 66900, spawnY: 380 },
+      { start: 76000, width: 80400, spawnX: 78100, spawnY: 380 },
+      { start: 88000, width: 92600, spawnX: 90200, spawnY: 380 },
+      { start: 102000, width: 107000, spawnX: 104400, spawnY: 380 },
+      { start: 118000, width: 123500, spawnX: 120600, spawnY: 380 },
+      { start: 136000, width: 142000, spawnX: 138800, spawnY: 380 },
     ];
     const aCfg = arenaMap[levelIndex - 1] || arenaMap[0];
     this.bossArenaStartX = aCfg.start;

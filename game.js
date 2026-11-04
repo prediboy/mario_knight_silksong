@@ -53,7 +53,7 @@ class Game {
     this.state = 'START'; // START, PLAYING, BOSS, LEVEL_CLEAR, GAME_OVER, WIN
     this.paused = false;
     this.currentLevel = 1;
-    this.levelTimer = 120.0; // Grand 120s Epic Expedition across Super-Extended Distances!
+    this.levelTimer = 180.0; // Ultra-Marathon 180s (3 Full Minutes) Expedition!
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.cameraX = 0;
@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 120.0; // Grand 120s Epic Expedition across Super-Extended Distances
+    this.levelTimer = 180.0; // Ultra-Marathon 180s (3 Full Minutes) Expedition
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -583,7 +583,7 @@ class Game {
 
     // Initial monsters densely populated across the entire traversal terrain!
     const types = this.levelManager.config.monsterTypes;
-    for (let sx = 450; sx < this.levelManager.bossArenaStartX - 150; sx += 260) {
+    for (let sx = 450; sx < this.levelManager.bossArenaStartX - 150; sx += 240) {
       const type = types[Math.floor(Math.random() * types.length)];
       const isFly = type === 'needle_wasp' || type === 'shadow_wisp' || type === 'astral_phantom' || type === 'void_shade' || type === 'crystal_bat' || type === 'molten_skull';
       const sy = isFly ? 210 + Math.random() * 140 : 490;
