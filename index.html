@@ -95,6 +95,8 @@
           </div>
         </div>
         <div class="sound-controls">
+          <button id="btn-save-game" class="btn-save" title="Save Checkpoint">💾 SAVE</button>
+          <button id="btn-load-game" class="btn-load" title="Load Checkpoint">📂 LOAD</button>
           <button id="btn-pause" class="btn-pause" title="Pause Game [P / Esc]">⏸️ PAUSE</button>
           <button id="btn-sound" class="btn-icon" title="Toggle Sound">🔊</button>
         </div>
@@ -126,6 +128,8 @@
         <h2 class="game-title">JOURNEY PAUSED</h2>
         <p class="tagline">The depths of Pharloom stand frozen in time</p>
         <div class="pause-actions">
+          <button id="btn-save-pause" class="btn-gold" style="background: linear-gradient(180deg, #00897b 0%, #004d40 100%); border-color: #80cbc4; color: #fff;">💾 SAVE CHECKPOINT</button>
+          <button id="btn-load-pause" class="btn-gold" style="background: linear-gradient(180deg, #1e88e5 0%, #0d47a1 100%); border-color: #90caf9; color: #fff;">📂 LOAD CHECKPOINT</button>
           <button id="btn-resume" class="btn-gold pulse-btn">RESUME [P / Esc]</button>
           <button id="btn-restart-level" class="btn-crimson">RESTART LEVEL</button>
         </div>
@@ -141,12 +145,13 @@
 
         <!-- Big Instant Start Button at Top for Mobile -->
         <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY ⚔️</button>
+        <button id="btn-continue-game" class="btn-gold pulse-btn btn-hero" style="display: none; margin-top: 10px; background: linear-gradient(180deg, #00897b 0%, #004d40 100%); border-color: #80cbc4; color: #fff;">CONTINUE SAVED GAME 📂</button>
 
         <div class="rules-card">
           <h3>✦ QUICK CODEX ✦</h3>
           <ul>
             <li><strong>Epic Expedition:</strong> Traverse the colossal distances at your own pace & slay the Colossal Boss!</li>
-            <li><strong>Arena Lock:</strong> The arena <strong>locks</strong> during the Colossus fight!</li>
+            <li><strong>Save & Load Anytime:</strong> Tap <strong>SAVE</strong> or <strong>LOAD</strong> anytime to save your progress!</li>
             <li><strong>Soul on Hit:</strong> Every axe strike gives <strong>+1 Soul</strong>! At <strong>10/10 Soul</strong>, tap <strong>HEAL</strong> to restore Life Masks!</li>
             <li><strong>12 Legendary Powers:</strong> Slaying bosses unlocks Thunder Axe, Tornado Dash, Meteor, Wings, Black Hole, Solar Aura, Chrono Gear, and Shadow Scythes!</li>
           </ul>
@@ -209,7 +214,10 @@
         <h2 class="death-title">YOU HAVE FALLEN</h2>
         <p class="death-reason" id="death-reason">Your Life Masks shattered completely.</p>
         <div class="restart-note">You will restart from the beginning of <strong id="death-level-text">Level 1</strong>.</div>
-        <button id="btn-retry" class="btn-crimson">RETRY LEVEL</button>
+        <div class="death-actions" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px;">
+          <button id="btn-load-retry" class="btn-gold pulse-btn" style="background: linear-gradient(180deg, #1e88e5 0%, #0d47a1 100%); border-color: #90caf9; color: #fff;">📂 LOAD LAST SAVE</button>
+          <button id="btn-retry" class="btn-crimson">RETRY LEVEL</button>
+        </div>
       </div>
     </div>
 
@@ -298,10 +306,10 @@
   </div>
 
   <!-- Game Scripts -->
-  <script src="audio.js?v=20"></script>
-  <script src="sprites.js?v=20"></script>
-  <script src="entities.js?v=20"></script>
-  <script src="levels.js?v=20"></script>
-  <script src="game.js?v=20"></script>
+  <script src="audio.js?v=21"></script>
+  <script src="sprites.js?v=21"></script>
+  <script src="entities.js?v=21"></script>
+  <script src="levels.js?v=21"></script>
+  <script src="game.js?v=21"></script>
 </body>
 </html>

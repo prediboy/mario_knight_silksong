@@ -100,6 +100,7 @@ class Game {
 
     this.bindEvents();
     this.bindTouchControls();
+    this.checkExistingSave();
   }
 
   resizeCanvas() {
@@ -131,6 +132,20 @@ class Game {
       if (code === 'KeyP' || code === 'Escape') {
         e.preventDefault();
         this.togglePause();
+        return;
+      }
+
+      // Save game shortcut (F5 or Ctrl/Cmd + S)
+      if (code === 'F5' || ((e.ctrlKey || e.metaKey) && code === 'KeyS')) {
+        e.preventDefault();
+        this.saveGame();
+        return;
+      }
+
+      // Load game shortcut (F9 or Ctrl/Cmd + O)
+      if (code === 'F9' || ((e.ctrlKey || e.metaKey) && code === 'KeyO')) {
+        e.preventDefault();
+        this.loadGame();
         return;
       }
 
@@ -345,6 +360,14 @@ class Game {
       if (this.modalGameOver) this.modalGameOver.classList.remove('active');
       this.startLevel(this.currentLevel);
     });
+
+    // Save & Load Game Buttons (HUD & Modals)
+    addAction('btn-save-game', () => this.saveGame());
+    addAction('btn-load-game', () => this.loadGame());
+    addAction('btn-save-pause', () => this.saveGame());
+    addAction('btn-load-pause', () => this.loadGame());
+    addAction('btn-load-retry', () => this.loadGame());
+    addAction('btn-continue-game', () => this.loadGame());
 
     // Play Again (After Win) Button
     addAction('btn-play-again', () => {
@@ -733,6 +756,118 @@ class Game {
     window.soundEngine.stopBGM();
     window.soundEngine.playVictory();
     this.modalGameWin.classList.add('active');
+  }
+
+  checkExistingSave() {
+    try {
+      const raw = localStorage.getItem('mario_knight_silksong_save');
+      const continueBtn = document.getElementById('btn-continue-game');
+      if (raw && continueBtn) {
+        const data = JSON.parse(raw);
+        if (data && data.level) {
+          continueBtn.style.display = 'block';
+          continueBtn.textContent = `CONTINUE SAVED GAME (LEVEL ${data.level}) 📂`;
+        }
+      }
+    } catch (e) {}
+  }
+
+  saveGame() {
+    try {
+      window.soundEngine.init();
+      const saveData = {
+        level: this.currentLevel,
+        x: Math.round(this.player.x),
+        y: Math.round(this.player.y),
+        masks: this.player.masks,
+        soul: this.player.soul,
+        powers: { ...this.player.powers },
+        levelKills: this.levelKills,
+        elapsedTime: this.elapsedTime,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('mario_knight_silksong_save', JSON.stringify(saveData));
+
+      if (window.soundEngine && window.soundEngine.playPowerUp) {
+        window.soundEngine.playPowerUp();
+      }
+      this.floatingTexts.push(new FloatingText('💾 GAME SAVED!', this.player.x, this.player.y - 30, '#ffd700', 14));
+      this.showToast(`💾 GAME SAVED! Level ${this.currentLevel} Checkpoint Recorded.`);
+
+      const continueBtn = document.getElementById('btn-continue-game');
+      if (continueBtn) {
+        continueBtn.style.display = 'block';
+        continueBtn.textContent = `CONTINUE SAVED GAME (LEVEL ${saveData.level}) 📂`;
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      this.showToast('⚠️ Could not save game to browser storage!');
+      return false;
+    }
+  }
+
+  loadGame() {
+    try {
+      window.soundEngine.init();
+      const raw = localStorage.getItem('mario_knight_silksong_save');
+      if (!raw) {
+        this.showToast('⚠️ No save file found! Tap [SAVE] during gameplay first.');
+        return false;
+      }
+      const data = JSON.parse(raw);
+      if (!data || !data.level) {
+        this.showToast('⚠️ Save file data is invalid.');
+        return false;
+      }
+
+      // Close all overlay modals
+      if (this.modalStart) this.modalStart.classList.remove('active');
+      if (this.modalPause) this.modalPause.classList.remove('active');
+      if (this.modalGameOver) this.modalGameOver.classList.remove('active');
+      if (this.modalLevelClear) this.modalLevelClear.classList.remove('active');
+      this.paused = false;
+
+      // Start the saved level
+      this.startLevel(data.level);
+
+      // Restore position & stats
+      this.player.x = data.x !== undefined ? data.x : 100;
+      this.player.y = data.y !== undefined ? data.y : 460;
+      this.player.masks = data.masks !== undefined ? Math.max(1, data.masks) : 6;
+      this.player.soul = data.soul !== undefined ? data.soul : 0;
+      if (data.powers) {
+        this.player.powers = { ...this.player.powers, ...data.powers };
+      }
+      this.levelKills = data.levelKills || 0;
+      this.elapsedTime = data.elapsedTime || 0;
+
+      // If loaded inside or near boss arena, trigger boss
+      if (this.player.x >= this.levelManager.bossArenaStartX - 50) {
+        this.state = 'BOSS';
+        this.activeBoss = new Boss(this.currentLevel, this.levelManager.bossSpawnX, this.levelManager.bossSpawnY);
+        this.bossHud.classList.remove('hidden');
+        this.bossName.textContent = this.activeBoss.name;
+        this.bossSubtitle.textContent = this.activeBoss.title;
+        this.bossBarFill.style.width = '100%';
+        window.soundEngine.startBGM('boss');
+      }
+
+      this.updateHPUI();
+      this.updateSoulUI();
+      this.updatePowerIconsUI();
+
+      if (window.soundEngine && window.soundEngine.playPowerUp) {
+        window.soundEngine.playPowerUp();
+      }
+      this.floatingTexts.push(new FloatingText('📂 GAME LOADED!', this.player.x, this.player.y - 30, '#00e5ff', 14));
+      this.showToast(`📂 GAME LOADED! Resumed Level ${data.level}`);
+      return true;
+    } catch (e) {
+      console.error(e);
+      this.showToast('⚠️ Error loading saved progress!');
+      return false;
+    }
   }
 
   // Main Game Loop

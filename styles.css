@@ -385,6 +385,41 @@ html, body {
   pointer-events: auto;
 }
 
+.btn-save, .btn-load {
+  background: rgba(18, 38, 48, 0.9);
+  border: 1.5px solid #00e5ff;
+  color: #00e5ff;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  pointer-events: auto;
+}
+
+.btn-save:hover, .btn-load:hover {
+  background: rgba(25, 55, 75, 0.95);
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.btn-save {
+  border-color: #00e676;
+  color: #00e676;
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.25);
+}
+
+.btn-save:hover {
+  box-shadow: 0 0 16px rgba(0, 230, 118, 0.6);
+}
+
 #btn-pause {
   background: rgba(30, 42, 68, 0.9);
   border: 1.5px solid var(--gold-primary);
