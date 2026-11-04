@@ -11,8 +11,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#2d1842',
     platformColor: '#4a256d',
     spikeColor: '#e040fb',
-    monsterTypes: ['void_goomba', 'silk_spiny'],
-    spawnInterval: 2.4,
+    monsterTypes: ['void_goomba', 'silk_spiny', 'crystal_bat'],
+    spawnInterval: 1.5,
     reward: {
       icon: '⚡',
       name: 'LIGHTNING THUNDER AXE',
@@ -29,8 +29,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#423712',
     platformColor: '#6d5a1e',
     spikeColor: '#ffd54f',
-    monsterTypes: ['void_goomba', 'silk_spiny', 'needle_wasp'],
-    spawnInterval: 2.2,
+    monsterTypes: ['void_goomba', 'silk_spiny', 'needle_wasp', 'spider_weaver'],
+    spawnInterval: 1.4,
     reward: {
       icon: '🌪️',
       name: 'TORNADO SILK DASH',
@@ -47,8 +47,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#451608',
     platformColor: '#75260e',
     spikeColor: '#ff5722',
-    monsterTypes: ['silk_spiny', 'shield_beetle', 'piranha_pod'],
-    spawnInterval: 2.0,
+    monsterTypes: ['silk_spiny', 'shield_beetle', 'piranha_pod', 'molten_skull'],
+    spawnInterval: 1.3,
     reward: {
       icon: '🔥',
       name: 'METEOR MAGMA BLASTER',
@@ -65,8 +65,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#0e274f',
     platformColor: '#184285',
     spikeColor: '#40c4ff',
-    monsterTypes: ['needle_wasp', 'shield_beetle', 'shadow_wisp'],
-    spawnInterval: 1.9,
+    monsterTypes: ['needle_wasp', 'shield_beetle', 'shadow_wisp', 'crystal_bat'],
+    spawnInterval: 1.2,
     reward: {
       icon: '🪽',
       name: 'HOLY MONARCH TRIPLE JUMP',
@@ -83,8 +83,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#063d36',
     platformColor: '#0b665b',
     spikeColor: '#64ffda',
-    monsterTypes: ['shadow_wisp', 'piranha_pod', 'void_shade'],
-    spawnInterval: 1.8,
+    monsterTypes: ['shadow_wisp', 'piranha_pod', 'void_shade', 'spider_weaver'],
+    spawnInterval: 1.2,
     reward: {
       icon: '🛡️',
       name: 'DIVINE AEGIS REFLECTOR',
@@ -101,8 +101,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#3c0e4c',
     platformColor: '#651780',
     spikeColor: '#ea80fc',
-    monsterTypes: ['silk_spiny', 'needle_wasp', 'cog_sentinel'],
-    spawnInterval: 1.6,
+    monsterTypes: ['silk_spiny', 'needle_wasp', 'cog_sentinel', 'crystal_bat'],
+    spawnInterval: 1.1,
     reward: {
       icon: '🌋',
       name: 'TITAN SEISMIC EARTHQUAKE',
@@ -119,8 +119,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#4f0d12',
     platformColor: '#80151d',
     spikeColor: '#ff1744',
-    monsterTypes: ['shadow_wisp', 'shield_beetle', 'void_shade'],
-    spawnInterval: 1.5,
+    monsterTypes: ['shadow_wisp', 'shield_beetle', 'void_shade', 'molten_skull'],
+    spawnInterval: 1.0,
     reward: {
       icon: '🌌',
       name: 'ABYSSAL BLACK HOLE VOID',
@@ -137,8 +137,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#5c4f0d',
     platformColor: '#8f7b15',
     spikeColor: '#ffee58',
-    monsterTypes: ['needle_wasp', 'astral_phantom', 'void_goomba'],
-    spawnInterval: 1.4,
+    monsterTypes: ['needle_wasp', 'astral_phantom', 'void_goomba', 'crystal_bat'],
+    spawnInterval: 1.0,
     reward: {
       icon: '☀️',
       name: 'RADIANT SOLAR AURA',
@@ -155,8 +155,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#3c096c',
     platformColor: '#5a189a',
     spikeColor: '#e0aaff',
-    monsterTypes: ['astral_phantom', 'needle_wasp', 'void_shade'],
-    spawnInterval: 1.3,
+    monsterTypes: ['astral_phantom', 'needle_wasp', 'void_shade', 'spider_weaver'],
+    spawnInterval: 0.9,
     reward: {
       icon: '🌟',
       name: 'STELLAR PRISM LANCE',
@@ -173,8 +173,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#5d2e00',
     platformColor: '#8d4600',
     spikeColor: '#ffab00',
-    monsterTypes: ['cog_sentinel', 'shield_beetle', 'piranha_pod'],
-    spawnInterval: 1.2,
+    monsterTypes: ['cog_sentinel', 'shield_beetle', 'piranha_pod', 'molten_skull'],
+    spawnInterval: 0.9,
     reward: {
       icon: '⚙️',
       name: 'TIME-WARP CHRONO GEAR',
@@ -191,8 +191,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#102347',
     platformColor: '#17366d',
     spikeColor: '#18ffff',
-    monsterTypes: ['void_shade', 'astral_phantom', 'shadow_wisp'],
-    spawnInterval: 1.1,
+    monsterTypes: ['void_shade', 'astral_phantom', 'shadow_wisp', 'spider_weaver', 'molten_skull'],
+    spawnInterval: 0.8,
     reward: {
       icon: '👁️',
       name: 'SHADOW SOUL CLEAVE',
@@ -209,8 +209,8 @@ const LEVEL_CONFIGS = [
     groundColor: '#6e5200',
     platformColor: '#997300',
     spikeColor: '#fff59d',
-    monsterTypes: ['astral_phantom', 'void_shade', 'cog_sentinel', 'needle_wasp'],
-    spawnInterval: 1.0,
+    monsterTypes: ['astral_phantom', 'void_shade', 'cog_sentinel', 'needle_wasp', 'crystal_bat', 'spider_weaver', 'molten_skull'],
+    spawnInterval: 0.8,
     reward: {
       icon: '👑',
       name: 'ASCENDED CHAMPION OF SILKSONG',
@@ -324,18 +324,24 @@ class LevelManager {
     if (this.spawnTimer <= 0) {
       this.spawnTimer = this.config.spawnInterval;
 
-      // Spawn monster ahead or behind player within viewing distance
-      const spawnAhead = Math.random() > 0.35;
-      const spawnX = player.x + (spawnAhead ? 450 + Math.random() * 250 : -350 - Math.random() * 180);
+      // Count monsters currently near player (within 1,000px)
+      const nearbyCount = monsters.reduce((acc, m) => acc + (Math.abs(m.x - player.x) < 1000 ? 1 : 0), 0);
 
-      // Don't spawn outside level or inside boss arena
-      if (spawnX > 80 && spawnX < this.bossArenaStartX - 80) {
-        const types = this.config.monsterTypes;
-        const chosenType = types[Math.floor(Math.random() * types.length)];
-        const spawnY = (chosenType === 'needle_wasp' || chosenType === 'shadow_wisp' || chosenType === 'astral_phantom') ? 220 + Math.random() * 140 : 490;
-        
-        if (monsters.length < 24) {
-          monsters.push(new SmallMonster(spawnX, spawnY, chosenType));
+      // Keep a dense, exciting swarm of 12-16 active monsters around the player
+      if (nearbyCount < 14) {
+        const spawnCount = Math.random() > 0.35 ? 2 : 1;
+        for (let s = 0; s < spawnCount; s++) {
+          const spawnAhead = Math.random() > 0.25;
+          const spawnX = player.x + (spawnAhead ? 380 + Math.random() * 450 : -350 - Math.random() * 250);
+
+          if (spawnX > 80 && spawnX < this.bossArenaStartX - 80) {
+            const types = this.config.monsterTypes;
+            const chosenType = types[Math.floor(Math.random() * types.length)];
+            const isFly = chosenType === 'needle_wasp' || chosenType === 'shadow_wisp' || chosenType === 'astral_phantom' || chosenType === 'void_shade' || chosenType === 'crystal_bat' || chosenType === 'molten_skull';
+            const spawnY = isFly ? 210 + Math.random() * 140 : 490;
+            
+            monsters.push(new SmallMonster(spawnX, spawnY, chosenType));
+          }
         }
       }
     }

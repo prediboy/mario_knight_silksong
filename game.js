@@ -581,16 +581,12 @@ class Game {
     // Hornet cage appears strictly after defeating the ultimate boss (Level 12)
     this.hornetCage = null;
 
-    // Initial monsters in traversal path across the super-extended terrain
+    // Initial monsters densely populated across the entire traversal terrain!
     const types = this.levelManager.config.monsterTypes;
-    const monsterCount = Math.min(48, 14 + levelNum * 3);
-    const spacing = Math.max(300, 520 - levelNum * 10);
-    for (let i = 0; i < monsterCount; i++) {
-      const sx = 500 + i * spacing;
-      if (sx >= this.levelManager.bossArenaStartX - 100) break;
-      const type = types[i % types.length];
-      const isFly = type === 'needle_wasp' || type === 'shadow_wisp' || type === 'astral_phantom' || type === 'void_shade';
-      const sy = isFly ? 220 + Math.random() * 120 : 490;
+    for (let sx = 450; sx < this.levelManager.bossArenaStartX - 150; sx += 260) {
+      const type = types[Math.floor(Math.random() * types.length)];
+      const isFly = type === 'needle_wasp' || type === 'shadow_wisp' || type === 'astral_phantom' || type === 'void_shade' || type === 'crystal_bat' || type === 'molten_skull';
+      const sy = isFly ? 210 + Math.random() * 140 : 490;
       this.monsters.push(new SmallMonster(sx, sy, type));
     }
 
@@ -833,6 +829,18 @@ class Game {
 
     for (let i = this.monsters.length - 1; i >= 0; i--) {
       const m = this.monsters[i];
+
+      // Remove monsters left far behind player during the long sprint
+      if (m.x < this.player.x - 1300) {
+        this.monsters.splice(i, 1);
+        continue;
+      }
+
+      // Only run physics & AI for active monsters near screen to keep 60 FPS buttery smooth
+      if (Math.abs(m.x - this.player.x) > 1800) {
+        continue;
+      }
+
       m.update(dt, this.player, this.levelManager.platforms, this.projectiles);
 
       // Monster Attack / Slash Collision with Player (Single hit per swing)

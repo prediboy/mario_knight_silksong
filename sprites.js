@@ -551,6 +551,144 @@ const Sprites = {
         ctx.shadowBlur = 0;
         break;
       }
+
+      case 'crystal_bat': {
+        // Amethyst Cave Flitter Bat
+        const flap = Math.sin(time * 26) * 14;
+        // Amethyst wings
+        ctx.fillStyle = '#9c27b0';
+        ctx.strokeStyle = '#e1bee7';
+        ctx.lineWidth = 1.5;
+        // Left wing
+        ctx.beginPath();
+        ctx.moveTo(-4, -2 + bob);
+        ctx.lineTo(-18, -14 + flap);
+        ctx.lineTo(-12, 4 + flap * 0.5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // Right wing
+        ctx.beginPath();
+        ctx.moveTo(4, -2 + bob);
+        ctx.lineTo(18, -14 + flap);
+        ctx.lineTo(12, 4 + flap * 0.5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Bat furry body
+        ctx.fillStyle = '#212121';
+        ctx.beginPath();
+        ctx.arc(0, 0 + bob, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Glowing Ruby Eyes & Tiny Fangs
+        ctx.fillStyle = '#ff1744';
+        ctx.shadowColor = '#ff1744';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(3, -2 + bob, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(2, 3 + bob, 2, 3);
+        break;
+      }
+
+      case 'spider_weaver': {
+        // 8-Legged Pharloom Silk Spider
+        // Abdomen
+        ctx.fillStyle = '#1a001a';
+        ctx.strokeStyle = '#d500f9';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(-4, 0 + bob, 11, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Crimson silk hourglass marking
+        ctx.fillStyle = '#ff1744';
+        ctx.beginPath();
+        ctx.moveTo(-6, -4 + bob);
+        ctx.lineTo(-2, 0 + bob);
+        ctx.lineTo(-6, 4 + bob);
+        ctx.closePath();
+        ctx.fill();
+
+        // Cephalothorax
+        ctx.fillStyle = '#260026';
+        ctx.beginPath();
+        ctx.arc(6, 0 + bob, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Multiple glowing red eyes
+        ctx.fillStyle = '#ff0055';
+        ctx.shadowColor = '#ff0055';
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.arc(7, -2 + bob, 1.5, 0, Math.PI * 2);
+        ctx.arc(9, 0 + bob, 1.5, 0, Math.PI * 2);
+        ctx.arc(7, 2 + bob, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Skittering jointed legs (4 pairs)
+        ctx.strokeStyle = '#e040fb';
+        ctx.lineWidth = 1.5;
+        for (let l = 0; l < 4; l++) {
+          const lOffset = (l - 1.5) * 5;
+          const legMove = Math.sin(time * 24 + l * 1.5) * 6;
+          ctx.beginPath();
+          ctx.moveTo(lOffset, 2 + bob);
+          ctx.lineTo(lOffset + 6, -6 + legMove);
+          ctx.lineTo(lOffset + 12, 10 + legMove);
+          ctx.stroke();
+        }
+        break;
+      }
+
+      case 'molten_skull': {
+        // Blazing Lava Obsidian Skull
+        const flamePulse = Math.sin(time * 12) * 3;
+        // Fiery aura
+        ctx.fillStyle = 'rgba(255, 87, 34, 0.4)';
+        ctx.shadowColor = '#ff3d00';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(0, 0 + bob, 14 + flamePulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Obsidian skull head
+        ctx.fillStyle = '#21100b';
+        ctx.strokeStyle = '#ff9100';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, -2 + bob, 10, Math.PI * 0.8, Math.PI * 2.2);
+        ctx.lineTo(5, 8 + bob);
+        ctx.lineTo(-5, 8 + bob);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Blazing magma eye sockets
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowColor = '#ffab00';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(4, -2 + bob, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Fiery crown embers
+        ctx.fillStyle = '#ff3d00';
+        for (let e = -6; e <= 6; e += 4) {
+          ctx.beginPath();
+          ctx.arc(e, -12 + bob + Math.sin(time * 15 + e) * 3, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      }
     }
 
     ctx.restore();

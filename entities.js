@@ -858,6 +858,29 @@ class SmallMonster {
         this.flying = true;
         this.baseY = y;
         break;
+      case 'crystal_bat':
+        this.width = 30;
+        this.height = 24;
+        this.hp = 40;
+        this.speed = 2.8;
+        this.flying = true;
+        this.baseY = y;
+        break;
+      case 'spider_weaver':
+        this.width = 34;
+        this.height = 26;
+        this.hp = 65;
+        this.speed = 2.2;
+        this.flying = false;
+        break;
+      case 'molten_skull':
+        this.width = 32;
+        this.height = 32;
+        this.hp = 55;
+        this.speed = 2.2;
+        this.flying = true;
+        this.baseY = y;
+        break;
       default:
         this.width = 28;
         this.height = 28;
@@ -1012,6 +1035,38 @@ class SmallMonster {
           'boss_sun_lance',
           1,
           9
+        ));
+      }
+    } else if (this.type === 'spider_weaver') {
+      this.shootTimer -= dt;
+      if (this.shootTimer <= 0) {
+        this.shootTimer = 2.0 + Math.random() * 1.0;
+        const shootVx = (player.x > this.x ? 1 : -1) * 6.2;
+        projectiles.push(new Projectile(
+          this.x + this.width / 2,
+          this.y + this.height / 2,
+          shootVx,
+          -1.5,
+          false,
+          'boss_needle',
+          1,
+          9
+        ));
+      }
+    } else if (this.type === 'molten_skull') {
+      this.shootTimer -= dt;
+      if (this.shootTimer <= 0) {
+        this.shootTimer = 1.8 + Math.random() * 1.0;
+        const shootVx = (player.x > this.x ? 1 : -1) * 5.8;
+        projectiles.push(new Projectile(
+          this.x + this.width / 2,
+          this.y + this.height / 2,
+          shootVx,
+          -2.0,
+          false,
+          'boss_fire',
+          1,
+          10
         ));
       }
     }
