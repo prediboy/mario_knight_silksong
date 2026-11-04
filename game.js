@@ -53,7 +53,7 @@ class Game {
     this.state = 'START'; // START, PLAYING, BOSS, LEVEL_CLEAR, GAME_OVER, WIN
     this.paused = false;
     this.currentLevel = 1;
-    this.levelTimer = 65.0; // Dynamic 65-Second Expedition Rush!
+    this.levelTimer = 80.0; // Grand 80s Expedition Rush for Longer Distances!
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.cameraX = 0;
@@ -563,7 +563,7 @@ class Game {
 
   startLevel(levelNum) {
     this.currentLevel = levelNum;
-    this.levelTimer = 65.0; // Dynamic 65s Expedition Rush
+    this.levelTimer = 80.0; // Grand 80s Expedition Rush across Extended Distances
     this.traveledKm = 0.0;
     this.levelKills = 0;
     this.screenShake = 0.3;
@@ -581,12 +581,12 @@ class Game {
     // Hornet cage appears strictly after defeating the ultimate boss (Level 12)
     this.hornetCage = null;
 
-    // Initial monsters in traversal path
+    // Initial monsters in traversal path across the extended terrain
     const types = this.levelManager.config.monsterTypes;
-    const monsterCount = Math.min(16, 5 + levelNum);
-    const spacing = Math.max(220, 340 - levelNum * 6);
+    const monsterCount = Math.min(28, 8 + levelNum * 2);
+    const spacing = Math.max(260, 420 - levelNum * 8);
     for (let i = 0; i < monsterCount; i++) {
-      const sx = 400 + i * spacing;
+      const sx = 450 + i * spacing;
       if (sx >= this.levelManager.bossArenaStartX - 100) break;
       const type = types[i % types.length];
       const isFly = type === 'needle_wasp' || type === 'shadow_wisp' || type === 'astral_phantom' || type === 'void_shade';
@@ -727,7 +727,7 @@ class Game {
 
     this.statTime.textContent = `${this.levelTimer.toFixed(1)}s`;
     this.statKills.textContent = `${this.levelKills}`;
-    this.statNextDist.textContent = this.currentLevel < 12 ? `${(1000 + this.currentLevel * 15)} km` : 'FINAL';
+    this.statNextDist.textContent = this.currentLevel < 12 ? `${LEVEL_CONFIGS[this.currentLevel].targetKm.toFixed(0)} km` : 'FINAL';
 
     this.modalLevelClear.classList.add('active');
   }

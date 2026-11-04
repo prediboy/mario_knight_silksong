@@ -959,8 +959,8 @@ class SmallMonster {
       this.x = 30;
       this.vx = Math.abs(this.vx);
       this.facingRight = true;
-    } else if (this.x > 5720) {
-      this.x = 5720;
+    } else if (this.x > 25000) {
+      this.x = 25000;
       this.vx = -Math.abs(this.vx);
       this.facingRight = false;
     }
