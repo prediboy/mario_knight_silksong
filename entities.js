@@ -258,9 +258,9 @@ class Player {
     this.facingRight = true;
     this.grounded = false;
 
-    // HP System (6 Masks, losing 1/6 HP per bite)
-    this.maxMasks = 6;
-    this.masks = 6;
+    // HP System (8 Masks, resilient Knight vigor)
+    this.maxMasks = 8;
+    this.masks = 8;
     this.invulnerableTimer = 0;
     this.dead = false;
 
@@ -273,7 +273,7 @@ class Player {
     this.slashTimer = 0;
     this.slashDuration = 0.22;
     this.slashCooldown = 0.10;
-    this.damage = 28; // Engaging Great Axe damage per hit
+    this.damage = 48; // Empowered Great Axe damage per hit
 
     // Sets to prevent multi-hit frame glitches during a single swing/dash/slam
     this.attackHitEntities = new Set();
@@ -350,7 +350,7 @@ class Player {
     if (this.invulnerableTimer > 0 || this.dead || this.dashing) return false;
 
     this.masks = Math.max(0, this.masks - amountMasks);
-    this.invulnerableTimer = 0.7; // Crisp 0.7s recovery invulnerability
+    this.invulnerableTimer = 1.1; // Generous 1.1s recovery invulnerability
     window.soundEngine.playHurt();
 
     if (this.masks <= 0) {
@@ -360,7 +360,7 @@ class Player {
     return true;
   }
 
-  addSoul(amount = 1) {
+  addSoul(amount = 2) {
     if (this.soul < this.maxSoul) {
       this.soul = Math.min(this.maxSoul, this.soul + amount);
       window.soundEngine.playSoulAbsorb();
@@ -371,9 +371,9 @@ class Player {
   }
 
   focusHeal() {
-    // 10/10 Soul restores +2 Life Masks (Balanced, non-cheating recovery)
+    // 10/10 Soul restores +4 Life Masks (Fair, restorative Knight healing)
     if (this.soul >= this.maxSoul && this.masks < this.maxMasks) {
-      this.masks = Math.min(this.maxMasks, this.masks + 2);
+      this.masks = Math.min(this.maxMasks, this.masks + 4);
       this.soul = 0;
       window.soundEngine.playFocusHeal();
       return true;

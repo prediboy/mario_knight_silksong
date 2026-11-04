@@ -14,6 +14,8 @@ class Game {
       document.getElementById('mask-3'),
       document.getElementById('mask-4'),
       document.getElementById('mask-5'),
+      document.getElementById('mask-6'),
+      document.getElementById('mask-7'),
     ];
     this.soulVal = document.getElementById('soul-val');
     this.soulLiquid = document.getElementById('soul-liquid');
@@ -33,10 +35,49 @@ class Game {
 
     // Modals
     this.modalStart = document.getElementById('modal-start');
+    this.modalStory = document.getElementById('modal-story');
     this.modalPause = document.getElementById('modal-pause');
     this.modalLevelClear = document.getElementById('modal-level-clear');
     this.modalGameOver = document.getElementById('modal-game-over');
     this.modalGameWin = document.getElementById('modal-game-win');
+
+    // Story UI Elements
+    this.storyChapterTag = document.getElementById('story-chapter-tag');
+    this.storyIcon = document.getElementById('story-icon');
+    this.storyHeadline = document.getElementById('story-headline');
+    this.storyText = document.getElementById('story-text');
+    this.btnStoryPrev = document.getElementById('btn-story-prev');
+    this.btnStoryNext = document.getElementById('btn-story-next');
+    this.btnStorySkip = document.getElementById('btn-story-skip');
+    this.currentStoryStep = 0;
+    this.hasSeenStory = false;
+
+    this.storyChapters = [
+      {
+        chapter: 'PROLOGUE • CHAPTER 1 OF 4',
+        icon: '🌀',
+        headline: 'THE SHATTERED WARP PIPE',
+        text: 'Deep beneath the Mushroom Kingdom, a cataclysmic void rift shattered the subterranean warp pipe network. Mario was sucked into a cosmic abyssal whirlpool, plummeting millions of fathoms into the haunted insect kingdom of Pharloom!'
+      },
+      {
+        chapter: 'PROLOGUE • CHAPTER 2 OF 4',
+        icon: '🕸️',
+        headline: 'AMBUSHED & DISARMED',
+        text: 'Awaking in the damp shadows of the Moss Grotto, Mario was surrounded by feral void-silk beetles and razor hornets. Without his usual Fire Flower or Super Mushroom, and with his fists bouncing off ancient chitin armor, he was trapped and weaponless!'
+      },
+      {
+        chapter: 'PROLOGUE • CHAPTER 3 OF 4',
+        icon: '🪓',
+        headline: 'THE ANCIENT ALTAR OF NEEDLES',
+        text: 'Cornered against a monolith of pale shell, Mario discovered the Titan Cleaver—a legendary double-bladed battle axe forged by the First Weavers from star-metal and fallen god-chitin, waiting eons for a worthy hero to lift its weight.'
+      },
+      {
+        chapter: 'PROLOGUE • CHAPTER 4 OF 4',
+        icon: '⚡',
+        headline: "THE KNIGHT'S AWAKENING & HORNET'S CRY",
+        text: "As Mario gripped the hilt, crackling starlight and the Knight's Soul infused his body with 8 Life Masks! Through the silk threads, Princess Hornet's voice echoed: 'Slay the 12 Titans who corrupted this realm, break my Golden Cage, and set us free!'"
+      }
+    ];
 
     // Stats UI in Modals
     this.statTime = document.getElementById('stat-time');
@@ -154,8 +195,36 @@ class Game {
         if (code === 'Space' || code === 'Enter' || code === 'KeyW' || code === 'KeyJ' || code === 'KeyZ') {
           e.preventDefault();
           window.soundEngine.init();
-          this.modalStart.classList.remove('active');
-          this.startLevel(1);
+          if (this.modalStart) this.modalStart.classList.remove('active');
+          if (!this.hasSeenStory) {
+            this.showStory(0);
+          } else {
+            this.startLevel(1);
+          }
+          return;
+        }
+      } else if (this.state === 'STORY') {
+        if (code === 'Space' || code === 'Enter' || code === 'KeyJ' || code === 'KeyZ' || code === 'ArrowRight' || code === 'KeyD') {
+          e.preventDefault();
+          if (this.currentStoryStep < this.storyChapters.length - 1) {
+            this.currentStoryStep++;
+            this.updateStoryView();
+            window.soundEngine.playJump();
+          } else {
+            this.finishStory();
+          }
+          return;
+        } else if (code === 'ArrowLeft' || code === 'KeyA') {
+          e.preventDefault();
+          if (this.currentStoryStep > 0) {
+            this.currentStoryStep--;
+            this.updateStoryView();
+            window.soundEngine.playJump();
+          }
+          return;
+        } else if (code === 'Escape') {
+          e.preventDefault();
+          this.finishStory();
           return;
         }
       } else if (this.state === 'GAME_OVER') {
@@ -340,10 +409,54 @@ class Game {
     const handleStartGame = () => {
       try { window.soundEngine.init(); } catch (err) {}
       if (this.modalStart) this.modalStart.classList.remove('active');
-      this.startLevel(1);
+      if (!this.hasSeenStory) {
+        this.showStory(0);
+      } else {
+        this.startLevel(1);
+      }
     };
     addAction('btn-play-game', handleStartGame);
     addAction('btn-play-game-bottom', handleStartGame);
+
+    // Story Prologue Actions
+    addAction('btn-show-story', () => {
+      try { window.soundEngine.init(); } catch (err) {}
+      this.showStory(0);
+    });
+
+    addAction('btn-story-prev', () => {
+      if (this.currentStoryStep > 0) {
+        this.currentStoryStep--;
+        this.updateStoryView();
+        window.soundEngine.playJump();
+      }
+    });
+
+    addAction('btn-story-next', () => {
+      if (this.currentStoryStep < this.storyChapters.length - 1) {
+        this.currentStoryStep++;
+        this.updateStoryView();
+        window.soundEngine.playJump();
+      } else {
+        this.finishStory();
+      }
+    });
+
+    addAction('btn-story-skip', () => {
+      this.finishStory();
+    });
+
+    // Story Dots interactive selection
+    const storyDots = document.querySelectorAll('.story-dot');
+    storyDots.forEach((dot) => {
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const step = parseInt(dot.getAttribute('data-step') || '0', 10);
+        this.currentStoryStep = step;
+        this.updateStoryView();
+        window.soundEngine.playJump();
+      });
+    });
 
     // Next Level Button
     addAction('btn-next-level', () => {
@@ -660,14 +773,71 @@ class Game {
 
   updateHPUI() {
     this.hpText.textContent = `(${this.player.masks}/${this.player.maxMasks})`;
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < this.maskElements.length; i++) {
       const maskEl = this.maskElements[i];
+      if (!maskEl) continue;
       if (i < this.player.masks) {
         maskEl.className = 'mask full';
       } else {
         maskEl.className = 'mask empty';
       }
     }
+  }
+
+  showStory(stepIndex = 0) {
+    this.state = 'STORY';
+    this.currentStoryStep = Math.max(0, Math.min(this.storyChapters.length - 1, stepIndex));
+    if (this.modalStart) this.modalStart.classList.remove('active');
+    if (this.modalStory) this.modalStory.classList.add('active');
+    this.updateStoryView();
+  }
+
+  updateStoryView() {
+    const data = this.storyChapters[this.currentStoryStep];
+    if (!data) return;
+
+    if (this.storyChapterTag) this.storyChapterTag.textContent = data.chapter;
+    if (this.storyIcon) this.storyIcon.textContent = data.icon;
+    if (this.storyHeadline) this.storyHeadline.textContent = data.headline;
+    if (this.storyText) this.storyText.textContent = data.text;
+
+    // Update dots
+    const dots = document.querySelectorAll('.story-dot');
+    dots.forEach((dot, idx) => {
+      if (idx === this.currentStoryStep) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+
+    // Update nav buttons
+    if (this.btnStoryPrev) {
+      this.btnStoryPrev.disabled = (this.currentStoryStep === 0);
+    }
+    if (this.btnStoryNext) {
+      if (this.currentStoryStep === this.storyChapters.length - 1) {
+        this.btnStoryNext.textContent = 'FINISH ⚔️';
+      } else {
+        this.btnStoryNext.textContent = 'NEXT ❯';
+      }
+    }
+    if (this.btnStorySkip) {
+      if (this.currentStoryStep === this.storyChapters.length - 1) {
+        this.btnStorySkip.textContent = 'TAKE UP THE AXE ⚔️';
+      } else {
+        this.btnStorySkip.textContent = 'SKIP PROLOGUE ❯❯';
+      }
+    }
+  }
+
+  finishStory() {
+    this.hasSeenStory = true;
+    if (this.modalStory) this.modalStory.classList.remove('active');
+    if (window.soundEngine && window.soundEngine.playPowerGet) {
+      window.soundEngine.playPowerGet();
+    }
+    this.startLevel(1);
   }
 
   updateSoulUI() {
@@ -1008,13 +1178,13 @@ class Game {
         }
       }
 
-      // Monster Bites Player -> Loses 1/6 HP (1 Mask)
+      // Monster Bites Player -> Loses 1/8 HP (1 Mask)
       if (this.player.checkOverlap(m)) {
         if (this.player.takeDamage(1)) {
           this.screenShake = 0.5;
           this.updateHPUI();
-          this.floatingTexts.push(new FloatingText('💥 BITTEN! -1/6 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
-          this.showToast(`⚠️ BITTEN BY MONSTER! -1/6 HP (${this.player.masks}/6 MASKS LEFT)`);
+          this.floatingTexts.push(new FloatingText('💥 BITTEN! -1/8 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
+          this.showToast(`⚠️ BITTEN BY MONSTER! -1/8 HP (${this.player.masks}/${this.player.maxMasks} MASKS LEFT)`);
         }
       }
 
@@ -1068,12 +1238,12 @@ class Game {
         }
       }
 
-      // Boss bites / hits Player (Direct titan body collision deals 2 masks!)
+      // Boss bites / hits Player (Direct titan body collision deals 1 mask with safe recoil)
       if (this.player.checkOverlap(this.activeBoss)) {
-        if (this.player.takeDamage(2)) {
-          this.screenShake = 0.55;
+        if (this.player.takeDamage(1)) {
+          this.screenShake = 0.45;
           this.updateHPUI();
-          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -2/6 HP', this.player.x - 25, this.player.y - 25, '#ff4d61', 13));
+          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -1/8 HP', this.player.x - 25, this.player.y - 25, '#ff4d61', 13));
         }
       }
     }
@@ -1181,7 +1351,7 @@ class Game {
           if (this.player.takeDamage(1)) {
             this.screenShake = 0.4;
             this.updateHPUI();
-            this.floatingTexts.push(new FloatingText('⚡ BLASTED! -1/6 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
+            this.floatingTexts.push(new FloatingText('⚡ BLASTED! -1/8 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
           }
         }
       }

@@ -741,6 +741,124 @@ html, body {
   filter: brightness(1.2);
 }
 
+/* Story Prologue Modal ("How Mario Got His Axe") */
+.story-modal {
+  max-width: 600px;
+  background: linear-gradient(180deg, #181528 0%, #0d0c18 100%);
+  border: 2px solid #b388ff;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 35px rgba(179, 136, 255, 0.45);
+  padding: 24px 24px 20px 24px;
+  gap: 16px;
+}
+
+.story-chapter-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #b388ff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(179, 136, 255, 0.6);
+}
+
+.story-scene-card {
+  background: rgba(12, 10, 24, 0.9);
+  border: 1px solid rgba(179, 136, 255, 0.35);
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.7);
+}
+
+.story-icon {
+  font-size: 54px;
+  filter: drop-shadow(0 0 14px rgba(240, 195, 85, 0.7));
+  animation: pulseStoryIcon 2s infinite ease-in-out;
+}
+
+@keyframes pulseStoryIcon {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(240, 195, 85, 0.6)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 22px rgba(240, 195, 85, 0.9)); }
+}
+
+.story-headline {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--gold-primary);
+  text-shadow: 0 0 12px var(--gold-glow);
+  letter-spacing: 2px;
+  text-align: center;
+  margin: 0;
+}
+
+.story-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e2e4f0;
+  text-align: center;
+  margin: 0;
+  min-height: 75px;
+}
+
+.story-dots {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.story-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(179, 136, 255, 0.5);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.story-dot.active {
+  background: #b388ff;
+  box-shadow: 0 0 10px #b388ff;
+  transform: scale(1.25);
+}
+
+.story-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.story-nav-btn {
+  flex: 1;
+  min-width: 110px;
+  max-width: 150px;
+  font-size: 13px !important;
+  padding: 10px 14px !important;
+}
+
+.story-nav-btn:disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  filter: grayscale(0.8) !important;
+}
+
+.story-skip-btn {
+  flex: 1.4;
+  min-width: 170px;
+  font-size: 13px !important;
+  padding: 10px 16px !important;
+  background: linear-gradient(180deg, #f0c355 0%, #b8860b 100%) !important;
+}
+
 /* Victory & Power Reward Styles */
 .victory-modal {
   border-color: #f0c355;

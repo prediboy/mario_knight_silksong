@@ -15,9 +15,9 @@
     <header id="hud">
       <!-- Left: HP & Soul Vessel -->
       <div class="hud-left">
-        <!-- Hollow Knight Style Masks (6 Max HP chunks) -->
+        <!-- Hollow Knight Style Masks (8 Max HP chunks) -->
         <div class="hp-section">
-          <div class="hud-label">LIFE MASKS <span id="hp-text">(6/6)</span></div>
+          <div class="hud-label">LIFE MASKS <span id="hp-text">(8/8)</span></div>
           <div id="masks-container">
             <div class="mask full" id="mask-0"></div>
             <div class="mask full" id="mask-1"></div>
@@ -25,6 +25,8 @@
             <div class="mask full" id="mask-3"></div>
             <div class="mask full" id="mask-4"></div>
             <div class="mask full" id="mask-5"></div>
+            <div class="mask full" id="mask-6"></div>
+            <div class="mask full" id="mask-7"></div>
           </div>
         </div>
 
@@ -146,14 +148,16 @@
         <!-- Big Instant Start Button at Top for Mobile -->
         <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY ⚔️</button>
         <button id="btn-continue-game" class="btn-gold pulse-btn btn-hero" style="display: none; margin-top: 10px; background: linear-gradient(180deg, #00897b 0%, #004d40 100%); border-color: #80cbc4; color: #fff;">CONTINUE SAVED GAME 📂</button>
+        <button id="btn-show-story" class="btn-gold" style="margin-top: 8px; width: 100%; max-width: 380px; background: linear-gradient(180deg, #512da8 0%, #311b92 100%); border-color: #b388ff; color: #fff; font-size: 13px;">📖 HOW MARIO GOT HIS AXE (PROLOGUE)</button>
 
         <div class="rules-card">
           <h3>✦ QUICK CODEX ✦</h3>
           <ul>
-            <li><strong>Epic Expedition:</strong> Traverse the colossal distances at your own pace & slay the Colossal Boss!</li>
-            <li><strong>Save & Load Anytime:</strong> Tap <strong>SAVE</strong> or <strong>LOAD</strong> anytime to save your progress!</li>
-            <li><strong>Soul on Hit:</strong> Every axe strike gives <strong>+1 Soul</strong>! At <strong>10/10 Soul</strong>, tap <strong>HEAL</strong> to restore Life Masks!</li>
-            <li><strong>12 Legendary Powers:</strong> Slaying bosses unlocks Thunder Axe, Tornado Dash, Meteor, Wings, Black Hole, Solar Aura, Chrono Gear, and Shadow Scythes!</li>
+            <li><strong>Epic Expedition:</strong> Traverse colossal distances & conquer 12 titans at your own pace!</li>
+            <li><strong>8 Life Masks:</strong> You wield 8 resilient masks and heavy 48 damage with your Great Axe!</li>
+            <li><strong>Save & Load:</strong> Checkpoint progress anytime with the <strong>SAVE</strong> & <strong>LOAD</strong> buttons!</li>
+            <li><strong>Soul & Heal:</strong> Axe strikes grant <strong>+2 Soul</strong>! Tap <strong>HEAL</strong> at 10/10 Soul to restore 4 Masks!</li>
+            <li><strong>11 Godlike Powers:</strong> Slaying bosses unlocks Thunder Axe, Tornado Dash, Meteor, Wings, Black Hole, and more!</li>
           </ul>
         </div>
 
@@ -169,6 +173,36 @@
         </div>
 
         <button id="btn-play-game-bottom" class="btn-gold pulse-btn">START EXPEDITION ⚔️</button>
+      </div>
+    </div>
+
+    <!-- Story Prologue Modal ("How Mario Got His Axe") -->
+    <div id="modal-story" class="modal">
+      <div class="modal-content story-modal">
+        <div class="silksong-crest">❖ 🪡 🪓 ❖</div>
+        <div class="story-chapter-tag" id="story-chapter-tag">PROLOGUE • CHAPTER 1 OF 4</div>
+        
+        <div class="story-scene-card">
+          <div class="story-icon" id="story-icon">🌀</div>
+          <h2 class="story-headline" id="story-headline">THE SHATTERED WARP PIPE</h2>
+          <p class="story-text" id="story-text">
+            Deep beneath the Mushroom Kingdom, a cataclysmic void rift shattered the subterranean warp pipe network. Mario was sucked into a cosmic abyssal whirlpool, plummeting millions of fathoms into the haunted insect kingdom of Pharloom!
+          </p>
+        </div>
+
+        <!-- Chapter dot progress indicators -->
+        <div class="story-dots" id="story-dots">
+          <span class="story-dot active" data-step="0"></span>
+          <span class="story-dot" data-step="1"></span>
+          <span class="story-dot" data-step="2"></span>
+          <span class="story-dot" data-step="3"></span>
+        </div>
+
+        <div class="story-actions">
+          <button id="btn-story-prev" class="btn-crimson story-nav-btn" disabled>❮ PREV</button>
+          <button id="btn-story-next" class="btn-gold pulse-btn story-nav-btn">NEXT ❯</button>
+          <button id="btn-story-skip" class="btn-gold story-skip-btn">TAKE UP THE AXE ⚔️</button>
+        </div>
       </div>
     </div>
 
@@ -306,10 +340,10 @@
   </div>
 
   <!-- Game Scripts -->
-  <script src="audio.js?v=21"></script>
-  <script src="sprites.js?v=21"></script>
-  <script src="entities.js?v=21"></script>
-  <script src="levels.js?v=21"></script>
-  <script src="game.js?v=21"></script>
+  <script src="audio.js?v=22"></script>
+  <script src="sprites.js?v=22"></script>
+  <script src="entities.js?v=22"></script>
+  <script src="levels.js?v=22"></script>
+  <script src="game.js?v=22"></script>
 </body>
 </html>
