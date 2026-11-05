@@ -243,9 +243,105 @@ class Projectile {
   }
 }
 
+// Playable Mario Characters Codex & Stats
+const MARIO_CHARACTERS = {
+  mario: {
+    id: 'mario',
+    name: 'MARIO',
+    title: 'The Resilient Knight',
+    emoji: '🍄',
+    color: '#d32f2f',
+    perkText: 'Balanced & Steady Vigor',
+    applyPerks(player) {
+      player.speed = 6.2;
+      player.jumpForce = -13.2;
+      player.damage = 48;
+    }
+  },
+  luigi: {
+    id: 'luigi',
+    name: 'LUIGI',
+    title: 'High-Flutter Knight',
+    emoji: '🍀',
+    color: '#2e7d32',
+    perkText: '+10% Higher Flutter Jump',
+    applyPerks(player) {
+      player.speed = 6.0;
+      player.jumpForce = -14.5;
+      player.damage = 48;
+    }
+  },
+  peach: {
+    id: 'peach',
+    name: 'PEACH',
+    title: 'Princess of Grace',
+    emoji: '👑',
+    color: '#f06292',
+    perkText: 'Silk Float [Hold Jump]',
+    applyPerks(player) {
+      player.speed = 6.1;
+      player.jumpForce = -13.2;
+      player.damage = 48;
+    }
+  },
+  toad: {
+    id: 'toad',
+    name: 'TOAD',
+    title: 'Fungal Scout',
+    emoji: '🍄',
+    color: '#1976d2',
+    perkText: '+12% Rapid Sprint Speed',
+    applyPerks(player) {
+      player.speed = 7.0;
+      player.jumpForce = -12.8;
+      player.damage = 48;
+    }
+  },
+  yoshi: {
+    id: 'yoshi',
+    name: 'YOSHI',
+    title: 'Dragon Chitin Steed',
+    emoji: '🦖',
+    color: '#43a047',
+    perkText: '+18% Super Pogo Bounce',
+    applyPerks(player) {
+      player.speed = 6.3;
+      player.jumpForce = -13.5;
+      player.damage = 48;
+    }
+  },
+  wario: {
+    id: 'wario',
+    name: 'WARIO',
+    title: 'Greedy Cleaver',
+    emoji: '💰',
+    color: '#fdd835',
+    perkText: '+6 Heavy Axe Cleave Dmg',
+    applyPerks(player) {
+      player.speed = 5.9;
+      player.jumpForce = -13.0;
+      player.damage = 54;
+    }
+  },
+  waluigi: {
+    id: 'waluigi',
+    name: 'WALUIGI',
+    title: 'Shadow Mischief',
+    emoji: '⚡',
+    color: '#7b1fa2',
+    perkText: '+25% Long Silk Dash',
+    applyPerks(player) {
+      player.speed = 6.4;
+      player.jumpForce = -13.4;
+      player.damage = 48;
+    }
+  }
+};
+
 // Mario Knight Player
 class Player {
   constructor(x, y) {
+    this.character = 'mario';
     this.x = x;
     this.y = y;
     this.width = 30;
@@ -330,6 +426,12 @@ class Player {
     else this.dashHitEntities.clear();
     if (!this.slamHitEntities) this.slamHitEntities = new Set();
     else this.slamHitEntities.clear();
+  }
+
+  setCharacter(charId) {
+    if (!MARIO_CHARACTERS[charId]) charId = 'mario';
+    this.character = charId;
+    MARIO_CHARACTERS[charId].applyPerks(this);
   }
 
   unlockPower(level) {
@@ -468,7 +570,9 @@ class Player {
     if (!this.dashHitEntities) this.dashHitEntities = new Set();
     else this.dashHitEntities.clear();
     this.vy = 0;
-    this.dashSpeed = this.powers.tornadoDash ? 18.0 : 14.5;
+    let baseDash = this.powers.tornadoDash ? 18.0 : 14.5;
+    if (this.character === 'waluigi') baseDash += 3.5;
+    this.dashSpeed = baseDash;
     this.vx = (this.facingRight ? 1 : -1) * this.dashSpeed;
 
     if (this.powers.tornadoDash) {
@@ -623,9 +727,14 @@ class Player {
         if (Math.abs(this.vx) < 0.1) this.vx = 0;
       }
 
-      // Gravity
-      this.vy += this.gravity * 60 * dt;
-      if (this.vy > 14) this.vy = 14;
+      // Gravity & Peach Silk Flutter Float
+      if (this.character === 'peach' && this.vy > 0 && input.jump) {
+        this.vy += this.gravity * 0.4 * 60 * dt;
+        if (this.vy > 4.5) this.vy = 4.5;
+      } else {
+        this.vy += this.gravity * 60 * dt;
+        if (this.vy > 14) this.vy = 14;
+      }
     }
 
     // Ground Slam landing shockwave
@@ -695,7 +804,8 @@ class Player {
   }
 
   pogoBounce() {
-    this.vy = this.jumpForce * 0.92;
+    const bounceMult = this.character === 'yoshi' ? 1.08 : 0.92;
+    this.vy = this.jumpForce * bounceMult;
     this.grounded = false;
     this.airJumpsLeft = this.powers.monarchTripleJump ? 2 : 0;
     window.soundEngine.playPogo();
@@ -773,7 +883,8 @@ class Player {
       },
       this.time,
       this.invulnerableTimer > 0,
-      this.parryActive
+      this.parryActive,
+      this.character || 'mario'
     );
   }
 }

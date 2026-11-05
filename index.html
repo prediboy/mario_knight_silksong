@@ -96,6 +96,7 @@
         <div class="sound-controls">
           <button id="btn-save-game" class="btn-save" title="Save Checkpoint">💾 SAVE</button>
           <button id="btn-load-game" class="btn-load" title="Load Checkpoint">📂 LOAD</button>
+          <button id="btn-change-char-hud" class="btn-char" title="Change Mario Character">👤 HERO</button>
           <button id="btn-pause" class="btn-pause" title="Pause Game [P / Esc]">⏸️ PAUSE</button>
           <button id="btn-sound" class="btn-icon" title="Toggle Sound">🔊</button>
         </div>
@@ -129,6 +130,7 @@
         <div class="pause-actions">
           <button id="btn-save-pause" class="btn-gold" style="background: linear-gradient(180deg, #00897b 0%, #004d40 100%); border-color: #80cbc4; color: #fff;">💾 SAVE CHECKPOINT</button>
           <button id="btn-load-pause" class="btn-gold" style="background: linear-gradient(180deg, #1e88e5 0%, #0d47a1 100%); border-color: #90caf9; color: #fff;">📂 LOAD CHECKPOINT</button>
+          <button id="btn-change-char-pause" class="btn-gold" style="background: linear-gradient(180deg, #7b1fa2 0%, #4a148c 100%); border-color: #ba68c8; color: #fff;">👥 CHANGE CHARACTER</button>
           <button id="btn-resume" class="btn-gold pulse-btn">RESUME [P / Esc]</button>
           <button id="btn-restart-level" class="btn-crimson">RESTART LEVEL</button>
         </div>
@@ -145,6 +147,7 @@
         <!-- Big Instant Start Button at Top for Mobile -->
         <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY ⚔️</button>
         <button id="btn-continue-game" class="btn-gold pulse-btn btn-hero" style="display: none; margin-top: 10px; background: linear-gradient(180deg, #00897b 0%, #004d40 100%); border-color: #80cbc4; color: #fff;">CONTINUE SAVED GAME 📂</button>
+        <button id="btn-change-char-start" class="btn-gold" style="margin-top: 8px; width: 100%; max-width: 380px; background: linear-gradient(180deg, #7b1fa2 0%, #4a148c 100%); border-color: #ba68c8; color: #fff; font-size: 13px;">👥 CHANGE CHARACTER</button>
         <button id="btn-show-story" class="btn-gold" style="margin-top: 8px; width: 100%; max-width: 380px; background: linear-gradient(180deg, #512da8 0%, #311b92 100%); border-color: #b388ff; color: #fff; font-size: 13px;">📖 LORE & ORIGIN STORY (PROLOGUE)</button>
 
         <div class="rules-card">
@@ -170,6 +173,19 @@
         </div>
 
         <button id="btn-play-game-bottom" class="btn-gold pulse-btn">START EXPEDITION ⚔️</button>
+      </div>
+    </div>
+
+    <!-- Character Select Modal -->
+    <div id="modal-character-select" class="modal">
+      <div class="modal-content char-modal">
+        <div class="silksong-crest">❖ 🍄 👑 ❖</div>
+        <h2 class="game-title" style="font-size: 24px;">CHOOSE YOUR HERO</h2>
+        <p class="tagline">Select a Mario Knight champion to take up the Titan Cleaver</p>
+        
+        <div class="char-grid" id="char-grid"></div>
+
+        <button id="btn-close-char-select" class="btn-crimson" style="margin-top: 6px; width: 100%; max-width: 260px;">BACK TO JOURNEY</button>
       </div>
     </div>
 
@@ -338,10 +354,10 @@
   </div>
 
   <!-- Game Scripts -->
-  <script src="audio.js?v=24"></script>
-  <script src="sprites.js?v=24"></script>
-  <script src="entities.js?v=24"></script>
-  <script src="levels.js?v=24"></script>
-  <script src="game.js?v=24"></script>
+  <script src="audio.js?v=25"></script>
+  <script src="sprites.js?v=25"></script>
+  <script src="entities.js?v=25"></script>
+  <script src="levels.js?v=25"></script>
+  <script src="game.js?v=25"></script>
 </body>
 </html>

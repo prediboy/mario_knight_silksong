@@ -18,8 +18,8 @@ if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D
 }
 
 const Sprites = {
-  // Draw Mario Knight
-  drawMarioKnight(ctx, x, y, width, height, facingRight, state, time, isInvulnerable, hasParry) {
+  // Draw Mario Knight & Hero Variants
+  drawMarioKnight(ctx, x, y, width, height, facingRight, state, time, isInvulnerable, hasParry, character = 'mario') {
     ctx.save();
     ctx.translate(x + width / 2, y + height / 2);
     if (!facingRight) ctx.scale(-1, 1);
@@ -43,8 +43,65 @@ const Sprites = {
     const bob = state.moving ? Math.sin(time * 15) * 2 : Math.sin(time * 4) * 1;
     const legSwing = state.moving ? Math.sin(time * 15) * 8 : 0;
 
+    // Character Color Palettes
+    let cloakColor = '#b71c1c';
+    let tunicColor = '#c62828';
+    let overallsColor = '#1a237e';
+    let bootsColor = '#4e342e';
+    let capColor = '#d32f2f';
+    let capVisorColor = '#b71c1c';
+    let capLetter = 'M';
+    let capLetterColor = '#d32f2f';
+    let skinColor = '#ffcc80';
+
+    if (character === 'luigi') {
+      cloakColor = '#1b5e20';
+      tunicColor = '#2e7d32';
+      overallsColor = '#0d47a1';
+      bootsColor = '#3e2723';
+      capColor = '#2e7d32';
+      capVisorColor = '#1b5e20';
+      capLetter = 'L';
+      capLetterColor = '#2e7d32';
+    } else if (character === 'peach') {
+      cloakColor = '#ec407a';
+      tunicColor = '#f06292';
+      overallsColor = '#f48fb1';
+      bootsColor = '#ad1457';
+      skinColor = '#ffe0b2';
+    } else if (character === 'toad') {
+      cloakColor = '#0d47a1';
+      tunicColor = '#1976d2';
+      overallsColor = '#f5f5f5';
+      bootsColor = '#8d6e63';
+    } else if (character === 'yoshi') {
+      cloakColor = '#2e7d32';
+      tunicColor = '#43a047';
+      overallsColor = '#81c784';
+      bootsColor = '#e65100';
+    } else if (character === 'wario') {
+      cloakColor = '#4a148c';
+      tunicColor = '#fdd835';
+      overallsColor = '#6a1b9a';
+      bootsColor = '#2e7d32';
+      capColor = '#fbc02d';
+      capVisorColor = '#f57f17';
+      capLetter = 'W';
+      capLetterColor = '#1565c0';
+      skinColor = '#ffe082';
+    } else if (character === 'waluigi') {
+      cloakColor = '#311b92';
+      tunicColor = '#7b1fa2';
+      overallsColor = '#1a1a2e';
+      bootsColor = '#e65100';
+      capColor = '#6a1b9a';
+      capVisorColor = '#4a148c';
+      capLetter = 'Γ';
+      capLetterColor = '#ffd600';
+    }
+
     // 1. Flowing Silk Knight Cloak (Back)
-    ctx.fillStyle = '#b71c1c';
+    ctx.fillStyle = cloakColor;
     ctx.beginPath();
     ctx.moveTo(-10, -5 + bob);
     ctx.quadraticCurveTo(-22 + Math.sin(time * 8) * 4, 10, -18 + Math.cos(time * 6) * 6, 22);
@@ -52,8 +109,8 @@ const Sprites = {
     ctx.closePath();
     ctx.fill();
 
-    // 2. Legs / Boots (Blue overalls / knight greaves)
-    ctx.fillStyle = '#1a237e'; // Dark Royal Blue
+    // 2. Legs / Boots (Overalls / knight greaves)
+    ctx.fillStyle = overallsColor;
     // Left Leg
     ctx.beginPath();
     ctx.roundRect(-10 + legSwing, 10 + bob, 8, 12, 3);
@@ -63,20 +120,20 @@ const Sprites = {
     ctx.roundRect(2 - legSwing, 10 + bob, 8, 12, 3);
     ctx.fill();
     // Boots
-    ctx.fillStyle = '#4e342e'; // Dark brown boots
+    ctx.fillStyle = bootsColor;
     ctx.beginPath();
     ctx.roundRect(-12 + legSwing, 18 + bob, 10, 5, 2);
     ctx.roundRect(0 - legSwing, 18 + bob, 10, 5, 2);
     ctx.fill();
 
-    // 3. Body (Red Tunic + Blue Overalls)
-    ctx.fillStyle = '#c62828';
+    // 3. Body (Tunic + Overalls)
+    ctx.fillStyle = tunicColor;
     ctx.beginPath();
     ctx.roundRect(-11, -8 + bob, 22, 18, 5);
     ctx.fill();
 
-    // Overalls
-    ctx.fillStyle = '#1a237e';
+    // Overalls / Vest
+    ctx.fillStyle = overallsColor;
     ctx.beginPath();
     ctx.roundRect(-9, 0 + bob, 18, 12, 3);
     ctx.fill();
@@ -87,53 +144,288 @@ const Sprites = {
     ctx.arc(5, 3 + bob, 2, 0, Math.PI * 2);
     ctx.fill();
 
-    // 4. Head / Mask (Mario Face with Pale Knight Mask Sheen)
-    ctx.fillStyle = '#ffcc80'; // Flesh tone
-    ctx.beginPath();
-    ctx.arc(0, -12 + bob, 11, 0, Math.PI * 2);
-    ctx.fill();
+    // 4. Head / Mask / Cap (Character Specific)
+    if (character === 'peach') {
+      // Long blonde hair back
+      ctx.fillStyle = '#ffd54f';
+      ctx.beginPath();
+      ctx.ellipse(-4, -10 + bob, 14, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
 
-    // Mario Iconic Mustache
-    ctx.fillStyle = '#212121';
-    ctx.beginPath();
-    ctx.ellipse(3, -9 + bob, 6, 3.5, 0.1, 0, Math.PI * 2);
-    ctx.ellipse(8, -10 + bob, 3, 2.5, 0.3, 0, Math.PI * 2);
-    ctx.fill();
+      // Face
+      ctx.fillStyle = skinColor;
+      ctx.beginPath();
+      ctx.arc(0, -12 + bob, 11, 0, Math.PI * 2);
+      ctx.fill();
 
-    // Knight Glowing Soul Eyes
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = '#3fe0d0';
-    ctx.shadowBlur = 6;
-    ctx.beginPath();
-    ctx.ellipse(4, -14 + bob, 2.5, 4, 0.1, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
+      // Cyan glowing soul eyes
+      ctx.fillStyle = '#00e5ff';
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.ellipse(3, -13 + bob, 2.5, 4, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
 
-    // Mario Cap with Horned Knight Crest
-    ctx.fillStyle = '#d32f2f'; // Red Cap
-    ctx.beginPath();
-    ctx.arc(0, -16 + bob, 12, Math.PI, 0);
-    ctx.lineTo(14, -13 + bob);
-    ctx.lineTo(-12, -13 + bob);
-    ctx.closePath();
-    ctx.fill();
+      // Blonde hair front bangs
+      ctx.fillStyle = '#ffd54f';
+      ctx.beginPath();
+      ctx.arc(0, -16 + bob, 12, Math.PI * 0.9, 0.1);
+      ctx.fill();
 
-    // Cap Visor
-    ctx.fillStyle = '#b71c1c';
-    ctx.beginPath();
-    ctx.roundRect(0, -15 + bob, 15, 4, 2);
-    ctx.fill();
+      // Royal Golden Crown
+      ctx.fillStyle = '#ffd700';
+      ctx.beginPath();
+      ctx.moveTo(-7, -19 + bob);
+      ctx.lineTo(-9, -27 + bob);
+      ctx.lineTo(-3, -22 + bob);
+      ctx.lineTo(2, -28 + bob);
+      ctx.lineTo(7, -22 + bob);
+      ctx.lineTo(11, -27 + bob);
+      ctx.lineTo(9, -19 + bob);
+      ctx.closePath();
+      ctx.fill();
 
-    // Cap Emblem (Gold Mario 'M' on White Badge)
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(2, -18 + bob, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#d32f2f';
-    ctx.font = 'bold 6px Cinzel';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('M', 2, -18 + bob);
+      // Ruby & sapphire jewels
+      ctx.fillStyle = '#e53935';
+      ctx.beginPath(); ctx.arc(2, -21 + bob, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#1e88e5';
+      ctx.beginPath(); ctx.arc(-4, -20 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
+    } else if (character === 'toad') {
+      // Face
+      ctx.fillStyle = skinColor;
+      ctx.beginPath();
+      ctx.arc(0, -8 + bob, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Friendly eyes & blush
+      ctx.fillStyle = '#212121';
+      ctx.beginPath();
+      ctx.ellipse(3, -9 + bob, 2, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ff8a80';
+      ctx.beginPath(); ctx.arc(6, -6 + bob, 2, 0, Math.PI * 2); ctx.fill();
+
+      // Giant Mushroom Cap (White with Red Spots)
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#cfd8dc';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(0, -18 + bob, 17, 14, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#e53935';
+      ctx.beginPath(); ctx.arc(0, -22 + bob, 5.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(12, -18 + bob, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(-11, -17 + bob, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(5, -13 + bob, 3.5, 0, Math.PI * 2); ctx.fill();
+    } else if (character === 'yoshi') {
+      // Dinosaur Head
+      ctx.fillStyle = '#43a047';
+      ctx.beginPath();
+      ctx.arc(-2, -12 + bob, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Snout
+      ctx.beginPath();
+      ctx.ellipse(7, -10 + bob, 9, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // White lower cheek
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(5, -6 + bob, 8, 6, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Nostril
+      ctx.fillStyle = '#1b5e20';
+      ctx.beginPath(); ctx.arc(13, -12 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
+
+      // Red crest spines
+      ctx.fillStyle = '#e53935';
+      ctx.beginPath();
+      ctx.roundRect(-13, -19 + bob, 5, 6, 2);
+      ctx.roundRect(-14, -11 + bob, 5, 6, 2);
+      ctx.fill();
+
+      // Dinosaur Eye
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(2, -16 + bob, 4, 7, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#1b5e20';
+      ctx.beginPath();
+      ctx.ellipse(3, -16 + bob, 2, 4.5, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (character === 'wario') {
+      // Face
+      ctx.fillStyle = skinColor;
+      ctx.beginPath();
+      ctx.arc(0, -11 + bob, 13, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pink Nose
+      ctx.fillStyle = '#f06292';
+      ctx.beginPath();
+      ctx.ellipse(8, -10 + bob, 5, 4.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Jagged zig-zag black mustache
+      ctx.fillStyle = '#212121';
+      ctx.beginPath();
+      ctx.moveTo(3, -8 + bob);
+      ctx.lineTo(8, -5 + bob);
+      ctx.lineTo(13, -10 + bob);
+      ctx.lineTo(18, -4 + bob);
+      ctx.lineTo(16, -11 + bob);
+      ctx.lineTo(7, -8 + bob);
+      ctx.closePath();
+      ctx.fill();
+
+      // Eyes
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#3fe0d0';
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.ellipse(4, -14 + bob, 2.5, 4, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Yellow Cap
+      ctx.fillStyle = capColor;
+      ctx.beginPath();
+      ctx.arc(0, -16 + bob, 13, Math.PI, 0);
+      ctx.lineTo(15, -13 + bob);
+      ctx.lineTo(-13, -13 + bob);
+      ctx.closePath();
+      ctx.fill();
+
+      // Visor
+      ctx.fillStyle = capVisorColor;
+      ctx.beginPath();
+      ctx.roundRect(0, -15 + bob, 16, 4, 2);
+      ctx.fill();
+
+      // Cap Emblem 'W'
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(2, -18 + bob, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = capLetterColor;
+      ctx.font = 'bold 7px Cinzel';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(capLetter, 2, -18 + bob);
+    } else if (character === 'waluigi') {
+      // Face
+      ctx.fillStyle = skinColor;
+      ctx.beginPath();
+      ctx.ellipse(0, -12 + bob, 9, 13, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pointed pink nose
+      ctx.fillStyle = '#f06292';
+      ctx.beginPath();
+      ctx.moveTo(3, -13 + bob);
+      ctx.lineTo(12, -10 + bob);
+      ctx.lineTo(4, -8 + bob);
+      ctx.closePath();
+      ctx.fill();
+
+      // Pointed upturned mustache
+      ctx.fillStyle = '#212121';
+      ctx.beginPath();
+      ctx.moveTo(2, -8 + bob);
+      ctx.quadraticCurveTo(12, -8 + bob, 16, -16 + bob);
+      ctx.lineTo(14, -16 + bob);
+      ctx.quadraticCurveTo(10, -6 + bob, 2, -6 + bob);
+      ctx.closePath();
+      ctx.fill();
+
+      // Eyes
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#3fe0d0';
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.ellipse(4, -14 + bob, 2.5, 4, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Purple Cap
+      ctx.fillStyle = capColor;
+      ctx.beginPath();
+      ctx.arc(0, -17 + bob, 11, Math.PI, 0);
+      ctx.lineTo(13, -14 + bob);
+      ctx.lineTo(-11, -14 + bob);
+      ctx.closePath();
+      ctx.fill();
+
+      // Visor
+      ctx.fillStyle = capVisorColor;
+      ctx.beginPath();
+      ctx.roundRect(0, -16 + bob, 15, 3.5, 2);
+      ctx.fill();
+
+      // Cap Emblem 'Γ'
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(2, -19 + bob, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = capLetterColor;
+      ctx.font = 'bold 7px Cinzel';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(capLetter, 2, -19 + bob);
+    } else {
+      // Mario & Luigi
+      ctx.fillStyle = skinColor;
+      ctx.beginPath();
+      ctx.arc(0, -12 + bob, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mustache
+      ctx.fillStyle = '#212121';
+      ctx.beginPath();
+      ctx.ellipse(3, -9 + bob, 6, 3.5, 0.1, 0, Math.PI * 2);
+      ctx.ellipse(8, -10 + bob, 3, 2.5, 0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Knight Glowing Soul Eyes
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#3fe0d0';
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.ellipse(4, -14 + bob, 2.5, 4, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Cap
+      ctx.fillStyle = capColor;
+      ctx.beginPath();
+      ctx.arc(0, -16 + bob, 12, Math.PI, 0);
+      ctx.lineTo(14, -13 + bob);
+      ctx.lineTo(-12, -13 + bob);
+      ctx.closePath();
+      ctx.fill();
+
+      // Cap Visor
+      ctx.fillStyle = capVisorColor;
+      ctx.beginPath();
+      ctx.roundRect(0, -15 + bob, 15, 4, 2);
+      ctx.fill();
+
+      // Cap Emblem
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(2, -18 + bob, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = capLetterColor;
+      ctx.font = 'bold 6px Cinzel';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(capLetter, 2, -18 + bob);
+    }
 
     // 5. Weapon: Silksong Great Battle Axe
     if (state.slashing) {

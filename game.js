@@ -33,6 +33,8 @@ class Game {
     // Modals
     this.modalStart = document.getElementById('modal-start');
     this.modalStory = document.getElementById('modal-story');
+    this.modalCharSelect = document.getElementById('modal-character-select');
+    this.charGrid = document.getElementById('char-grid');
     this.modalPause = document.getElementById('modal-pause');
     this.modalLevelClear = document.getElementById('modal-level-clear');
     this.modalGameOver = document.getElementById('modal-game-over');
@@ -228,6 +230,12 @@ class Game {
         } else if (code === 'Escape') {
           e.preventDefault();
           this.finishStory();
+          return;
+        }
+      } else if (this.state === 'CHAR_SELECT') {
+        if (code === 'Escape') {
+          e.preventDefault();
+          this.closeCharacterSelect();
           return;
         }
       } else if (this.state === 'GAME_OVER') {
@@ -485,6 +493,12 @@ class Game {
     addAction('btn-load-retry', () => this.loadGame());
     addAction('btn-continue-game', () => this.loadGame());
 
+    // Change Character Buttons (HUD, Start, Pause)
+    addAction('btn-change-char-hud', () => this.openCharacterSelect());
+    addAction('btn-change-char-start', () => this.openCharacterSelect());
+    addAction('btn-change-char-pause', () => this.openCharacterSelect());
+    addAction('btn-close-char-select', () => this.closeCharacterSelect());
+
     // Play Again (After Win) Button
     addAction('btn-play-again', () => {
       if (this.modalGameWin) this.modalGameWin.classList.remove('active');
@@ -740,6 +754,7 @@ class Game {
     this.updateHPUI();
     this.updateSoulUI();
     this.updatePowerIconsUI();
+    this.updateCharacterUI();
 
     this.state = 'PLAYING';
     window.soundEngine.startBGM('ambient');
@@ -841,6 +856,120 @@ class Game {
       window.soundEngine.playPowerGet();
     }
     this.startLevel(1);
+  }
+
+  renderCharacterGrid() {
+    if (!this.charGrid) return;
+    this.charGrid.innerHTML = '';
+
+    Object.keys(MARIO_CHARACTERS).forEach((charKey) => {
+      const char = MARIO_CHARACTERS[charKey];
+      const isSelected = this.player && this.player.character === charKey;
+
+      const card = document.createElement('div');
+      card.className = `char-card ${isSelected ? 'selected' : ''}`;
+      card.dataset.charId = charKey;
+
+      // Create preview canvas with live hero vector sprite
+      const cvs = document.createElement('canvas');
+      cvs.className = 'char-avatar-canvas';
+      cvs.width = 48;
+      cvs.height = 56;
+      const cctx = cvs.getContext('2d');
+      if (cctx) {
+        Sprites.drawMarioKnight(
+          cctx,
+          24 - 15,
+          28 - 19,
+          30,
+          38,
+          true,
+          { moving: false, slashing: false, slashTimer: 0, slashDuration: 0.22 },
+          0,
+          false,
+          false,
+          charKey
+        );
+      }
+
+      card.appendChild(cvs);
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'char-name';
+      nameEl.textContent = `${char.emoji} ${char.name}`;
+      card.appendChild(nameEl);
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'char-title';
+      titleEl.textContent = char.title;
+      card.appendChild(titleEl);
+
+      const perkEl = document.createElement('div');
+      perkEl.className = 'char-perk';
+      perkEl.textContent = char.perkText;
+      card.appendChild(perkEl);
+
+      const badgeEl = document.createElement('div');
+      badgeEl.className = 'char-status-badge';
+      badgeEl.textContent = isSelected ? 'SELECTED' : 'PLAY ⚔️';
+      card.appendChild(badgeEl);
+
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.selectCharacter(charKey);
+      });
+
+      this.charGrid.appendChild(card);
+    });
+  }
+
+  selectCharacter(charKey) {
+    if (!MARIO_CHARACTERS[charKey]) return;
+    this.player.setCharacter(charKey);
+    this.updateCharacterUI();
+    this.closeCharacterSelect();
+    try {
+      if (window.soundEngine && window.soundEngine.playPowerGet) {
+        window.soundEngine.playPowerGet();
+      }
+    } catch (e) {}
+    this.showToast(`✨ PLAYING AS ${MARIO_CHARACTERS[charKey].name}! (${MARIO_CHARACTERS[charKey].perkText})`);
+  }
+
+  updateCharacterUI() {
+    const char = (this.player && MARIO_CHARACTERS[this.player.character]) ? MARIO_CHARACTERS[this.player.character] : MARIO_CHARACTERS.mario;
+    if (this.distanceMarioPin) {
+      this.distanceMarioPin.textContent = char.emoji;
+    }
+    if (this.charGrid) {
+      const cards = this.charGrid.querySelectorAll('.char-card');
+      cards.forEach((c) => {
+        const isSel = c.dataset.charId === this.player.character;
+        c.className = `char-card ${isSel ? 'selected' : ''}`;
+        const badge = c.querySelector('.char-status-badge');
+        if (badge) badge.textContent = isSel ? 'SELECTED' : 'PLAY ⚔️';
+      });
+    }
+  }
+
+  openCharacterSelect() {
+    this.prevModalState = this.state;
+    this.state = 'CHAR_SELECT';
+    this.renderCharacterGrid();
+    if (this.modalCharSelect) {
+      this.modalCharSelect.classList.add('active');
+    }
+  }
+
+  closeCharacterSelect() {
+    if (this.modalCharSelect) {
+      this.modalCharSelect.classList.remove('active');
+    }
+    if (this.prevModalState && this.prevModalState !== 'CHAR_SELECT') {
+      this.state = this.prevModalState;
+    } else {
+      this.state = 'PLAYING';
+    }
   }
 
   updateSoulUI() {
@@ -952,6 +1081,7 @@ class Game {
         level: this.currentLevel,
         x: Math.round(this.player.x),
         y: Math.round(this.player.y),
+        character: this.player.character,
         masks: this.player.masks,
         soul: this.player.soul,
         powers: { ...this.player.powers },
@@ -1009,6 +1139,10 @@ class Game {
       this.player.y = data.y !== undefined ? data.y : 460;
       this.player.masks = data.masks !== undefined ? Math.max(1, Math.min(this.player.maxMasks, data.masks)) : this.player.maxMasks;
       this.player.soul = data.soul !== undefined ? data.soul : 0;
+      if (data.character && typeof this.player.setCharacter === 'function') {
+        this.player.setCharacter(data.character);
+      }
+      this.updateCharacterUI();
       if (data.powers) {
         this.player.powers = { ...this.player.powers, ...data.powers };
       }
