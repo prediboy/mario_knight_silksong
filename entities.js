@@ -258,9 +258,9 @@ class Player {
     this.facingRight = true;
     this.grounded = false;
 
-    // HP System (8 Masks, resilient Knight vigor)
-    this.maxMasks = 8;
-    this.masks = 8;
+    // HP System (5 Masks / Lives)
+    this.maxMasks = 5;
+    this.masks = 5;
     this.invulnerableTimer = 0;
     this.dead = false;
 
@@ -371,9 +371,9 @@ class Player {
   }
 
   focusHeal() {
-    // 10/10 Soul restores +4 Life Masks (Fair, restorative Knight healing)
+    // 10/10 Soul restores +2 Life Masks (2 Lives restored)
     if (this.soul >= this.maxSoul && this.masks < this.maxMasks) {
-      this.masks = Math.min(this.maxMasks, this.masks + 4);
+      this.masks = Math.min(this.maxMasks, this.masks + 2);
       this.soul = 0;
       window.soundEngine.playFocusHeal();
       return true;

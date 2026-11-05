@@ -13,9 +13,6 @@ class Game {
       document.getElementById('mask-2'),
       document.getElementById('mask-3'),
       document.getElementById('mask-4'),
-      document.getElementById('mask-5'),
-      document.getElementById('mask-6'),
-      document.getElementById('mask-7'),
     ];
     this.soulVal = document.getElementById('soul-val');
     this.soulLiquid = document.getElementById('soul-liquid');
@@ -75,7 +72,7 @@ class Game {
         chapter: 'PROLOGUE • CHAPTER 4 OF 4',
         icon: '⚡',
         headline: "THE KNIGHT'S AWAKENING & HORNET'S CRY",
-        text: "As Mario gripped the hilt, crackling starlight and the Knight's Soul infused his body with 8 Life Masks! Through the silk threads, Princess Hornet's voice echoed: 'Slay the 12 Titans who corrupted this realm, break my Golden Cage, and set us free!'"
+        text: "As Mario gripped the hilt, crackling starlight and the Knight's Soul infused his body with 5 Life Masks! Through the silk threads, Princess Hornet's voice echoed: 'Slay the 12 Titans who corrupted this realm, break my Golden Cage, and set us free!'"
       }
     ];
 
@@ -308,7 +305,7 @@ class Game {
       if (code === 'KeyH' || code === 'KeyU') {
         if (!this.input.heal && (this.state === 'PLAYING' || this.state === 'BOSS')) {
           if (this.player.focusHeal()) {
-            this.showToast('✨ 10/10 SOUL FOCUSED: FULL HP RESTORED!');
+            this.showToast('✨ 10/10 SOUL FOCUSED: +2 LIVES RESTORED!');
             this.updateHPUI();
             this.updateSoulUI();
           }
@@ -671,10 +668,10 @@ class Game {
       this.player.castSpell(this.projectiles);
     });
 
-    // Soul Focus Full Heal (10/10)
+    // Soul Focus Heal +2 Lives (10/10)
     bindArcadeButton('touch-heal', () => {
       if (this.player.focusHeal()) {
-        this.showToast('✨ 10/10 SOUL FOCUSED: FULL HP RESTORED!');
+        this.showToast('✨ 10/10 SOUL FOCUSED: +2 LIVES RESTORED!');
         this.updateHPUI();
         this.updateSoulUI();
       }
@@ -1004,7 +1001,7 @@ class Game {
       // Restore position & stats
       this.player.x = data.x !== undefined ? data.x : 100;
       this.player.y = data.y !== undefined ? data.y : 460;
-      this.player.masks = data.masks !== undefined ? Math.max(1, data.masks) : 6;
+      this.player.masks = data.masks !== undefined ? Math.max(1, Math.min(this.player.maxMasks, data.masks)) : this.player.maxMasks;
       this.player.soul = data.soul !== undefined ? data.soul : 0;
       if (data.powers) {
         this.player.powers = { ...this.player.powers, ...data.powers };
@@ -1178,13 +1175,13 @@ class Game {
         }
       }
 
-      // Monster Bites Player -> Loses 1/8 HP (1 Mask)
+      // Monster Bites Player -> Loses 1 Life (1 Mask)
       if (this.player.checkOverlap(m)) {
         if (this.player.takeDamage(1)) {
           this.screenShake = 0.5;
           this.updateHPUI();
-          this.floatingTexts.push(new FloatingText('💥 BITTEN! -1/8 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
-          this.showToast(`⚠️ BITTEN BY MONSTER! -1/8 HP (${this.player.masks}/${this.player.maxMasks} MASKS LEFT)`);
+          this.floatingTexts.push(new FloatingText('💥 BITTEN! -1 LIFE', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
+          this.showToast(`⚠️ BITTEN BY MONSTER! -1 LIFE (${this.player.masks}/${this.player.maxMasks} LIVES LEFT)`);
         }
       }
 
@@ -1238,12 +1235,12 @@ class Game {
         }
       }
 
-      // Boss bites / hits Player (Direct titan body collision deals 1 mask with safe recoil)
+      // Boss bites / hits Player (Direct titan body collision deals 1 life with safe recoil)
       if (this.player.checkOverlap(this.activeBoss)) {
         if (this.player.takeDamage(1)) {
           this.screenShake = 0.45;
           this.updateHPUI();
-          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -1/8 HP', this.player.x - 25, this.player.y - 25, '#ff4d61', 13));
+          this.floatingTexts.push(new FloatingText('TITAN CRUSH! -1 LIFE', this.player.x - 25, this.player.y - 25, '#ff4d61', 13));
         }
       }
     }
@@ -1351,7 +1348,7 @@ class Game {
           if (this.player.takeDamage(1)) {
             this.screenShake = 0.4;
             this.updateHPUI();
-            this.floatingTexts.push(new FloatingText('⚡ BLASTED! -1/8 HP', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
+            this.floatingTexts.push(new FloatingText('⚡ BLASTED! -1 LIFE', this.player.x - 20, this.player.y - 20, '#ff4d61', 12));
           }
         }
       }
