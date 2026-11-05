@@ -1115,20 +1115,20 @@ class Boss {
     this.attackTimer = 1.0;
     this.phase = 1;
 
-    // Challenging & Epic Boss Progression across all 12 Titans
+    // Challenging & Epic Boss Progression across all 12 Titans (Strengthened & Formidable)
     const bossConfigs = [
-      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 350, w: 90, h: 80, speed: 1.8, isFlying: false },
-      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 520, w: 80, h: 90, speed: 2.6, isFlying: true },
-      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 750, w: 95, h: 95, speed: 2.4, isFlying: false },
-      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 980, w: 85, h: 100, speed: 2.7, isFlying: true },
-      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 1250, w: 110, h: 85, speed: 2.6, isFlying: true },
-      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 1600, w: 105, h: 95, speed: 2.3, isFlying: false },
-      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 2000, w: 95, h: 110, speed: 3.2, isFlying: true },
-      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 2500, w: 115, h: 115, speed: 3.4, isFlying: true },
-      { name: 'CELESTIAL WEAVER MATRON', title: 'Spinner of Astral Fates', maxHp: 3000, w: 100, h: 105, speed: 3.2, isFlying: true },
-      { name: 'CHRONOS AUTOMATON PRIME', title: 'Clockwork Eternal Warden', maxHp: 3600, w: 110, h: 100, speed: 2.4, isFlying: false },
-      { name: 'THE HOLLOW SHADOW KING', title: 'Monarch of Abyssal Despair', maxHp: 4300, w: 95, h: 115, speed: 3.5, isFlying: true },
-      { name: 'THE ASCENDED GODWEAVER KOOPA', title: 'Supreme Weaver of the Cosmos', maxHp: 5200, w: 120, h: 120, speed: 3.6, isFlying: true }
+      { name: 'GIGA GOOMBA COLOSSUS', title: 'Titan of the First Chasm', maxHp: 550, w: 90, h: 80, speed: 2.2, isFlying: false },
+      { name: 'BROODMOTHER HORNET QUEEN', title: 'Matriarch of Needles', maxHp: 800, w: 80, h: 90, speed: 3.0, isFlying: true },
+      { name: 'MOLTEN BOWSER KNIGHT', title: 'Lord of Magma Chitin', maxHp: 1200, w: 95, h: 95, speed: 2.8, isFlying: false },
+      { name: 'ARCANE MANTIS KAMEK', title: 'Grand Sorcerer of Silk', maxHp: 1600, w: 85, h: 100, speed: 3.2, isFlying: true },
+      { name: 'ABYSSAL CHEEP LEVIATHAN', title: 'Deep Sea Angler Terror', maxHp: 2000, w: 110, h: 85, speed: 3.0, isFlying: true },
+      { name: 'CRYSTAL KOOPA TITAN', title: 'Prismatic Gem Fortress', maxHp: 2500, w: 105, h: 95, speed: 2.7, isFlying: false },
+      { name: 'GRIMM BOWSER OF PHARLOOM', title: 'The Scarlet Nightmare Dragon', maxHp: 3200, w: 95, h: 110, speed: 3.8, isFlying: true },
+      { name: 'THE RADIANCE KOOPA GOD', title: 'Ascended Light of the Void', maxHp: 3900, w: 115, h: 115, speed: 4.0, isFlying: true },
+      { name: 'CELESTIAL WEAVER MATRON', title: 'Spinner of Astral Fates', maxHp: 4600, w: 100, h: 105, speed: 3.8, isFlying: true },
+      { name: 'CHRONOS AUTOMATON PRIME', title: 'Clockwork Eternal Warden', maxHp: 5400, w: 110, h: 100, speed: 3.0, isFlying: false },
+      { name: 'THE HOLLOW SHADOW KING', title: 'Monarch of Abyssal Despair', maxHp: 6400, w: 95, h: 115, speed: 4.2, isFlying: true },
+      { name: 'THE ASCENDED GODWEAVER KOOPA', title: 'Supreme Weaver of the Cosmos', maxHp: 7800, w: 120, h: 120, speed: 4.4, isFlying: true }
     ];
 
     const cfg = bossConfigs[bossLevel - 1] || bossConfigs[0];
@@ -1169,7 +1169,7 @@ class Boss {
     // Phase shift at 50% HP (Enraged & Speed boost)
     if (this.hp < this.maxHp * 0.5 && this.phase === 1) {
       this.phase = 2;
-      this.baseSpeed *= 1.25;
+      this.baseSpeed *= 1.35;
       window.soundEngine.playBossRoar();
       floatingTexts.push(new FloatingText('⚡ PHASE 2 ENRAGED! ⚡', this.x, this.y - 45, '#ffd700', 14));
     }
@@ -1204,10 +1204,10 @@ class Boss {
     const dx = player.x - this.x;
     const dy = player.y - this.y;
 
-    // Fast, intense bullet-hell cadence
+    // Fast, relentless bullet-hell cadence
     if (this.attackTimer <= 0) {
       this.executeAttack(player, projectiles, particles);
-      this.attackTimer = this.phase === 2 ? 0.75 : 1.15;
+      this.attackTimer = this.phase === 2 ? 0.55 : 0.85;
     }
 
     // Boss Level Specific AI Movement
@@ -1258,6 +1258,13 @@ class Boss {
           if (this.vy > 0 && this.y + this.height - this.vy * 60 * dt <= p.y + 16) {
             this.y = p.y - this.height;
             this.vy = 0;
+
+            // Aggressive ground leap toward player
+            if (Math.abs(dx) > 90 && Math.random() < 0.035) {
+              this.vy = -10.5;
+              this.x += Math.sign(dx) * 22;
+              window.soundEngine.playJump();
+            }
           }
         }
       }

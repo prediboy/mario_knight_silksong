@@ -51,28 +51,34 @@ class Game {
 
     this.storyChapters = [
       {
-        chapter: 'PROLOGUE • CHAPTER 1 OF 4',
+        chapter: 'PROLOGUE • CHAPTER 1 OF 5',
         icon: '🌀',
         headline: 'THE SHATTERED WARP PIPE',
         text: 'Deep beneath the Mushroom Kingdom, a cataclysmic void rift shattered the subterranean warp pipe network. Mario was sucked into a cosmic abyssal whirlpool, plummeting millions of fathoms into the haunted insect kingdom of Pharloom!'
       },
       {
-        chapter: 'PROLOGUE • CHAPTER 2 OF 4',
+        chapter: 'PROLOGUE • CHAPTER 2 OF 5',
+        icon: '🐛',
+        headline: 'HOW THE BUGS CAME: THE VOID PLAGUE',
+        text: 'Eons ago, Pharloom was a peaceful sanctuary of gentle weavers, worker beetles, and nectar wasps. But a toxic void infection bubbled up from the subterranean abyss—warping the bugs into razor-jawed chitin beasts and corrupting the 12 realm guardians into bloodthirsty Titans!'
+      },
+      {
+        chapter: 'PROLOGUE • CHAPTER 3 OF 5',
         icon: '🕸️',
         headline: 'AMBUSHED & DISARMED',
-        text: 'Awaking in the damp shadows of the Moss Grotto, Mario was surrounded by feral void-silk beetles and razor hornets. Without his usual Fire Flower or Super Mushroom, and with his fists bouncing off ancient chitin armor, he was trapped and weaponless!'
+        text: 'Awaking in the damp gloom of the Moss Grotto, Mario found himself surrounded by swarms of infected void bugs. Stripped of his Fire Flowers and mushrooms, his bare knuckles shattered harmlessly against their iron chitin. He was cornered and weaponless!'
       },
       {
-        chapter: 'PROLOGUE • CHAPTER 3 OF 4',
+        chapter: 'PROLOGUE • CHAPTER 4 OF 5',
         icon: '🪓',
-        headline: 'THE ANCIENT ALTAR OF NEEDLES',
-        text: 'Cornered against a monolith of pale shell, Mario discovered the Titan Cleaver—a legendary double-bladed battle axe forged by the First Weavers from star-metal and fallen god-chitin, waiting eons for a worthy hero to lift its weight.'
+        headline: 'THE TITAN CLEAVER BATTLE AXE',
+        text: 'Desperate, Mario broke through a fragile silk wall into an ancient shrine. Embedded in an altar of petrified silk stood the Titan Cleaver—a colossal double-bladed battle axe forged from starlight steel and fallen god-chitin, waiting ages for a true champion to draw it.'
       },
       {
-        chapter: 'PROLOGUE • CHAPTER 4 OF 4',
-        icon: '⚡',
-        headline: "THE KNIGHT'S AWAKENING & HORNET'S CRY",
-        text: "As Mario gripped the hilt, crackling starlight and the Knight's Soul infused his body with 5 Life Masks! Through the silk threads, Princess Hornet's voice echoed: 'Slay the 12 Titans who corrupted this realm, break my Golden Cage, and set us free!'"
+        chapter: 'PROLOGUE • CHAPTER 5 OF 5',
+        icon: '🛡️',
+        headline: 'THE 5 SACRED LIFE MASKS & HORNET',
+        text: 'As Mario gripped the hilt, 5 ancient Weaver Spirits manifested. To protect his mortal heart from the venomous bug blight, each spirit fused into a resilient Life Mask—granting Mario 5 sacred lives! Through the silk threads, Princess Hornet cried: "Conquer the 12 Titans and break my Golden Cage!"'
       }
     ];
 
