@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mario Knight Silksong</title>
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=27" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
@@ -96,7 +96,7 @@
         <div class="sound-controls">
           <button id="btn-save-game" class="btn-save" title="Save Checkpoint">💾 SAVE</button>
           <button id="btn-load-game" class="btn-load" title="Load Checkpoint">📂 LOAD</button>
-          <button id="btn-change-char-hud" class="btn-char" title="Change Mario Character">👤 HERO</button>
+          <button id="btn-change-char-hud" class="btn-char" title="Change Mario Character [C]">👥 <span id="hud-char-label">MARIO</span></button>
           <button id="btn-pause" class="btn-pause" title="Pause Game [P / Esc]">⏸️ PAUSE</button>
           <button id="btn-sound" class="btn-icon" title="Toggle Sound">🔊</button>
         </div>
@@ -127,6 +127,9 @@
         <div class="silksong-crest">⏸️ ❖ ⏸️</div>
         <h2 class="game-title">JOURNEY PAUSED</h2>
         <p class="tagline">The depths of Pharloom stand frozen in time</p>
+        <div class="start-hero-badge" id="pause-hero-display" style="margin-bottom: 6px;">
+          ACTIVE HERO: <strong id="pause-hero-name">🍄 MARIO</strong>
+        </div>
         <div class="pause-actions">
           <button id="btn-save-pause" class="btn-gold" style="background: linear-gradient(180deg, #00897b 0%, #004d40 100%); border-color: #80cbc4; color: #fff;">💾 SAVE CHECKPOINT</button>
           <button id="btn-load-pause" class="btn-gold" style="background: linear-gradient(180deg, #1e88e5 0%, #0d47a1 100%); border-color: #90caf9; color: #fff;">📂 LOAD CHECKPOINT</button>
@@ -144,10 +147,14 @@
         <h1 class="game-title">MARIO KNIGHT<br><span class="subtitle">SILKSONG</span></h1>
         <p class="tagline">12 Epic Boss Levels • Pharloom's Mushroom Chasm</p>
 
+        <div class="start-hero-badge" id="start-hero-display">
+          ACTIVE CHAMPION: <strong id="start-hero-name">🍄 MARIO (The Resilient Knight)</strong>
+        </div>
+
         <!-- Big Instant Start Button at Top for Mobile -->
         <button id="btn-play-game" class="btn-gold pulse-btn btn-hero">START JOURNEY ⚔️</button>
         <button id="btn-continue-game" class="btn-gold pulse-btn btn-hero" style="display: none; margin-top: 10px; background: linear-gradient(180deg, #00897b 0%, #004d40 100%); border-color: #80cbc4; color: #fff;">CONTINUE SAVED GAME 📂</button>
-        <button id="btn-change-char-start" class="btn-gold" style="margin-top: 8px; width: 100%; max-width: 380px; background: linear-gradient(180deg, #7b1fa2 0%, #4a148c 100%); border-color: #ba68c8; color: #fff; font-size: 13px;">👥 CHANGE CHARACTER</button>
+        <button id="btn-change-char-start" class="btn-gold btn-char-select-main" style="margin-top: 8px; width: 100%; max-width: 380px; font-size: 13px;">👥 CHANGE CHARACTER (7 HEROES)</button>
         <button id="btn-show-story" class="btn-gold" style="margin-top: 8px; width: 100%; max-width: 380px; background: linear-gradient(180deg, #512da8 0%, #311b92 100%); border-color: #b388ff; color: #fff; font-size: 13px;">📖 LORE & ORIGIN STORY (PROLOGUE)</button>
 
         <div class="rules-card">
@@ -314,6 +321,9 @@
           <button class="arcade-mini-btn btn-pause" id="touch-pause" title="Pause Game [P / Esc]">
             <span class="mini-icon">⏸️</span> PAUSE
           </button>
+          <button class="arcade-mini-btn btn-char-mini" id="touch-char" title="Change Character [C]">
+            <span class="mini-icon">👥</span> HERO
+          </button>
           <button class="arcade-mini-btn btn-heal" id="touch-heal" title="Soul Focus Heal (10/10) [H / U]">
             <span class="mini-icon">✨</span> HEAL
           </button>
@@ -354,10 +364,10 @@
   </div>
 
   <!-- Game Scripts -->
-  <script src="audio.js?v=25"></script>
-  <script src="sprites.js?v=25"></script>
-  <script src="entities.js?v=25"></script>
-  <script src="levels.js?v=25"></script>
-  <script src="game.js?v=25"></script>
+  <script src="audio.js?v=27"></script>
+  <script src="sprites.js?v=27"></script>
+  <script src="entities.js?v=27"></script>
+  <script src="levels.js?v=27"></script>
+  <script src="game.js?v=27"></script>
 </body>
 </html>

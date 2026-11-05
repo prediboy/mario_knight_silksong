@@ -147,6 +147,7 @@ class Game {
     this.bindEvents();
     this.bindTouchControls();
     this.checkExistingSave();
+    this.updateCharacterUI();
   }
 
   resizeCanvas() {
@@ -301,8 +302,19 @@ class Game {
         }
         this.input.slash = true;
       }
-      // Dash keys (L, Shift, C)
-      if (code === 'KeyL' || code === 'ShiftLeft' || code === 'ShiftRight' || code === 'KeyC') {
+      // Character Select shortcut (C)
+      if (code === 'KeyC') {
+        e.preventDefault();
+        if (this.state === 'CHAR_SELECT') {
+          this.closeCharacterSelect();
+        } else {
+          this.openCharacterSelect();
+        }
+        return;
+      }
+
+      // Dash keys (L, Shift)
+      if (code === 'KeyL' || code === 'ShiftLeft' || code === 'ShiftRight') {
         if (!this.input.dash && (this.state === 'PLAYING' || this.state === 'BOSS')) {
           this.player.dash(this.particles);
         }
@@ -392,8 +404,8 @@ class Game {
         lastTriggerTime = now;
 
         if (e) {
-          e.preventDefault();
-          e.stopPropagation();
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
         }
         try { window.soundEngine.init(); } catch (err) {}
         if (document.activeElement) document.activeElement.blur();
@@ -649,14 +661,14 @@ class Game {
 
       const trigger = (e) => {
         if (e) {
-          e.preventDefault();
-          e.stopPropagation();
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
         }
         try { window.soundEngine.init(); } catch (err) {}
         el.classList.add('active');
         setTimeout(() => el.classList.remove('active'), 120);
 
-        if (this.state === 'PLAYING' || this.state === 'BOSS' || id === 'touch-pause') {
+        if (this.state === 'PLAYING' || this.state === 'BOSS' || id === 'touch-pause' || id === 'touch-char') {
           actionFn();
         }
       };
@@ -700,6 +712,11 @@ class Game {
     // Pause Game Button
     bindArcadeButton('touch-pause', () => {
       this.togglePause();
+    });
+
+    // Change Character Button on mobile arcade
+    bindArcadeButton('touch-char', () => {
+      this.openCharacterSelect();
     });
 
     // Global touch cleanup
@@ -869,6 +886,8 @@ class Game {
       const card = document.createElement('div');
       card.className = `char-card ${isSelected ? 'selected' : ''}`;
       card.dataset.charId = charKey;
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
 
       // Create preview canvas with live hero vector sprite
       const cvs = document.createElement('canvas');
@@ -911,12 +930,30 @@ class Game {
 
       const badgeEl = document.createElement('div');
       badgeEl.className = 'char-status-badge';
-      badgeEl.textContent = isSelected ? 'SELECTED' : 'PLAY ⚔️';
+      badgeEl.textContent = isSelected ? 'SELECTED (PLAY ⚔️)' : 'PLAY NOW ⚔️';
       card.appendChild(badgeEl);
 
-      card.addEventListener('click', (e) => {
-        e.stopPropagation();
+      // Fast, debounced multi-input listener for both mobile touch and desktop click
+      let lastCardTrigger = 0;
+      const handleSelect = (e) => {
+        const now = performance.now();
+        if (now - lastCardTrigger < 300) return;
+        lastCardTrigger = now;
+        if (e) {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        }
         this.selectCharacter(charKey);
+      };
+
+      card.addEventListener('pointerup', handleSelect);
+      card.addEventListener('touchend', handleSelect, { passive: false });
+      card.addEventListener('click', handleSelect);
+      card.addEventListener('keydown', (e) => {
+        if (e.code === 'Enter' || e.code === 'Space') {
+          e.preventDefault();
+          handleSelect(e);
+        }
       });
 
       this.charGrid.appendChild(card);
@@ -927,13 +964,14 @@ class Game {
     if (!MARIO_CHARACTERS[charKey]) return;
     this.player.setCharacter(charKey);
     this.updateCharacterUI();
-    this.closeCharacterSelect();
     try {
       if (window.soundEngine && window.soundEngine.playPowerGet) {
         window.soundEngine.playPowerGet();
       }
     } catch (e) {}
-    this.showToast(`✨ PLAYING AS ${MARIO_CHARACTERS[charKey].name}! (${MARIO_CHARACTERS[charKey].perkText})`);
+    this.showToast(`✨ NOW PLAYING AS ${MARIO_CHARACTERS[charKey].name}! (${MARIO_CHARACTERS[charKey].perkText})`);
+    // Direct gameplay activation: "if i click on one of the character, that character should play"
+    this.closeCharacterSelect(true);
   }
 
   updateCharacterUI() {
@@ -941,31 +979,96 @@ class Game {
     if (this.distanceMarioPin) {
       this.distanceMarioPin.textContent = char.emoji;
     }
+    const startHeroName = document.getElementById('start-hero-name');
+    if (startHeroName) {
+      startHeroName.textContent = `${char.emoji} ${char.name} (${char.title})`;
+    }
+    const pauseHeroName = document.getElementById('pause-hero-name');
+    if (pauseHeroName) {
+      pauseHeroName.textContent = `${char.emoji} ${char.name} (${char.title})`;
+    }
+    const hudCharLabel = document.getElementById('hud-char-label');
+    if (hudCharLabel) {
+      hudCharLabel.textContent = `${char.emoji} ${char.name}`;
+    }
+    const btnPlay = document.getElementById('btn-play-game');
+    if (btnPlay) {
+      btnPlay.textContent = `START JOURNEY AS ${char.emoji} ${char.name} ⚔️`;
+    }
+    const btnPlayBottom = document.getElementById('btn-play-game-bottom');
+    if (btnPlayBottom) {
+      btnPlayBottom.textContent = `START EXPEDITION AS ${char.emoji} ${char.name} ⚔️`;
+    }
     if (this.charGrid) {
       const cards = this.charGrid.querySelectorAll('.char-card');
       cards.forEach((c) => {
         const isSel = c.dataset.charId === this.player.character;
         c.className = `char-card ${isSel ? 'selected' : ''}`;
         const badge = c.querySelector('.char-status-badge');
-        if (badge) badge.textContent = isSel ? 'SELECTED' : 'PLAY ⚔️';
+        if (badge) badge.textContent = isSel ? 'SELECTED (PLAY ⚔️)' : 'PLAY NOW ⚔️';
       });
     }
   }
 
   openCharacterSelect() {
     this.prevModalState = this.state;
+    this.wasStartActive = !!(this.modalStart && this.modalStart.classList.contains('active'));
+    this.wasPauseActive = !!(this.modalPause && this.modalPause.classList.contains('active'));
+
+    if (this.wasStartActive && this.modalStart) {
+      this.modalStart.classList.remove('active');
+    }
+    if (this.wasPauseActive && this.modalPause) {
+      this.modalPause.classList.remove('active');
+    }
+
     this.state = 'CHAR_SELECT';
     this.renderCharacterGrid();
     if (this.modalCharSelect) {
       this.modalCharSelect.classList.add('active');
     }
+    try {
+      if (window.soundEngine && window.soundEngine.playJump) {
+        window.soundEngine.playJump();
+      }
+    } catch (e) {}
   }
 
-  closeCharacterSelect() {
+  closeCharacterSelect(startPlaying = false) {
     if (this.modalCharSelect) {
       this.modalCharSelect.classList.remove('active');
     }
-    if (this.prevModalState && this.prevModalState !== 'CHAR_SELECT') {
+
+    if (startPlaying) {
+      if (this.modalStart) this.modalStart.classList.remove('active');
+      if (this.modalPause) this.modalPause.classList.remove('active');
+      this.paused = false;
+      if (this.wasStartActive || this.prevModalState === 'START') {
+        this.wasStartActive = false;
+        if (!this.hasSeenStory) {
+          this.showStory(0);
+        } else {
+          this.startLevel(1);
+        }
+      } else {
+        this.state = 'PLAYING';
+        if (window.soundEngine && window.soundEngine.startBGM) {
+          window.soundEngine.startBGM(this.state === 'BOSS' ? 'boss' : 'ambient');
+        }
+      }
+      return;
+    }
+
+    // Cancel / Return to previous modal
+    if (this.wasStartActive) {
+      this.wasStartActive = false;
+      this.state = 'START';
+      if (this.modalStart) this.modalStart.classList.add('active');
+    } else if (this.wasPauseActive) {
+      this.wasPauseActive = false;
+      this.state = 'PAUSED';
+      if (this.modalPause) this.modalPause.classList.add('active');
+    } else if (this.prevModalState && this.prevModalState !== 'CHAR_SELECT') {
       this.state = this.prevModalState;
     } else {
       this.state = 'PLAYING';
