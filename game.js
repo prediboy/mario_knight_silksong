@@ -161,15 +161,38 @@ class Game {
     window.soundEngine.playPause();
     if (this.paused) {
       if (this.modalPause) this.modalPause.classList.add('active');
-      window.soundEngine.stopBGM();
+      window.soundEngine.pauseBGM();
     } else {
       if (this.modalPause) this.modalPause.classList.remove('active');
-      window.soundEngine.startBGM(this.state === 'BOSS' ? 'boss' : 'ambient');
+      window.soundEngine.resumeBGM();
       this.lastTime = performance.now();
     }
   }
 
   bindEvents() {
+    // Global User Interaction Audio Unlock & BGM Autoplay
+    const unlockAndPlayBGM = () => {
+      try {
+        if (!window.soundEngine) return;
+        window.soundEngine.init();
+        if (!window.soundEngine.bgmPlaying && !window.soundEngine.muted) {
+          if (this.state === 'START' || this.state === 'CHAR_SELECT') {
+            window.soundEngine.startBGM('title');
+          } else if (this.state === 'STORY') {
+            window.soundEngine.startBGM('story');
+          } else if (this.state === 'BOSS') {
+            window.soundEngine.startBGM('boss');
+          } else if (this.state === 'PLAYING') {
+            window.soundEngine.startBGM('ambient');
+          }
+        }
+      } catch (e) {}
+    };
+
+    window.addEventListener('pointerdown', unlockAndPlayBGM, { passive: true });
+    window.addEventListener('keydown', unlockAndPlayBGM, { passive: true });
+    window.addEventListener('touchstart', unlockAndPlayBGM, { passive: true });
+
     // Keyboard Input Listeners
     window.addEventListener('keydown', (e) => {
       window.soundEngine.init();
@@ -825,6 +848,9 @@ class Game {
     if (this.modalStart) this.modalStart.classList.remove('active');
     if (this.modalStory) this.modalStory.classList.add('active');
     this.updateStoryView();
+    if (window.soundEngine && window.soundEngine.startBGM) {
+      window.soundEngine.startBGM('story');
+    }
   }
 
   updateStoryView() {
@@ -1064,14 +1090,23 @@ class Game {
       this.wasStartActive = false;
       this.state = 'START';
       if (this.modalStart) this.modalStart.classList.add('active');
+      if (window.soundEngine && window.soundEngine.startBGM) {
+        window.soundEngine.startBGM('title');
+      }
     } else if (this.wasPauseActive) {
       this.wasPauseActive = false;
       this.state = 'PAUSED';
       if (this.modalPause) this.modalPause.classList.add('active');
+      if (window.soundEngine && window.soundEngine.pauseBGM) {
+        window.soundEngine.pauseBGM();
+      }
     } else if (this.prevModalState && this.prevModalState !== 'CHAR_SELECT') {
       this.state = this.prevModalState;
     } else {
       this.state = 'PLAYING';
+      if (window.soundEngine && window.soundEngine.startBGM) {
+        window.soundEngine.startBGM('ambient');
+      }
     }
   }
 
